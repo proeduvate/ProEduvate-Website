@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+/*
+ * ProEduvate design tokens.
+ *
+ * STUB: Colors below are a best-effort visual extraction from the supplied
+ * logo (no pixel-accurate eyedropper was possible -- the asset was pasted
+ * inline in chat, not saved to disk). Swap the hex values in this single
+ * block once the exact brand hex codes are confirmed; every component
+ * consumes these tokens, never a hardcoded hex.
+ */
+:root {
+  --color-black: #030507;
+  --color-primary: #081c3a;
+  --color-primary-2: #0f2f5c;
+  --color-accent: #1471f0;
+  --color-accent-2: #3d8bff;
+  --color-accent-glow: #6fadff;
+  --color-white: #ffffff;
+  --color-off-white: #f5f7fa;
+  --color-gray-50: #eef1f5;
+  --color-gray-200: #c3cbd6;
+  --color-gray-400: #8a94a6;
+  --color-gray-600: #5b6577;
+  --color-gray-800: #232a36;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+}
+
+@theme inline {
+  --color-black: var(--color-black);
+  --color-primary: var(--color-primary);
+  --color-primary-2: var(--color-primary-2);
+  --color-accent: var(--color-accent);
+  --color-accent-2: var(--color-accent-2);
+  --color-accent-glow: var(--color-accent-glow);
+  --color-white: var(--color-white);
+  --color-off-white: var(--color-off-white);
+  --color-gray-50: var(--color-gray-50);
+  --color-gray-200: var(--color-gray-200);
+  --color-gray-400: var(--color-gray-400);
+  --color-gray-600: var(--color-gray-600);
+  --color-gray-800: var(--color-gray-800);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-fade-up: fade-up 0.6s ease-out both;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-white);
+    color: var(--color-black);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      color-mix(in srgb, var(--color-white) 6%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--color-white) 6%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 48px 48px;
+}
