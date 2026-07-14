@@ -70,7 +70,7 @@ export function Hero() {
         {!shouldReduceMotion && heroInView && (
           <div className="pointer-events-none absolute inset-0" aria-hidden="true">
             <WebGLBoundary>
-              <HeroScene />
+              <HeroScene scrollProgress={scrollYProgress} />
             </WebGLBoundary>
           </div>
         )}
@@ -100,7 +100,7 @@ export function Hero() {
             aria-hidden="true"
             style={{
               background:
-                "radial-gradient(30% 38% at 47% 52%, var(--color-accent), transparent 70%)",
+                "radial-gradient(45% 50% at 60% 48%, var(--color-accent), transparent 72%)",
             }}
           />
         )}
@@ -159,6 +159,22 @@ export function Hero() {
           </motion.div>
         </Container>
       </motion.div>
+
+      {/*
+        A designed seam instead of a flat color cut between this section
+        and the next: a bold diagonal wedge with an accent-lit edge, so the
+        boundary reads as an intentional beat even where both sections
+        share the same dark background.
+      */}
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-24 md:h-36"
+        aria-hidden="true"
+        style={{
+          clipPath: "polygon(0 100%, 100% 45%, 100% 100%)",
+          background:
+            "linear-gradient(200deg, color-mix(in srgb, var(--color-accent-glow) 55%, transparent) 0%, transparent 35%)",
+        }}
+      />
 
       {!shouldReduceMotion && (
         <motion.div
