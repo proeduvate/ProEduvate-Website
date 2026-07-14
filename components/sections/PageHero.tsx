@@ -1,9 +1,10 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { Badge } from "@/components/ui/Badge";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 
 export function PageHero({
   eyebrow,
@@ -16,7 +17,7 @@ export function PageHero({
   description?: React.ReactNode;
   children?: React.ReactNode;
 }) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionSafe();
 
   return (
     <section className="relative overflow-hidden bg-black pt-40 pb-20 md:pt-48 md:pb-28">

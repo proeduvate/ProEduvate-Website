@@ -1,17 +1,27 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Magnetic } from "@/components/ui/Magnetic";
+import { WebGLBoundary } from "@/components/three/WebGLBoundary";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
+// Three.js/WebGL only exists in the browser — load it client-only and skip
+// it entirely during SSR so the initial HTML never depends on a GPU.
+const HeroScene = dynamic(
+  () => import("@/components/three/HeroScene").then((mod) => mod.HeroScene),
+  { ssr: false }
+);
+
 export function Hero() {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionSafe();
   const openRoles = jobs.length + internships.length;
 
   const sectionRef = useRef<HTMLElement>(null);
@@ -26,6 +36,21 @@ export function Hero() {
   const bgY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 160]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, shouldReduceMotion ? 1 : 0]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : -40]);
+
+  // Only mount the WebGL canvas while the hero is actually on (or near)
+  // screen, so scrolling three pages down doesn't leave a GPU-rendering
+  // canvas running in the background for the rest of the session.
+  const [heroInView, setHeroInView] = useState(true);
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroInView(entry.isIntersecting),
+      { rootMargin: "200px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
@@ -42,13 +67,12 @@ export function Hero() {
               "radial-gradient(60% 50% at 50% 20%, color-mix(in srgb, var(--color-primary-2) 55%, transparent), transparent), radial-gradient(45% 40% at 85% 75%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent)",
           }}
         />
-        {!shouldReduceMotion && (
-          <motion.div
-            aria-hidden="true"
-            className="absolute top-1/4 right-[8%] h-72 w-72 rounded-full bg-accent/25 blur-[100px]"
-            animate={{ y: [0, 30, 0], opacity: [0.5, 0.8, 0.5] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          />
+        {!shouldReduceMotion && heroInView && (
+          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+            <WebGLBoundary>
+              <HeroScene />
+            </WebGLBoundary>
+          </div>
         )}
       </motion.div>
 

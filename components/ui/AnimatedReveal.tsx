@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 
 export function AnimatedReveal({
   children,
@@ -18,7 +19,7 @@ export function AnimatedReveal({
   as?: "div" | "li";
   once?: boolean;
 }) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionSafe();
   const Tag = motion[as];
 
   const variants: Variants = {

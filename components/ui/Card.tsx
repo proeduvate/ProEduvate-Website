@@ -1,8 +1,8 @@
 "use client";
 
-import { useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Spotlight } from "@/components/ui/Spotlight";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 
 export function Card({
   children,
@@ -16,7 +16,7 @@ export function Card({
   /** Cursor-following glow on hover — use sparingly (product/service/pillar cards). */
   spotlight?: boolean;
 }) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionSafe();
 
   return (
     <div

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { Container } from "@/components/ui/Container";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 
 /**
  * Big, full-width scroll-triggered statement moment. Splits `text` into
@@ -9,7 +10,7 @@ import { Container } from "@/components/ui/Container";
  * single fade-up block. Falls back to a plain fade under reduced motion.
  */
 export function Statement({ text }: { text: string }) {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionSafe();
   const words = text.split(" ");
 
   const container: Variants = {

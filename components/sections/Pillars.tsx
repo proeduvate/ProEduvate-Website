@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useReducedMotion } from "framer-motion";
 import { GraduationCap, Cpu, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Stagger, AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { Spotlight } from "@/components/ui/Spotlight";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 
 const pillars = [
   {
@@ -28,7 +28,7 @@ const pillars = [
 ];
 
 export function Pillars() {
-  const shouldReduceMotion = useReducedMotion();
+  const shouldReduceMotion = useReducedMotionSafe();
 
   return (
     <section className="bg-white py-24 md:py-32">
