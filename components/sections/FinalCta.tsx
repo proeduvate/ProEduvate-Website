@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { Magnetic } from "@/components/ui/Magnetic";
 
 export function FinalCta() {
   return (
@@ -11,12 +12,16 @@ export function FinalCta() {
             Let&apos;s build something together.
           </h2>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <Button href="/contact" size="lg">
-              Start a Conversation
-            </Button>
-            <Button href="/careers" variant="ghost" size="lg" className="border border-gray-200">
-              Explore Careers
-            </Button>
+            <Magnetic>
+              <Button href="/contact" size="lg">
+                Start a Conversation
+              </Button>
+            </Magnetic>
+            <Magnetic>
+              <Button href="/careers" variant="ghost" size="lg" className="border border-gray-200">
+                Explore Careers
+              </Button>
+            </Magnetic>
           </div>
         </AnimatedReveal>
       </Container>

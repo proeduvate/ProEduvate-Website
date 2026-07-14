@@ -1,6 +1,8 @@
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { Magnetic } from "@/components/ui/Magnetic";
+import { Counter } from "@/components/ui/Counter";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
@@ -32,9 +34,11 @@ export function CareersTeaser() {
               roles are open across engineering, design, AI, and content.
             </p>
             <div className="mt-8">
-              <Button href="/careers" size="lg">
-                See Open Roles
-              </Button>
+              <Magnetic>
+                <Button href="/careers" size="lg">
+                  See Open Roles
+                </Button>
+              </Magnetic>
             </div>
           </AnimatedReveal>
 
@@ -48,7 +52,9 @@ export function CareersTeaser() {
                 key={item.label}
                 className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center"
               >
-                <div className="text-3xl font-display font-medium text-white">{item.value}</div>
+                <div className="text-3xl font-display font-medium text-white">
+                  <Counter value={item.value} />
+                </div>
                 <p className="mt-1 text-xs text-gray-400">{item.label}</p>
               </div>
             ))}

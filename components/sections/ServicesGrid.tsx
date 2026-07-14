@@ -33,7 +33,7 @@ export function ServicesGrid() {
             const Icon = iconMap[service.icon];
             return (
               <AnimatedReveal key={service.slug} className="h-full">
-                <Card className="h-full">
+                <Card spotlight className="h-full">
                   <Icon className="h-9 w-9 text-accent" aria-hidden="true" />
                   <h3 className="mt-5 text-xl font-medium text-black">{service.name}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-gray-600">

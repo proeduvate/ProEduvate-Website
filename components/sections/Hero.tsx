@@ -1,10 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Magnetic } from "@/components/ui/Magnetic";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
@@ -12,74 +14,100 @@ export function Hero() {
   const shouldReduceMotion = useReducedMotion();
   const openRoles = jobs.length + internships.length;
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+
+  // Background layers drift at a different rate than the foreground text as
+  // the hero scrolls out of view — parallax stays on the backdrop only, per
+  // the brief ("not on text — text must stay crisp/readable").
+  const bgY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 160]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, shouldReduceMotion ? 1 : 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : -40]);
+
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
-      <div className="bg-grid absolute inset-0" aria-hidden="true" />
-      <div
-        className="absolute inset-0"
-        aria-hidden="true"
-        style={{
-          background:
-            "radial-gradient(60% 50% at 50% 20%, color-mix(in srgb, var(--color-primary-2) 55%, transparent), transparent), radial-gradient(45% 40% at 85% 75%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent)",
-        }}
-      />
-      {!shouldReduceMotion && (
-        <motion.div
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-screen items-center overflow-hidden bg-black"
+    >
+      <motion.div style={{ y: bgY }} className="absolute inset-0">
+        <div className="bg-grid absolute inset-0" aria-hidden="true" />
+        <div
+          className="absolute inset-0"
           aria-hidden="true"
-          className="absolute top-1/4 right-[8%] h-72 w-72 rounded-full bg-accent/25 blur-[100px]"
-          animate={{ y: [0, 30, 0], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            background:
+              "radial-gradient(60% 50% at 50% 20%, color-mix(in srgb, var(--color-primary-2) 55%, transparent), transparent), radial-gradient(45% 40% at 85% 75%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent)",
+          }}
         />
-      )}
+        {!shouldReduceMotion && (
+          <motion.div
+            aria-hidden="true"
+            className="absolute top-1/4 right-[8%] h-72 w-72 rounded-full bg-accent/25 blur-[100px]"
+            animate={{ y: [0, 30, 0], opacity: [0.5, 0.8, 0.5] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          />
+        )}
+      </motion.div>
 
-      <Container className="relative z-10 pt-24">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <Badge tone="outline" className="mb-6">
-            AI-Powered Product Company
-          </Badge>
-        </motion.div>
+      <motion.div style={{ opacity: contentOpacity, y: contentY }}>
+        <Container className="relative z-10 pt-24">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Badge tone="outline" className="mb-6">
+              AI-Powered Product Company
+            </Badge>
+          </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="text-balance max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl"
-        >
-          Building the future of learning and enterprise technology.
-        </motion.h1>
+          <div className="max-w-4xl overflow-hidden">
+            <motion.h1
+              initial={{ y: "100%" }}
+              animate={{ y: "0%" }}
+              transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className="text-balance text-4xl font-medium text-white sm:text-6xl md:text-7xl"
+            >
+              Building the future of learning and enterprise technology.
+            </motion.h1>
+          </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl"
-        >
-          ProEduvate designs and ships AI-native products for EdTech and
-          enterprise, and partners with institutions and companies who need
-          the same craft applied to their own software.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl"
+          >
+            ProEduvate designs and ships AI-native products for EdTech and
+            enterprise, and partners with institutions and companies who need
+            the same craft applied to their own software.
+          </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-10 flex flex-wrap items-center gap-4"
-        >
-          <Button href="/products" size="lg">
-            Explore Our Products
-          </Button>
-          <Button href="/careers" variant="outline-light" size="lg">
-            We&apos;re Hiring
-            <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-white">
-              {openRoles}
-            </span>
-          </Button>
-        </motion.div>
-      </Container>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-10 flex flex-wrap items-center gap-4"
+          >
+            <Magnetic>
+              <Button href="/products" size="lg">
+                Explore Our Products
+              </Button>
+            </Magnetic>
+            <Magnetic>
+              <Button href="/careers" variant="outline-light" size="lg">
+                We&apos;re Hiring
+                <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-white">
+                  {openRoles}
+                </span>
+              </Button>
+            </Magnetic>
+          </motion.div>
+        </Container>
+      </motion.div>
 
       {!shouldReduceMotion && (
         <motion.div

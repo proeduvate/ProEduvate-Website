@@ -12,7 +12,7 @@ const statusTone = {
 
 export function ProductCard({ product }: { product: Product }) {
   return (
-    <Card className="flex h-full flex-col">
+    <Card spotlight className="flex h-full flex-col">
       <div className="flex items-start justify-between gap-3">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 font-display text-base font-semibold text-accent">
           {product.initials}

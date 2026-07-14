@@ -49,7 +49,7 @@ export function ServicesPreview() {
             const Icon = iconMap[service.icon];
             return (
               <AnimatedReveal key={service.slug} className="h-full">
-                <Card className="h-full">
+                <Card spotlight className="h-full">
                   <Icon className="h-8 w-8 text-accent" aria-hidden="true" />
                   <h3 className="mt-5 text-lg font-medium text-black">{service.name}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-gray-600">

@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { Magnetic } from "@/components/ui/Magnetic";
 
 export function CtaBand({
   title,
@@ -24,9 +25,11 @@ export function CtaBand({
             <p className="mx-auto mt-4 max-w-xl text-gray-600">{description}</p>
           )}
           <div className="mt-8">
-            <Button href={ctaHref} size="lg">
-              {ctaLabel}
-            </Button>
+            <Magnetic>
+              <Button href={ctaHref} size="lg">
+                {ctaLabel}
+              </Button>
+            </Magnetic>
           </div>
         </AnimatedReveal>
       </Container>

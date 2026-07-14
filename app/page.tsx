@@ -19,10 +19,7 @@ export default function Home() {
       <Pillars />
       <ProductsPreview />
       <ServicesPreview />
-      <Statement>
-        We don&apos;t just build software. We build what education and
-        enterprise will run on next.
-      </Statement>
+      <Statement text="We don't just build software. We build what education and enterprise will run on next." />
       <ValuesGrid />
       <Testimonials />
       <CareersTeaser />
