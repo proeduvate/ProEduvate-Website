@@ -77,7 +77,34 @@ export function Hero() {
       </motion.div>
 
       <motion.div style={{ opacity: contentOpacity, y: contentY }}>
-        <Container className="relative z-10 pt-24">
+        {!shouldReduceMotion && (
+          /*
+           * `mix-blend-mode` on the headline below needs a real backdrop
+           * to react against. It doesn't blend against the WebGL canvas
+           * at all in Chromium — verified directly, a plain CSS layer
+           * blends correctly, canvas output doesn't. It also can't blend
+           * against this file's *other* motion.div above (the one with
+           * `style={{ y: bgY }}`): that wrapper is bound to a
+           * continuously-live `useTransform(scrollYProgress, ...)` value,
+           * which keeps it permanently on its own GPU-composited layer
+           * (unlike a one-time settling animation), and Chromium can't
+           * composite mix-blend-mode across that layer boundary —
+           * verified directly by bisection (elements inserted together
+           * into the *same* wrapper always blended; the same elements
+           * split across the two sibling motion.divs never did,
+           * regardless of which element was animated). So this gradient
+           * lives in the *same* motion.div as the headline instead.
+           */
+          <div
+            className="pointer-events-none absolute inset-0"
+            aria-hidden="true"
+            style={{
+              background:
+                "radial-gradient(30% 38% at 47% 52%, var(--color-accent), transparent 70%)",
+            }}
+          />
+        )}
+        <Container className="relative pt-24">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
@@ -93,7 +120,7 @@ export function Hero() {
               initial={{ y: "100%" }}
               animate={{ y: "0%" }}
               transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-balance text-4xl font-medium text-white sm:text-6xl md:text-7xl"
+              className="text-balance mix-blend-difference text-4xl font-medium text-white sm:text-6xl md:text-7xl"
             >
               Building the future of learning and enterprise technology.
             </motion.h1>
