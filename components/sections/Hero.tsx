@@ -20,6 +20,11 @@ const HeroScene = dynamic(
   { ssr: false }
 );
 
+const backdropStyle = {
+  background:
+    "radial-gradient(60% 50% at 50% 20%, color-mix(in srgb, var(--color-primary-2) 55%, transparent), transparent), radial-gradient(45% 40% at 85% 75%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent)",
+};
+
 export function Hero() {
   const shouldReduceMotion = useReducedMotionSafe();
   const openRoles = jobs.length + internships.length;
@@ -27,18 +32,47 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start start", "end start"],
+    offset: ["start start", "end end"],
   });
 
-  // Background layers drift at a different rate than the foreground text as
-  // the hero scrolls out of view — parallax stays on the backdrop only, per
-  // the brief ("not on text — text must stay crisp/readable").
-  const bgY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : 160]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, shouldReduceMotion ? 1 : 0]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, shouldReduceMotion ? 0 : -40]);
+  // Three scroll-choreographed beats, held in place while the logo (see
+  // HeroScene.tsx) arrives, crosses, and recedes behind them. Beat 1 is
+  // fully visible at rest (progress 0) so the headline never depends on the
+  // user scrolling first.
+  //
+  // `clamp: false` looks backwards here (our arrays never extrapolate,
+  // real scrollYProgress never leaves [0,1]) but it's actually what keeps
+  // these correct: Framer Motion opts array-output useTransform calls into
+  // a native CSS ViewTimeline "acceleration" path whenever the browser
+  // supports it, and that native timeline computes progress against the
+  // *whole* (huge, 300–340vh) section rather than our sticky-pin range —
+  // verified directly by comparing a debug useTransform(scrollYProgress, v
+  // => ...) (a function transformer, never eligible for acceleration) to
+  // these: at real progress 0.9 the accelerated versions were still
+  // rendering as if progress were ~0.25. `clamp: false` is the documented
+  // escape hatch that disables that opt-in, forcing the plain JS-computed
+  // value that matches the debug readout.
+  const noAccelerate = { clamp: false };
+  const beat1Opacity = useTransform(scrollYProgress, [0, 0.24, 0.32], [1, 1, 0], noAccelerate);
+  const beat1Y = useTransform(scrollYProgress, [0, 0.24, 0.32], [0, 0, -50], noAccelerate);
+  const beat2Opacity = useTransform(
+    scrollYProgress,
+    [0.28, 0.38, 0.62, 0.7],
+    [0, 1, 1, 0],
+    noAccelerate
+  );
+  const beat2Y = useTransform(
+    scrollYProgress,
+    [0.28, 0.38, 0.62, 0.7],
+    [30, 0, 0, -50],
+    noAccelerate
+  );
+  const beat3Opacity = useTransform(scrollYProgress, [0.66, 0.78], [0, 1], noAccelerate);
+  const beat3Y = useTransform(scrollYProgress, [0.66, 0.78], [30, 0], noAccelerate);
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0], noAccelerate);
 
   // Only mount the WebGL canvas while the hero is actually on (or near)
-  // screen, so scrolling three pages down doesn't leave a GPU-rendering
+  // screen, so scrolling several pages down doesn't leave a GPU-rendering
   // canvas running in the background for the rest of the session.
   const [heroInView, setHeroInView] = useState(true);
   useEffect(() => {
@@ -52,119 +86,163 @@ export function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  return (
-    <section
-      ref={sectionRef}
-      className="relative flex min-h-screen items-center overflow-hidden bg-black"
-    >
-      <motion.div style={{ y: bgY }} className="absolute inset-0">
+  // Under prefers-reduced-motion, skip the multi-viewport scroll-pinned
+  // story entirely — a single static viewport with the same core content
+  // and no forced extra scrolling, no WebGL.
+  if (shouldReduceMotion) {
+    return (
+      <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
         <div className="bg-grid absolute inset-0" aria-hidden="true" />
-        <div
-          className="absolute inset-0"
-          aria-hidden="true"
-          style={{
-            background:
-              "radial-gradient(60% 50% at 50% 20%, color-mix(in srgb, var(--color-primary-2) 55%, transparent), transparent), radial-gradient(45% 40% at 85% 75%, color-mix(in srgb, var(--color-accent) 30%, transparent), transparent)",
-          }}
-        />
-        {!shouldReduceMotion && heroInView && (
+        <div className="absolute inset-0" aria-hidden="true" style={backdropStyle} />
+        <Container className="relative pt-24">
+          <Badge tone="outline" className="mb-6">
+            AI-Powered Product Company
+          </Badge>
+          <h1 className="text-balance max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl">
+            Building the future of learning and enterprise technology.
+          </h1>
+          <p className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl">
+            ProEduvate designs and ships AI-native products for EdTech and
+            enterprise, and partners with institutions and companies who need
+            the same craft applied to their own software.
+          </p>
+          <div className="mt-10 flex flex-wrap items-center gap-4">
+            <Button href="/products" size="lg">
+              Explore Our Products
+            </Button>
+            <Button href="/careers" variant="outline-light" size="lg">
+              We&apos;re Hiring
+              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-white">
+                {openRoles}
+              </span>
+            </Button>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
+  return (
+    <section ref={sectionRef} className="relative h-[300vh] bg-black md:h-[340vh]">
+      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+        <div className="bg-grid absolute inset-0" aria-hidden="true" />
+        <div className="absolute inset-0" aria-hidden="true" style={backdropStyle} />
+
+        {heroInView && (
           <div className="pointer-events-none absolute inset-0" aria-hidden="true">
             <WebGLBoundary>
               <HeroScene scrollProgress={scrollYProgress} />
             </WebGLBoundary>
           </div>
         )}
-      </motion.div>
 
-      <motion.div style={{ opacity: contentOpacity, y: contentY }}>
-        {!shouldReduceMotion && (
-          /*
-           * `mix-blend-mode` on the headline below needs a real backdrop
-           * to react against. It doesn't blend against the WebGL canvas
-           * at all in Chromium — verified directly, a plain CSS layer
-           * blends correctly, canvas output doesn't. It also can't blend
-           * against this file's *other* motion.div above (the one with
-           * `style={{ y: bgY }}`): that wrapper is bound to a
-           * continuously-live `useTransform(scrollYProgress, ...)` value,
-           * which keeps it permanently on its own GPU-composited layer
-           * (unlike a one-time settling animation), and Chromium can't
-           * composite mix-blend-mode across that layer boundary —
-           * verified directly by bisection (elements inserted together
-           * into the *same* wrapper always blended; the same elements
-           * split across the two sibling motion.divs never did,
-           * regardless of which element was animated). So this gradient
-           * lives in the *same* motion.div as the headline instead.
-           */
+        {/* Beat 1 — arrival: badge + primary headline, left-aligned, sits
+            in front of the logo as it spins in from the back-right. */}
+        <motion.div
+          style={{ opacity: beat1Opacity, y: beat1Y }}
+          className="pointer-events-none absolute inset-0 flex items-center"
+        >
+          {/*
+           * `mix-blend-mode` needs a real CSS backdrop to react against —
+           * it doesn't blend against the WebGL canvas at all in Chromium —
+           * and the blend source has to live in the *same* motion.div as
+           * the blended text, or Chromium's compositor can't blend across
+           * the layer boundary between two independently scroll-bound
+           * wrappers (verified directly by bisection during the previous
+           * hero build). Hence this gradient sits alongside the headline
+           * here instead of in a separate always-on layer.
+           */}
           <div
-            className="pointer-events-none absolute inset-0"
+            className="absolute inset-0"
             aria-hidden="true"
             style={{
               background:
                 "radial-gradient(45% 50% at 60% 48%, var(--color-accent), transparent 72%)",
             }}
           />
-        )}
-        <Container className="relative pt-24">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <Container className="relative">
             <Badge tone="outline" className="mb-6">
               AI-Powered Product Company
             </Badge>
-          </motion.div>
-
-          <div className="max-w-4xl overflow-hidden">
-            <motion.h1
-              initial={{ y: "100%" }}
-              animate={{ y: "0%" }}
-              transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="text-balance mix-blend-difference text-4xl font-medium text-white sm:text-6xl md:text-7xl"
-            >
+            <h1 className="text-balance mix-blend-difference max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl">
               Building the future of learning and enterprise technology.
-            </motion.h1>
-          </div>
+            </h1>
+            <p className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl">
+              ProEduvate designs and ships AI-native products for EdTech and
+              enterprise, and partners with institutions and companies who
+              need the same craft applied to their own software.
+            </p>
+          </Container>
+        </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl"
-          >
-            ProEduvate designs and ships AI-native products for EdTech and
-            enterprise, and partners with institutions and companies who need
-            the same craft applied to their own software.
-          </motion.p>
+        {/* Beat 2 — crossing: secondary statement, right-aligned, so the
+            logo visibly drifts across the frame between the two blocks
+            rather than just cutting from one beat to the next. */}
+        <motion.div
+          style={{ opacity: beat2Opacity, y: beat2Y }}
+          className="pointer-events-none absolute inset-0 flex items-center justify-end"
+        >
+          <div
+            className="absolute inset-0"
+            aria-hidden="true"
+            style={{
+              background:
+                "radial-gradient(45% 50% at 35% 55%, var(--color-accent), transparent 72%)",
+            }}
+          />
+          <Container className="relative">
+            <p className="text-balance mix-blend-difference ml-auto max-w-lg text-right text-3xl font-medium text-white sm:text-4xl md:text-5xl">
+              AI-native. Enterprise-grade. Built to ship.
+            </p>
+          </Container>
+        </motion.div>
 
+        {/* Beat 3 — close: final line + the real CTAs, centered, handing
+            off to the next section as the pin releases. */}
+        <motion.div
+          style={{ opacity: beat3Opacity, y: beat3Y }}
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        >
+          <Container className="relative text-center">
+            <p className="text-balance mx-auto max-w-2xl text-2xl font-medium text-white sm:text-3xl">
+              Let&apos;s build what&apos;s next.
+            </p>
+            <div className="pointer-events-auto mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Magnetic>
+                <Button href="/products" size="lg">
+                  Explore Our Products
+                </Button>
+              </Magnetic>
+              <Magnetic>
+                <Button href="/careers" variant="outline-light" size="lg">
+                  We&apos;re Hiring
+                  <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-white">
+                    {openRoles}
+                  </span>
+                </Button>
+              </Magnetic>
+            </div>
+          </Container>
+        </motion.div>
+
+        <motion.div
+          style={{ opacity: cueOpacity }}
+          className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60"
+          aria-hidden="true"
+        >
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           >
-            <Magnetic>
-              <Button href="/products" size="lg">
-                Explore Our Products
-              </Button>
-            </Magnetic>
-            <Magnetic>
-              <Button href="/careers" variant="outline-light" size="lg">
-                We&apos;re Hiring
-                <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-white">
-                  {openRoles}
-                </span>
-              </Button>
-            </Magnetic>
+            <ChevronDown className="h-6 w-6" />
           </motion.div>
-        </Container>
-      </motion.div>
+        </motion.div>
+      </div>
 
       {/*
-        A designed seam instead of a flat color cut between this section
-        and the next: a bold diagonal wedge with an accent-lit edge, so the
-        boundary reads as an intentional beat even where both sections
-        share the same dark background.
+        A designed seam instead of a flat color cut into the next section:
+        a bold diagonal wedge with an accent-lit edge, so the boundary reads
+        as an intentional beat right as the pinned scroll releases.
       */}
       <div
         className="pointer-events-none absolute inset-x-0 bottom-0 h-24 md:h-36"
@@ -175,17 +253,6 @@ export function Hero() {
             "linear-gradient(200deg, color-mix(in srgb, var(--color-accent-glow) 55%, transparent) 0%, transparent 35%)",
         }}
       />
-
-      {!shouldReduceMotion && (
-        <motion.div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          aria-hidden="true"
-        >
-          <ChevronDown className="h-6 w-6" />
-        </motion.div>
-      )}
     </section>
   );
 }

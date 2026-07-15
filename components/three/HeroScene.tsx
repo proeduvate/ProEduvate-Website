@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sparkles } from "@react-three/drei";
-import type { Mesh, MeshStandardMaterial } from "three";
+import { useGLTF, Sparkles } from "@react-three/drei";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
+import type { Group, Mesh, MeshStandardMaterial } from "three";
 import type { MotionValue } from "framer-motion";
+
+const MODEL_PATH = "/models/logo.glb";
 
 /**
  * The canvas is rendered `pointer-events-none` (see Hero.tsx) so clicks pass
@@ -38,165 +41,93 @@ function useMotionValueRef(value: MotionValue<number>) {
   return ref;
 }
 
-type Shape = "torus" | "octahedron" | "box" | "capsule" | "cone";
-
-interface ServiceObjectConfig {
-  shape: Shape;
-  position: [number, number, number];
-  color: string;
-  rotationSpeed: [number, number, number];
-  scrollDrift: [number, number, number];
-  scale: number;
-  wireframe?: boolean;
-}
-
-// Loosely tied to the company's pillars (EdTech, AI, Enterprise, Products) —
-// abstract geometric stand-ins rather than literal icons, so they read as
-// premium/tech rather than clip-art. Colors, depth (z), and scale vary so
-// the cluster has real parallax when the camera or scroll moves.
-const OBJECTS: ServiceObjectConfig[] = [
-  {
-    shape: "torus",
-    position: [2.7, 0.9, -2.2],
-    color: "#1471f0",
-    rotationSpeed: [0.25, 0.35, 0],
-    scrollDrift: [0.7, 1.6, -0.4],
-    scale: 0.9,
-  },
-  {
-    shape: "octahedron",
-    position: [0.5, -0.7, -3.4],
-    color: "#3d8bff",
-    rotationSpeed: [0.3, 0.2, 0.15],
-    scrollDrift: [-0.9, 1.9, 0.6],
-    scale: 0.75,
-  },
-  {
-    shape: "box",
-    position: [3.6, -1.0, -1.4],
-    color: "#6fadff",
-    rotationSpeed: [0.2, 0.25, 0.3],
-    scrollDrift: [1.2, 1.2, -0.3],
-    scale: 0.55,
-    wireframe: true,
-  },
-  {
-    shape: "capsule",
-    position: [1.5, 1.5, -2.8],
-    color: "#1471f0",
-    rotationSpeed: [0.15, 0.1, 0.3],
-    scrollDrift: [-0.5, 2.1, 0.5],
-    scale: 0.5,
-  },
-  {
-    shape: "cone",
-    position: [-0.6, 1.1, -3.6],
-    color: "#5b9cff",
-    rotationSpeed: [0.1, 0.3, 0.1],
-    scrollDrift: [-0.3, 1.7, -0.6],
-    scale: 0.5,
-    wireframe: true,
-  },
-];
-
-function ObjectGeometry({ shape }: { shape: Shape }) {
-  switch (shape) {
-    case "torus":
-      return <torusGeometry args={[1, 0.34, 16, 100]} />;
-    case "octahedron":
-      return <octahedronGeometry args={[1, 0]} />;
-    case "box":
-      return <boxGeometry args={[1.3, 1.3, 1.3]} />;
-    case "capsule":
-      return <capsuleGeometry args={[0.55, 1.1, 4, 16]} />;
-    case "cone":
-      return <coneGeometry args={[0.9, 1.6, 24]} />;
-  }
-}
-
 /**
- * One floating geometric object: continuous independent rotation, plus a
- * scroll-linked drift/fade so it visually moves apart from and past the
- * headline text as the user scrolls through the hero.
+ * The company logo, sculpted into a real 3D object (AI-generated 3D pass
+ * over the flat mark, then decimated + compressed with gltf-transform — the
+ * source scan was ~770k verts / 7MB, this build is ~167k verts / 1.1MB).
+ * It's the sole hero object: no abstract geometric stand-ins.
+ *
+ * Scroll drives it through three beats that line up with the headline copy
+ * in Hero.tsx:
+ *  - 0.00–0.32 arrival  — spins into frame from the back-right, behind the
+ *                         left-aligned headline.
+ *  - 0.32–0.68 crossing — drifts left across the frame as the headline
+ *                         swaps to the right-aligned statement, so the
+ *                         object visibly passes behind/through the text
+ *                         rather than just cutting away.
+ *  - 0.68–1.00 recede   — pulls back, shrinks and dims as the closing CTA
+ *                         beat takes over, handing off to the next section.
  */
-function FloatingObject({
-  config,
-  scrollProgress,
-}: {
-  config: ServiceObjectConfig;
-  scrollProgress: RefObject<number>;
-}) {
-  const meshRef = useRef<Mesh>(null);
-  const [baseX, baseY, baseZ] = config.position;
-  const [driftX, driftY, driftZ] = config.scrollDrift;
+function Logo({ scrollProgress }: { scrollProgress: RefObject<number> }) {
+  const groupRef = useRef<Group>(null);
+  const { scene } = useGLTF(MODEL_PATH);
+
+  useEffect(() => {
+    scene.traverse((child) => {
+      const mesh = child as Mesh;
+      if (!mesh.isMesh) return;
+      const material = mesh.material as MeshStandardMaterial;
+      material.transparent = true;
+      material.emissive?.set("#1471f0");
+      material.emissiveIntensity = 0.2;
+    });
+  }, [scene]);
 
   useFrame((state) => {
-    const mesh = meshRef.current;
-    if (!mesh) return;
+    const group = groupRef.current;
+    if (!group) return;
     const t = state.clock.elapsedTime;
-    mesh.rotation.x = t * config.rotationSpeed[0];
-    mesh.rotation.y = t * config.rotationSpeed[1];
-    mesh.rotation.z = t * config.rotationSpeed[2];
-
     const p = scrollProgress.current;
-    mesh.position.set(baseX + driftX * p, baseY + driftY * p, baseZ + driftZ * p);
-    const scale = config.scale * (1 - p * 0.3);
-    mesh.scale.setScalar(scale);
 
-    const material = mesh.material as MeshStandardMaterial;
-    material.opacity = (config.wireframe ? 0.7 : 0.55) * (1 - p * 0.9);
+    const arrival = Math.min(p / 0.32, 1);
+    const arrivalEased = 1 - Math.pow(1 - arrival, 3);
+    const crossing = Math.min(Math.max((p - 0.32) / 0.36, 0), 1);
+    const crossingEased = crossing * crossing * (3 - 2 * crossing);
+    const recede = Math.min(Math.max((p - 0.68) / 0.32, 0), 1);
+
+    // The source model is authored lying flat (its face-normal points up
+    // the Y axis, like a plaque resting on a table) rather than standing
+    // upright facing the camera — verified visually, the un-corrected
+    // model reads as a near-invisible sliver from this scene's camera
+    // angle. Tipping it -90° on X stands it upright so the dynamic spin
+    // below reads as a turntable facing the viewer, not an edge-on wobble.
+    group.rotation.x =
+      -Math.PI / 2 - 0.15 + Math.sin(t * 0.3) * 0.05 + crossingEased * 0.2;
+    group.rotation.y = t * 0.2 + arrivalEased * Math.PI * 0.6 + crossingEased * Math.PI * 0.9;
+    group.rotation.z = crossingEased * -0.1;
+
+    const introX = 1.7 - arrivalEased * 0.5;
+    const crossingX = -crossingEased * 3.2;
+    group.position.x = introX + crossingX;
+    group.position.y = -0.2 + Math.sin(t * 0.25) * 0.08 - recede * 0.4;
+    group.position.z = -1 - (1 - arrivalEased) * 2.5 - recede * 2.5;
+
+    const introScale = 0.4 + arrivalEased * 2.4;
+    const scale = introScale * (1 - recede * 0.55);
+    group.scale.setScalar(scale);
+
+    const fadeOpacity = 1 - recede * 0.85;
+    scene.traverse((child) => {
+      const mesh = child as Mesh;
+      if (!mesh.isMesh) return;
+      (mesh.material as MeshStandardMaterial).opacity = fadeOpacity;
+    });
   });
 
-  return (
-    <mesh ref={meshRef} position={config.position}>
-      <ObjectGeometry shape={config.shape} />
-      <meshStandardMaterial
-        color={config.color}
-        emissive={config.color}
-        emissiveIntensity={config.wireframe ? 0.2 : 0.35}
-        roughness={0.4}
-        metalness={0.25}
-        wireframe={config.wireframe}
-        transparent
-        opacity={config.wireframe ? 0.7 : 0.55}
-      />
-    </mesh>
-  );
+  return <primitive ref={groupRef} object={scene} />;
 }
 
 /**
- * Camera choreography: an eased dolly-in on load (pulled back and off-angle
- * at t=0, settling into the resting frame over ~2.5s), a slow continuous
- * autonomous drift layered underneath so the shot never goes fully static,
- * a subtle pull toward the cursor on top of both, and a pull-back as the
- * user scrolls so the whole cluster recedes rather than just cutting off.
+ * Camera stays mostly still — a taller pinned scroll section already has
+ * plenty of motion from the logo itself — with only a light cursor-pull for
+ * depth.
  */
-function CameraRig({
-  pointer,
-  scrollProgress,
-}: {
-  pointer: RefObject<{ x: number; y: number }>;
-  scrollProgress: RefObject<number>;
-}) {
-  const introDuration = 2.5;
-
+function CameraRig({ pointer }: { pointer: RefObject<{ x: number; y: number }> }) {
   useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    const introT = Math.min(t / introDuration, 1);
-    const eased = 1 - Math.pow(1 - introT, 3);
-
-    const autoX = Math.sin(t * 0.15) * 0.3;
-    const autoY = Math.cos(t * 0.1) * 0.15;
-    const introOffsetX = (1 - eased) * 2.2;
-    const p = scrollProgress.current;
-    const introZ = 9 - eased * 3 + p * 2.5;
-
-    const targetX = pointer.current.x * 0.4 + autoX + introOffsetX;
-    const targetY = pointer.current.y * 0.2 + autoY;
-
+    const targetX = pointer.current.x * 0.3;
+    const targetY = pointer.current.y * 0.15;
     state.camera.position.x += (targetX - state.camera.position.x) * 0.04;
     state.camera.position.y += (targetY - state.camera.position.y) * 0.04;
-    state.camera.position.z += (introZ - state.camera.position.z) * 0.05;
     state.camera.lookAt(0, 0, 0);
   });
   return null;
@@ -210,15 +141,13 @@ export function HeroScene({ scrollProgress }: { scrollProgress: MotionValue<numb
     <Canvas
       dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-      camera={{ position: [2.2, 0, 9], fov: 45 }}
+      camera={{ position: [0, 0, 6], fov: 42 }}
     >
       <fog attach="fog" args={["#030507", 5, 13]} />
-      <ambientLight intensity={0.9} />
-      <pointLight position={[4, 3, 5]} intensity={16} color="#3d8bff" />
-      <pointLight position={[-3, -2, 2]} intensity={8} color="#ffffff" />
-      {OBJECTS.map((config, i) => (
-        <FloatingObject key={i} config={config} scrollProgress={scrollRef} />
-      ))}
+      <ambientLight intensity={0.7} />
+      <pointLight position={[4, 3, 5]} intensity={20} color="#3d8bff" />
+      <pointLight position={[-3, -2, 2]} intensity={7} color="#ffffff" />
+      <Logo scrollProgress={scrollRef} />
       <Sparkles
         count={160}
         scale={[9, 5, 4]}
@@ -236,7 +165,12 @@ export function HeroScene({ scrollProgress }: { scrollProgress: MotionValue<numb
         color="#ffffff"
         opacity={0.35}
       />
-      <CameraRig pointer={pointer} scrollProgress={scrollRef} />
+      <CameraRig pointer={pointer} />
+      <EffectComposer>
+        <Bloom luminanceThreshold={0.35} luminanceSmoothing={0.9} intensity={0.55} mipmapBlur />
+      </EffectComposer>
     </Canvas>
   );
 }
+
+useGLTF.preload(MODEL_PATH);
