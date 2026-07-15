@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { WebGLBoundary } from "@/components/three/WebGLBoundary";
 import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
+import { TEXT_BEATS } from "@/lib/hero-timeline";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
@@ -35,8 +36,10 @@ export function Hero() {
     offset: ["start start", "end end"],
   });
 
-  // Three scroll-choreographed beats, held in place while the logo (see
-  // HeroScene.tsx) arrives, crosses, and recedes behind them. Beat 1 is
+  // Three scroll-choreographed text beats, timed against the same
+  // HERO_TIMELINE phases driving the 3D scene (see HeroScene.tsx): beat 1
+  // rides alongside the laptop/phone product shot, beat 2 covers the logo's
+  // flight/landing/roll, beat 3 is the closing CTA as it exits. Beat 1 is
   // fully visible at rest (progress 0) so the headline never depends on the
   // user scrolling first.
   //
@@ -45,31 +48,61 @@ export function Hero() {
   // these correct: Framer Motion opts array-output useTransform calls into
   // a native CSS ViewTimeline "acceleration" path whenever the browser
   // supports it, and that native timeline computes progress against the
-  // *whole* (huge, 300–340vh) section rather than our sticky-pin range —
-  // verified directly by comparing a debug useTransform(scrollYProgress, v
-  // => ...) (a function transformer, never eligible for acceleration) to
-  // these: at real progress 0.9 the accelerated versions were still
-  // rendering as if progress were ~0.25. `clamp: false` is the documented
-  // escape hatch that disables that opt-in, forcing the plain JS-computed
-  // value that matches the debug readout.
+  // *whole* (huge) section rather than our sticky-pin range — verified
+  // directly by comparing a debug useTransform(scrollYProgress, v => ...)
+  // (a function transformer, never eligible for acceleration) to these: at
+  // real progress 0.9 the accelerated versions were still rendering as if
+  // progress were ~0.25. `clamp: false` is the documented escape hatch that
+  // disables that opt-in, forcing the plain JS-computed value that matches
+  // the debug readout.
   const noAccelerate = { clamp: false };
-  const beat1Opacity = useTransform(scrollYProgress, [0, 0.24, 0.32], [1, 1, 0], noAccelerate);
-  const beat1Y = useTransform(scrollYProgress, [0, 0.24, 0.32], [0, 0, -50], noAccelerate);
+  const beat1Opacity = useTransform(
+    scrollYProgress,
+    [0, TEXT_BEATS.beat1FadeStart, TEXT_BEATS.beat1FadeEnd],
+    [1, 1, 0],
+    noAccelerate
+  );
+  const beat1Y = useTransform(
+    scrollYProgress,
+    [0, TEXT_BEATS.beat1FadeStart, TEXT_BEATS.beat1FadeEnd],
+    [0, 0, -50],
+    noAccelerate
+  );
   const beat2Opacity = useTransform(
     scrollYProgress,
-    [0.28, 0.38, 0.62, 0.7],
+    [
+      TEXT_BEATS.beat2FadeInStart,
+      TEXT_BEATS.beat2FadeInEnd,
+      TEXT_BEATS.beat2FadeOutStart,
+      TEXT_BEATS.beat2FadeOutEnd,
+    ],
     [0, 1, 1, 0],
     noAccelerate
   );
   const beat2Y = useTransform(
     scrollYProgress,
-    [0.28, 0.38, 0.62, 0.7],
+    [
+      TEXT_BEATS.beat2FadeInStart,
+      TEXT_BEATS.beat2FadeInEnd,
+      TEXT_BEATS.beat2FadeOutStart,
+      TEXT_BEATS.beat2FadeOutEnd,
+    ],
     [30, 0, 0, -50],
     noAccelerate
   );
-  const beat3Opacity = useTransform(scrollYProgress, [0.66, 0.78], [0, 1], noAccelerate);
-  const beat3Y = useTransform(scrollYProgress, [0.66, 0.78], [30, 0], noAccelerate);
-  const cueOpacity = useTransform(scrollYProgress, [0, 0.12], [1, 0], noAccelerate);
+  const beat3Opacity = useTransform(
+    scrollYProgress,
+    [TEXT_BEATS.beat3FadeInStart, TEXT_BEATS.beat3FadeInEnd],
+    [0, 1],
+    noAccelerate
+  );
+  const beat3Y = useTransform(
+    scrollYProgress,
+    [TEXT_BEATS.beat3FadeInStart, TEXT_BEATS.beat3FadeInEnd],
+    [30, 0],
+    noAccelerate
+  );
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0], noAccelerate);
 
   // Only mount the WebGL canvas while the hero is actually on (or near)
   // screen, so scrolling several pages down doesn't leave a GPU-rendering
@@ -123,7 +156,7 @@ export function Hero() {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-[300vh] bg-black md:h-[340vh]">
+    <section ref={sectionRef} className="relative h-[420vh] bg-black md:h-[480vh]">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <div className="bg-grid absolute inset-0" aria-hidden="true" />
         <div className="absolute inset-0" aria-hidden="true" style={backdropStyle} />
