@@ -36,12 +36,12 @@ export function Hero() {
     offset: ["start start", "end end"],
   });
 
-  // Three scroll-choreographed text beats, timed against the same
-  // HERO_TIMELINE phases driving the 3D scene (see HeroScene.tsx): beat 1
-  // rides alongside the laptop/phone product shot, beat 2 covers the logo's
-  // flight/landing/roll, beat 3 is the closing CTA as it exits. Beat 1 is
-  // fully visible at rest (progress 0) so the headline never depends on the
-  // user scrolling first.
+  // Two scroll-choreographed text beats, timed against the laptop's own
+  // turn/zoom/exit (see HeroScene.tsx): the headline holds through most of
+  // the scroll, fading only as the laptop turns away and starts its exit,
+  // then the closing CTA fades in as it clears the frame. Fully visible at
+  // rest (progress 0) so the headline never depends on the user scrolling
+  // first.
   //
   // `clamp: false` looks backwards here (our arrays never extrapolate,
   // real scrollYProgress never leaves [0,1]) but it's actually what keeps
@@ -56,49 +56,27 @@ export function Hero() {
   // disables that opt-in, forcing the plain JS-computed value that matches
   // the debug readout.
   const noAccelerate = { clamp: false };
-  const beat1Opacity = useTransform(
+  const headlineOpacity = useTransform(
     scrollYProgress,
-    [0, TEXT_BEATS.beat1FadeStart, TEXT_BEATS.beat1FadeEnd],
+    [0, TEXT_BEATS.headlineFadeStart, TEXT_BEATS.headlineFadeEnd],
     [1, 1, 0],
     noAccelerate
   );
-  const beat1Y = useTransform(
+  const headlineY = useTransform(
     scrollYProgress,
-    [0, TEXT_BEATS.beat1FadeStart, TEXT_BEATS.beat1FadeEnd],
+    [0, TEXT_BEATS.headlineFadeStart, TEXT_BEATS.headlineFadeEnd],
     [0, 0, -50],
     noAccelerate
   );
-  const beat2Opacity = useTransform(
+  const ctaOpacity = useTransform(
     scrollYProgress,
-    [
-      TEXT_BEATS.beat2FadeInStart,
-      TEXT_BEATS.beat2FadeInEnd,
-      TEXT_BEATS.beat2FadeOutStart,
-      TEXT_BEATS.beat2FadeOutEnd,
-    ],
-    [0, 1, 1, 0],
-    noAccelerate
-  );
-  const beat2Y = useTransform(
-    scrollYProgress,
-    [
-      TEXT_BEATS.beat2FadeInStart,
-      TEXT_BEATS.beat2FadeInEnd,
-      TEXT_BEATS.beat2FadeOutStart,
-      TEXT_BEATS.beat2FadeOutEnd,
-    ],
-    [30, 0, 0, -50],
-    noAccelerate
-  );
-  const beat3Opacity = useTransform(
-    scrollYProgress,
-    [TEXT_BEATS.beat3FadeInStart, TEXT_BEATS.beat3FadeInEnd],
+    [TEXT_BEATS.ctaFadeStart, TEXT_BEATS.ctaFadeEnd],
     [0, 1],
     noAccelerate
   );
-  const beat3Y = useTransform(
+  const ctaY = useTransform(
     scrollYProgress,
-    [TEXT_BEATS.beat3FadeInStart, TEXT_BEATS.beat3FadeInEnd],
+    [TEXT_BEATS.ctaFadeStart, TEXT_BEATS.ctaFadeEnd],
     [30, 0],
     noAccelerate
   );
@@ -119,9 +97,9 @@ export function Hero() {
     return () => observer.disconnect();
   }, []);
 
-  // Under prefers-reduced-motion, skip the multi-viewport scroll-pinned
-  // story entirely — a single static viewport with the same core content
-  // and no forced extra scrolling, no WebGL.
+  // Under prefers-reduced-motion, skip the scroll-pinned story entirely —
+  // a single static viewport with the same core content and no forced
+  // extra scrolling, no WebGL.
   if (shouldReduceMotion) {
     return (
       <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
@@ -156,7 +134,7 @@ export function Hero() {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-[420vh] bg-black md:h-[480vh]">
+    <section ref={sectionRef} className="relative h-[260vh] bg-black md:h-[300vh]">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <div className="bg-grid absolute inset-0" aria-hidden="true" />
         <div className="absolute inset-0" aria-hidden="true" style={backdropStyle} />
@@ -169,13 +147,12 @@ export function Hero() {
           </div>
         )}
 
-        {/* Beat 1 — arrival: badge + primary headline, left-aligned, while
-            the laptop/phone product shot sits on the right (see
-            HeroScene.tsx). The emphasized phrase is plain gradient-clipped
-            text rather than a blend-mode glow — no soft "blob" behind it,
-            just a colored keyword like the reference layout. */}
+        {/* Headline — badge + primary headline, left-aligned, while the
+            laptop sits on the right (see HeroScene.tsx). The emphasized
+            phrase is plain gradient-clipped text, no blend-mode glow
+            behind it. */}
         <motion.div
-          style={{ opacity: beat1Opacity, y: beat1Y }}
+          style={{ opacity: headlineOpacity, y: headlineY }}
           className="pointer-events-none absolute inset-0 flex items-center"
         >
           <Container className="relative">
@@ -201,27 +178,11 @@ export function Hero() {
           </Container>
         </motion.div>
 
-        {/* Beat 2 — crossing: secondary statement, right-aligned, timed to
-            the logo's landing on the left of the frame. */}
+        {/* Close — final line + the real CTAs, centered, fading in as the
+            laptop clears the frame and handing off to the next section as
+            the pin releases. */}
         <motion.div
-          style={{ opacity: beat2Opacity, y: beat2Y }}
-          className="pointer-events-none absolute inset-0 flex items-center justify-end"
-        >
-          <Container className="relative">
-            <p className="text-balance ml-auto max-w-lg text-right text-3xl font-medium text-white sm:text-4xl md:text-5xl">
-              AI-native.{" "}
-              <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
-                Enterprise-grade.
-              </span>{" "}
-              Built to ship.
-            </p>
-          </Container>
-        </motion.div>
-
-        {/* Beat 3 — close: final line + the real CTAs, centered, handing
-            off to the next section as the pin releases. */}
-        <motion.div
-          style={{ opacity: beat3Opacity, y: beat3Y }}
+          style={{ opacity: ctaOpacity, y: ctaY }}
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
           <Container className="relative text-center">
