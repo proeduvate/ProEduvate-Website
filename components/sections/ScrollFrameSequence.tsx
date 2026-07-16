@@ -31,8 +31,8 @@ function drawCover(
 }
 
 /**
- * Plays a pre-rendered image sequence (baked from HeroScene.tsx — see
- * scripts/capture-hero-frames) by drawing the frame matching the current
+ * Plays a pre-rendered image sequence (baked from HeroScene.tsx via the
+ * app/dev/hero-capture rig) by drawing the frame matching the current
  * scroll progress into a 2D canvas, "Apple product page" style. Chosen over
  * a scrubbed <video> element because seek precision/latency across browsers
  * (notably Safari) isn't reliable enough for frame-accurate scroll sync.

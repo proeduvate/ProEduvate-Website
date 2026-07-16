@@ -14,9 +14,11 @@ import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
 // A pre-rendered frame sequence baked from the live HeroScene.tsx 3D build
-// (see scripts/capture-hero-frames.py) — see that file's header comment for
-// why this project uses a scrubbed image sequence instead of a live WebGL
-// canvas or a scrubbed <video>.
+// (rendered at app/dev/hero-capture, a bare capture rig — scroll it through
+// and screenshot the viewport at each step to regenerate the sequence
+// below). See ScrollFrameSequence's header comment for why this project
+// uses a scrubbed image sequence instead of a live WebGL canvas or a
+// scrubbed <video>.
 const HERO_FRAME_COUNT = 96;
 const HERO_FRAME_BASE_PATH = "/hero-frames";
 
