@@ -69,6 +69,22 @@ function forEachMeshMaterial(scene: Group, fn: (material: MeshStandardMaterial) 
   });
 }
 
+/**
+ * Some of the sourced device models carry a `KHR_materials_transmission`
+ * extension on body/back-panel materials (real "glass" rendering), which
+ * three.js honors by sampling whatever is behind the object. Against this
+ * scene's near-black background that reads as "nearly invisible" rather
+ * than "glass" — confirmed directly by inspecting the raw glTF material
+ * list, where ordinary opaque body panels (not just camera lenses) carry
+ * transmissionFactor: 1. Flattening it back to a normal opaque PBR
+ * response is what makes the devices read as solid product renders like
+ * the reference images, instead of partially see-through.
+ */
+function killTransmission(material: MeshStandardMaterial) {
+  const physical = material as MeshStandardMaterial & { transmission?: number };
+  if (physical.transmission) physical.transmission = 0;
+}
+
 /** A small seeded PRNG so per-instance "random" layout (streaks, rings) is stable across renders. */
 function makeRng(seed: number) {
   let s = seed;
@@ -208,6 +224,7 @@ function Devices({
   useEffect(() => {
     forEachMeshMaterial(laptopScene, (m) => {
       m.transparent = true;
+      killTransmission(m);
       if (m.emissiveMap) m.emissiveIntensity = 1.6;
     });
   }, [laptopScene]);
@@ -215,6 +232,7 @@ function Devices({
   useEffect(() => {
     forEachMeshMaterial(phoneScene, (m) => {
       m.transparent = true;
+      killTransmission(m);
       if (m.emissiveMap) m.emissiveIntensity = 1.6;
     });
   }, [phoneScene]);
