@@ -55,14 +55,25 @@ function forEachMeshMaterial(scene: Group, fn: (material: MeshStandardMaterial) 
   });
 }
 
+const LAPTOP_BASE_POS = new Vector3(1.4, -0.45, -0.7);
+const LAPTOP_BASE_ROT = { x: 0, y: 0.28, z: 0 };
+const PHONE_BASE_POS = new Vector3(2.5, -0.15, 0.85);
+const PHONE_BASE_ROT = { x: -0.08, y: -0.4, z: 0.14 };
+
 /**
- * The laptop + phone product shot. Both already come textured with real
+ * The laptop + phone product shot, arranged on the right side of the
+ * frame (headline stays left) — a stylized product-marketplace hero shot
+ * rather than a centered display. Both already come textured with real
  * screen content baked into their materials by the source models, so the
  * only setup needed is enabling opacity fades and giving their screens a
  * bit more emissive punch so bloom catches them like lit displays.
  *
- * They idle in place through `devicesHoldEnd`, then slide/recede apart and
- * fade out through `devicesExitEnd` as the logo begins its entrance.
+ * They idle in place through `devicesHoldEnd`, then exit with distinct
+ * choreography per device rather than both just fading back into the fog:
+ *  - the phone slides left across the frame;
+ *  - the laptop spins around its own Z axis (like flipping a coin toward
+ *    the viewer), drifts toward the camera as it does, then continues
+ *    down toward the bottom-left corner and out of frame.
  */
 function Devices({ scrollProgress }: { scrollProgress: RefObject<number> }) {
   const laptopRef = useRef<Group>(null);
@@ -84,32 +95,36 @@ function Devices({ scrollProgress }: { scrollProgress: RefObject<number> }) {
     });
   }, [phoneScene]);
 
-  const DEVICE_SCALE = 6.2;
+  const DEVICE_SCALE = 5.4;
+  const PHONE_SCALE = 7.6;
 
   useFrame((state) => {
     const p = scrollProgress.current;
     const t = state.clock.elapsedTime;
-    const exitT = smoothstep(T.devicesHoldEnd, T.devicesExitEnd, p);
-    const opacity = 1 - exitT;
 
     const laptop = laptopRef.current;
     if (laptop) {
+      const exitT = smoothstep(T.laptopExitStart, T.laptopExitEnd, p);
       const idleBob = Math.sin(t * 0.6) * 0.03;
-      laptop.position.set(1.0 - exitT * 2.6, -0.5 + idleBob - exitT * 2.2, 0.1 - exitT * 3.5);
-      // A backward tilt (like a laptop angled toward you on a desk) so the
-      // keyboard deck is actually visible from a roughly level camera —
-      // dead-on, this just reads as a flat floating screen.
-      laptop.rotation.set(-0.42, 0.3 - exitT * 0.6, -0.02 - exitT * 0.4);
-      laptop.scale.setScalar(DEVICE_SCALE * (1 - exitT * 0.3));
+      laptop.position.set(
+        LAPTOP_BASE_POS.x - exitT * 3.6,
+        LAPTOP_BASE_POS.y + idleBob - exitT * 3.2,
+        LAPTOP_BASE_POS.z + exitT * 4.2
+      );
+      laptop.rotation.set(LAPTOP_BASE_ROT.x, LAPTOP_BASE_ROT.y, LAPTOP_BASE_ROT.z + exitT * Math.PI * 3);
+      laptop.scale.setScalar(DEVICE_SCALE);
+      const opacity = 1 - smoothstep(0.7, 1, exitT);
       if (opacity < 1) forEachMeshMaterial(laptopScene, (m) => (m.opacity = opacity));
     }
 
     const phone = phoneRef.current;
     if (phone) {
+      const exitT = smoothstep(T.phoneExitStart, T.phoneExitEnd, p);
       const idleBob = Math.sin(t * 0.7 + 1) * 0.02;
-      phone.position.set(2.5 + exitT * 3.0, -0.8 + idleBob - exitT * 2.6, 0.75 - exitT * 3.0);
-      phone.rotation.set(-0.1, -0.5 + exitT * 0.7, 0.12 + exitT * 0.5);
-      phone.scale.setScalar(DEVICE_SCALE * (1 - exitT * 0.3));
+      phone.position.set(PHONE_BASE_POS.x - exitT * 7.5, PHONE_BASE_POS.y + idleBob, PHONE_BASE_POS.z);
+      phone.rotation.set(PHONE_BASE_ROT.x, PHONE_BASE_ROT.y, PHONE_BASE_ROT.z + exitT * 0.4);
+      phone.scale.setScalar(PHONE_SCALE);
+      const opacity = 1 - smoothstep(0.75, 1, exitT);
       if (opacity < 1) forEachMeshMaterial(phoneScene, (m) => (m.opacity = opacity));
     }
   });
@@ -128,9 +143,14 @@ function Devices({ scrollProgress }: { scrollProgress: RefObject<number> }) {
 // un-rotated orientation already reads as a "top-down" view. So "landed,
 // front-facing" is a +90°-ish tip on X (facing the camera), and the
 // front-to-top transition is just easing that tip back off.
-const FLIGHT_START = new Vector3(-4.2, 3.2, -6.5);
-const LAND_POS = new Vector3(0, 0.15, 1.6);
-const EXIT_POS = new Vector3(3.4, -2.8, -3.5);
+//
+// It enters from the upper-right (opposite the devices, which exit toward
+// the bottom-left) and lands on the *left* side of the frame, at a lower
+// "ground" height — not centered — then exits further up/left, continuing
+// its original heading rather than doubling back.
+const FLIGHT_START = new Vector3(4.6, 3.4, -6.2);
+const LAND_POS = new Vector3(-1.85, -0.55, 1.3);
+const EXIT_POS = new Vector3(-4.6, 3.0, -4.2);
 
 const FLY_QUAT = new Quaternion().setFromEuler(new Euler(0.55, -0.6, 0.35));
 const LAND_QUAT = new Quaternion().setFromEuler(new Euler(-Math.PI / 2 - 0.12, 0, 0));
@@ -221,6 +241,15 @@ function LogoPlane({ scrollProgress }: { scrollProgress: RefObject<number> }) {
  * matching the logo's own reorientation so the pair reads as "we're now
  * looking down at it from above," and holds that elevated view through
  * the roll and exit.
+ *
+ * Deliberately does *not* pan its look-target to track the plane's x
+ * position: `lookAt` centers whatever it targets, so tracking the plane
+ * all the way to `LAND_POS.x` would undo the "lands on the left side"
+ * placement the moment the pan finished (verified directly — with a full
+ * pan, the plane visibly recentered over the CTA during the exit beat).
+ * A small constant left bias keeps the whole scene (devices, then the
+ * plane) framed slightly left-of-center without ever fully centering on
+ * either.
  */
 function CameraRig({
   pointer,
@@ -237,16 +266,26 @@ function CameraRig({
     // A slight downward angle from the start — needed to actually see the
     // laptop's tilted-back keyboard deck and the phone's screen rather than
     // viewing both dead-on — deepens further through the front-to-top beat.
+    //
+    // The scroll-driven Y position is set directly rather than damped: the
+    // scroll itself already provides gradualness, and `lookAt` below reads
+    // `risen` un-damped every frame regardless — damping only the position
+    // let it lag behind its own look-target on a fast scroll through this
+    // beat, producing a real (not screenshot-flake) stretch of broken,
+    // near-edge-on framing where the camera's height and where it was
+    // pointed briefly disagreed (verified directly by comparing consecutive
+    // repeat-captures across this exact range).
     const baseY = 0.75 + risen * 1.4;
-    const targetX = pointer.current.x * 0.25;
-    const targetY = baseY + pointer.current.y * 0.1;
+    state.camera.position.y = baseY + pointer.current.y * 0.1;
+    state.camera.position.z = 6.4;
 
-    state.camera.position.x += (targetX - state.camera.position.x) * 0.04;
-    state.camera.position.y += (targetY - state.camera.position.y) * 0.04;
-    state.camera.position.z += (6.4 - state.camera.position.z) * 0.03;
+    // Only the cursor-parallax offset benefits from damping — mouse input
+    // is itself jittery, unlike the scroll-driven state above.
+    const targetX = pointer.current.x * 0.25;
+    state.camera.position.x += (targetX - state.camera.position.x) * 0.06;
 
     const lookTargetY = -0.25 - risen * 1.1;
-    state.camera.lookAt(0, lookTargetY, 0);
+    state.camera.lookAt(-0.35, lookTargetY, 0);
   });
   return null;
 }

@@ -169,36 +169,29 @@ export function Hero() {
           </div>
         )}
 
-        {/* Beat 1 — arrival: badge + primary headline, left-aligned, sits
-            in front of the logo as it spins in from the back-right. */}
+        {/* Beat 1 — arrival: badge + primary headline, left-aligned, while
+            the laptop/phone product shot sits on the right (see
+            HeroScene.tsx). The emphasized phrase is plain gradient-clipped
+            text rather than a blend-mode glow — no soft "blob" behind it,
+            just a colored keyword like the reference layout. */}
         <motion.div
           style={{ opacity: beat1Opacity, y: beat1Y }}
           className="pointer-events-none absolute inset-0 flex items-center"
         >
-          {/*
-           * `mix-blend-mode` needs a real CSS backdrop to react against —
-           * it doesn't blend against the WebGL canvas at all in Chromium —
-           * and the blend source has to live in the *same* motion.div as
-           * the blended text, or Chromium's compositor can't blend across
-           * the layer boundary between two independently scroll-bound
-           * wrappers (verified directly by bisection during the previous
-           * hero build). Hence this gradient sits alongside the headline
-           * here instead of in a separate always-on layer.
-           */}
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              background:
-                "radial-gradient(45% 50% at 60% 48%, var(--color-accent), transparent 72%)",
-            }}
-          />
           <Container className="relative">
             <Badge tone="outline" className="mb-6">
               AI-Powered Product Company
             </Badge>
-            <h1 className="text-balance mix-blend-difference max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl">
-              Building the future of learning and enterprise technology.
+            <h1 className="text-balance max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl">
+              Building the{" "}
+              <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
+                future
+              </span>{" "}
+              of learning and{" "}
+              <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
+                enterprise technology
+              </span>
+              .
             </h1>
             <p className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl">
               ProEduvate designs and ships AI-native products for EdTech and
@@ -208,24 +201,19 @@ export function Hero() {
           </Container>
         </motion.div>
 
-        {/* Beat 2 — crossing: secondary statement, right-aligned, so the
-            logo visibly drifts across the frame between the two blocks
-            rather than just cutting from one beat to the next. */}
+        {/* Beat 2 — crossing: secondary statement, right-aligned, timed to
+            the logo's landing on the left of the frame. */}
         <motion.div
           style={{ opacity: beat2Opacity, y: beat2Y }}
           className="pointer-events-none absolute inset-0 flex items-center justify-end"
         >
-          <div
-            className="absolute inset-0"
-            aria-hidden="true"
-            style={{
-              background:
-                "radial-gradient(45% 50% at 35% 55%, var(--color-accent), transparent 72%)",
-            }}
-          />
           <Container className="relative">
-            <p className="text-balance mix-blend-difference ml-auto max-w-lg text-right text-3xl font-medium text-white sm:text-4xl md:text-5xl">
-              AI-native. Enterprise-grade. Built to ship.
+            <p className="text-balance ml-auto max-w-lg text-right text-3xl font-medium text-white sm:text-4xl md:text-5xl">
+              AI-native.{" "}
+              <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
+                Enterprise-grade.
+              </span>{" "}
+              Built to ship.
             </p>
           </Container>
         </motion.div>

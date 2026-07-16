@@ -11,24 +11,30 @@
  */
 export const HERO_TIMELINE = {
   devicesHoldEnd: 0.14,
+  // Phone leads, laptop follows a beat behind — staggered within the same
+  // overall exit window rather than moving in lockstep.
+  phoneExitStart: 0.14,
+  phoneExitEnd: 0.26,
+  laptopExitStart: 0.18,
+  laptopExitEnd: 0.3,
   devicesExitEnd: 0.3,
-  flightStart: 0.2,
-  flightEnd: 0.44,
-  landHoldEnd: 0.52,
-  topTransitionEnd: 0.68,
-  rollEnd: 0.85,
+  flightStart: 0.26,
+  flightEnd: 0.5,
+  landHoldEnd: 0.58,
+  topTransitionEnd: 0.72,
+  rollEnd: 0.87,
   exitEnd: 1.0,
 } as const;
 
 export const TEXT_BEATS = {
   beat1FadeStart: 0.12,
   beat1FadeEnd: 0.2,
-  beat2FadeInStart: 0.4,
-  beat2FadeInEnd: 0.48,
-  beat2FadeOutStart: 0.76,
-  beat2FadeOutEnd: 0.84,
-  beat3FadeInStart: 0.82,
-  beat3FadeInEnd: 0.92,
+  beat2FadeInStart: 0.46,
+  beat2FadeInEnd: 0.54,
+  beat2FadeOutStart: 0.8,
+  beat2FadeOutEnd: 0.87,
+  beat3FadeInStart: 0.85,
+  beat3FadeInEnd: 0.94,
 } as const;
 
 export function smoothstep(edge0: number, edge1: number, x: number): number {
