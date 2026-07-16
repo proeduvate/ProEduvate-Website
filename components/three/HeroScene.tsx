@@ -86,7 +86,7 @@ function useVectorShadowTexture() {
   }, []);
 }
 
-const LAPTOP_BASE_POS = { x: 2.15, y: -0.55, z: -0.2 };
+const LAPTOP_BASE_POS = { x: 2.8, y: -0.55, z: -0.2 };
 
 /**
  * A flat "vector" ground shadow — a soft radial-gradient ellipse rather than
@@ -133,7 +133,10 @@ const LAPTOP_INITIAL_ROT_Y = -0.6;
 // side-on and reveal the back of the lid, per the brief ("show back side
 // of screen while on the table").
 const LAPTOP_TURN_TOTAL = 3.5;
-const LAPTOP_EXIT_X = 3.2;
+// Exits toward the bottom-*left* — starting from the right side of the
+// frame, it drifts all the way across and down rather than continuing
+// further right.
+const LAPTOP_EXIT_X = -7.0;
 const LAPTOP_EXIT_Y = -3.0;
 const LAPTOP_SCALE = 5.6;
 
@@ -143,7 +146,7 @@ const LAPTOP_SCALE = 5.6;
  * a desk facing the viewer's corner, with a flat vector-style shadow
  * beneath it. On scroll it slowly turns in place — vertical-axis rotation
  * only, no tilt — swinging around to show the back of the lid while
- * staying flat on the "ground", drifting toward the bottom-right and
+ * staying flat on the "ground", drifting toward the bottom-left and
  * fading out as it goes, while the camera dollies in throughout (see
  * CameraRig).
  */
@@ -212,7 +215,7 @@ function CameraRig({
     state.camera.position.x += (targetX - state.camera.position.x) * 0.05;
     state.camera.position.y += (targetY - state.camera.position.y) * 0.05;
 
-    state.camera.lookAt(1.1, -0.45, 0);
+    state.camera.lookAt(0.4, -0.45, 0);
   });
   return null;
 }
