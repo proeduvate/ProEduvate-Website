@@ -1,20 +1,34 @@
 /**
  * Single source of truth for the hero's scroll-progress phase boundaries
  * (0 = top of the pinned section, 1 = pin release). Shared between
- * Hero.tsx (text beats) and HeroScene.tsx (the laptop's turn/zoom/exit) so
- * the two can't drift out of sync when either is tuned.
+ * Hero.tsx (text beats) and HeroScene.tsx (the 3D choreography) so the two
+ * can't drift out of sync when either is tuned.
  *
- * Sequence: the laptop sits on the right, angled toward the viewer, while
- * the headline holds on the left. On scroll it turns in place (vertical
- * axis only) to reveal the back of the lid, drifts toward the bottom-right
- * and fades out, while the camera dollies in throughout. The headline
- * fades out as the laptop turns away; the closing CTA fades in as it exits.
+ * Sequence: the laptop + phone sit on the left, idle, then float upward
+ * with light streaming down beneath them. The camera then rushes forward
+ * through a field of light streaks converging on a point where the logo
+ * emerges, growing as it flies toward the viewer. It banks into frame,
+ * settles into a top-down view with rings rippling out beneath it on the
+ * ground, then flies off and exits toward the top-right corner.
  */
+export const HERO_TIMELINE = {
+  holdEnd: 0.16,
+  ascendEnd: 0.32,
+  warpEnd: 0.54,
+  arriveEnd: 0.64,
+  settleEnd: 0.8,
+  exitEnd: 1.0,
+} as const;
+
 export const TEXT_BEATS = {
-  headlineFadeStart: 0.55,
-  headlineFadeEnd: 0.72,
-  ctaFadeStart: 0.82,
-  ctaFadeEnd: 0.94,
+  headlineFadeStart: 0.14,
+  headlineFadeEnd: 0.28,
+  statementFadeInStart: 0.56,
+  statementFadeInEnd: 0.64,
+  statementFadeOutStart: 0.78,
+  statementFadeOutEnd: 0.85,
+  ctaFadeStart: 0.86,
+  ctaFadeEnd: 0.96,
 } as const;
 
 export function smoothstep(edge0: number, edge1: number, x: number): number {

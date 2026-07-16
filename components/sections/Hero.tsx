@@ -36,11 +36,12 @@ export function Hero() {
     offset: ["start start", "end end"],
   });
 
-  // Two scroll-choreographed text beats, timed against the laptop's own
-  // turn/zoom/exit (see HeroScene.tsx): the headline holds through most of
-  // the scroll, fading only as the laptop turns away and starts its exit,
-  // then the closing CTA fades in as it clears the frame. Fully visible at
-  // rest (progress 0) so the headline never depends on the user scrolling
+  // Three scroll-choreographed text beats, timed against the 3D sequence
+  // in HeroScene.tsx: the headline (now right-aligned, since the laptop +
+  // phone sit on the left — see HeroScene.tsx) fades as they float up:
+  // a mid statement fades in on the left as the logo arrives and settles,
+  // then the closing CTA takes over as it flies off. Headline is fully
+  // visible at rest (progress 0) so it never depends on the user scrolling
   // first.
   //
   // `clamp: false` looks backwards here (our arrays never extrapolate,
@@ -66,6 +67,28 @@ export function Hero() {
     scrollYProgress,
     [0, TEXT_BEATS.headlineFadeStart, TEXT_BEATS.headlineFadeEnd],
     [0, 0, -50],
+    noAccelerate
+  );
+  const statementOpacity = useTransform(
+    scrollYProgress,
+    [
+      TEXT_BEATS.statementFadeInStart,
+      TEXT_BEATS.statementFadeInEnd,
+      TEXT_BEATS.statementFadeOutStart,
+      TEXT_BEATS.statementFadeOutEnd,
+    ],
+    [0, 1, 1, 0],
+    noAccelerate
+  );
+  const statementY = useTransform(
+    scrollYProgress,
+    [
+      TEXT_BEATS.statementFadeInStart,
+      TEXT_BEATS.statementFadeInEnd,
+      TEXT_BEATS.statementFadeOutStart,
+      TEXT_BEATS.statementFadeOutEnd,
+    ],
+    [30, 0, 0, -50],
     noAccelerate
   );
   const ctaOpacity = useTransform(
@@ -134,7 +157,7 @@ export function Hero() {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-[260vh] bg-black md:h-[300vh]">
+    <section ref={sectionRef} className="relative h-[300vh] bg-black md:h-[340vh]">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <div className="bg-grid absolute inset-0" aria-hidden="true" />
         <div className="absolute inset-0" aria-hidden="true" style={backdropStyle} />
@@ -147,19 +170,19 @@ export function Hero() {
           </div>
         )}
 
-        {/* Headline — badge + primary headline, left-aligned, while the
-            laptop sits on the right (see HeroScene.tsx). The emphasized
-            phrase is plain gradient-clipped text, no blend-mode glow
-            behind it. */}
+        {/* Headline — badge + primary headline, right-aligned, while the
+            laptop + phone sit on the left (see HeroScene.tsx). The
+            emphasized phrase is plain gradient-clipped text, no blend-mode
+            glow behind it. */}
         <motion.div
           style={{ opacity: headlineOpacity, y: headlineY }}
-          className="pointer-events-none absolute inset-0 flex items-center"
+          className="pointer-events-none absolute inset-0 flex items-center justify-end"
         >
-          <Container className="relative">
+          <Container className="relative text-right">
             <Badge tone="outline" className="mb-6">
               AI-Powered Product Company
             </Badge>
-            <h1 className="text-balance max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl">
+            <h1 className="text-balance ml-auto max-w-4xl text-4xl font-medium text-white sm:text-6xl md:text-7xl">
               Building the{" "}
               <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
                 future
@@ -170,7 +193,7 @@ export function Hero() {
               </span>
               .
             </h1>
-            <p className="text-balance mt-6 max-w-xl text-lg text-gray-200 sm:text-xl">
+            <p className="text-balance ml-auto mt-6 max-w-xl text-lg text-gray-200 sm:text-xl">
               ProEduvate designs and ships AI-native products for EdTech and
               enterprise, and partners with institutions and companies who
               need the same craft applied to their own software.
@@ -178,9 +201,26 @@ export function Hero() {
           </Container>
         </motion.div>
 
+        {/* Statement — a short mid beat, left-aligned, timed to the logo's
+            arrival and settle. */}
+        <motion.div
+          style={{ opacity: statementOpacity, y: statementY }}
+          className="pointer-events-none absolute inset-0 flex items-center justify-start"
+        >
+          <Container className="relative">
+            <p className="text-balance max-w-lg text-3xl font-medium text-white sm:text-4xl md:text-5xl">
+              AI-native.{" "}
+              <span className="bg-gradient-to-r from-accent to-accent-2 bg-clip-text text-transparent">
+                Enterprise-grade.
+              </span>{" "}
+              Built to ship.
+            </p>
+          </Container>
+        </motion.div>
+
         {/* Close — final line + the real CTAs, centered, fading in as the
-            laptop clears the frame and handing off to the next section as
-            the pin releases. */}
+            logo flies off and handing off to the next section as the pin
+            releases. */}
         <motion.div
           style={{ opacity: ctaOpacity, y: ctaY }}
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
