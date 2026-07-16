@@ -604,7 +604,12 @@ export function HeroScene({ scrollProgress }: { scrollProgress: MotionValue<numb
   return (
     <Canvas
       dpr={[1, 1.5]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+        preserveDrawingBuffer: true,
+      }}
       camera={{ position: [-0.6, 0.45, 6.4], fov: 42 }}
     >
       <fog attach="fog" args={["#030507", 5, 14]} />

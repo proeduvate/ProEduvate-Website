@@ -1,25 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Magnetic } from "@/components/ui/Magnetic";
-import { WebGLBoundary } from "@/components/three/WebGLBoundary";
+import { ScrollFrameSequence } from "@/components/sections/ScrollFrameSequence";
 import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 import { TEXT_BEATS } from "@/lib/hero-timeline";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
-// Three.js/WebGL only exists in the browser — load it client-only and skip
-// it entirely during SSR so the initial HTML never depends on a GPU.
-const HeroScene = dynamic(
-  () => import("@/components/three/HeroScene").then((mod) => mod.HeroScene),
-  { ssr: false }
-);
+// A pre-rendered frame sequence baked from the live HeroScene.tsx 3D build
+// (see scripts/capture-hero-frames.py) — see that file's header comment for
+// why this project uses a scrubbed image sequence instead of a live WebGL
+// canvas or a scrubbed <video>.
+const HERO_FRAME_COUNT = 96;
+const HERO_FRAME_BASE_PATH = "/hero-frames";
 
 const backdropStyle = {
   background:
@@ -164,9 +163,11 @@ export function Hero() {
 
         {heroInView && (
           <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-            <WebGLBoundary>
-              <HeroScene scrollProgress={scrollYProgress} />
-            </WebGLBoundary>
+            <ScrollFrameSequence
+              scrollProgress={scrollYProgress}
+              frameCount={HERO_FRAME_COUNT}
+              basePath={HERO_FRAME_BASE_PATH}
+            />
           </div>
         )}
 
@@ -175,6 +176,7 @@ export function Hero() {
             emphasized phrase is plain gradient-clipped text, no blend-mode
             glow behind it. */}
         <motion.div
+          data-hero-overlay
           style={{ opacity: headlineOpacity, y: headlineY }}
           className="pointer-events-none absolute inset-0 flex items-center justify-end"
         >
@@ -204,6 +206,7 @@ export function Hero() {
         {/* Statement — a short mid beat, left-aligned, timed to the logo's
             arrival and settle. */}
         <motion.div
+          data-hero-overlay
           style={{ opacity: statementOpacity, y: statementY }}
           className="pointer-events-none absolute inset-0 flex items-center justify-start"
         >
@@ -222,6 +225,7 @@ export function Hero() {
             logo flies off and handing off to the next section as the pin
             releases. */}
         <motion.div
+          data-hero-overlay
           style={{ opacity: ctaOpacity, y: ctaY }}
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
         >
@@ -248,6 +252,7 @@ export function Hero() {
         </motion.div>
 
         <motion.div
+          data-hero-overlay
           style={{ opacity: cueOpacity }}
           className="pointer-events-none absolute bottom-10 left-1/2 -translate-x-1/2 text-white/60"
           aria-hidden="true"
