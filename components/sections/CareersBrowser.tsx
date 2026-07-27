@@ -73,13 +73,13 @@ export function CareersBrowser() {
           ))}
         </Stagger>
       ) : (
-        <div className="mt-14 rounded-2xl border border-gray-200 bg-off-white p-10 text-center">
-          <p className="text-lg font-medium text-black">No roles match your filters.</p>
-          <p className="mt-2 text-sm text-gray-600">
+        <div className="mt-14 rounded-2xl border border-white/10 bg-surface-2 p-10 text-center">
+          <p className="text-lg font-medium text-chalk">No roles match your filters.</p>
+          <p className="mt-2 text-sm text-gray-400">
             Don&apos;t see the right fit? Send us your resume anyway.
           </p>
           <div className="mt-6">
-            <Button href="mailto:careers@proeduvate.in" variant="secondary" className="border border-gray-200">
+            <Button href="mailto:careers@proeduvate.in" variant="secondary" className="border border-white/10">
               Send General Application
             </Button>
           </div>

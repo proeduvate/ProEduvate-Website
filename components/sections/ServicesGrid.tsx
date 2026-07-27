@@ -6,12 +6,10 @@ import {
   Cloud,
   Database,
   Compass,
-  Check,
   type LucideIcon,
 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { Card } from "@/components/ui/Card";
-import { Stagger, AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { services } from "@/data/services";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -26,32 +24,50 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function ServicesGrid() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-surface py-20 md:py-28">
       <Container>
-        <Stagger className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {services.map((service) => {
+        <div className="border-t border-white/10">
+          {services.map((service, i) => {
             const Icon = iconMap[service.icon];
             return (
-              <AnimatedReveal key={service.slug} className="h-full">
-                <Card className="h-full">
-                  <Icon className="h-9 w-9 text-accent" aria-hidden="true" />
-                  <h3 className="mt-5 text-xl font-medium text-black">{service.name}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-gray-600">
-                    {service.description}
-                  </p>
-                  <ul className="mt-5 space-y-2">
-                    {service.included.map((item) => (
-                      <li key={item} className="flex items-start gap-2 text-sm text-gray-700">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
+              <AnimatedReveal key={service.slug} delay={Math.min(i * 0.04, 0.2)}>
+                <article className="group grid grid-cols-1 gap-6 border-b border-white/10 py-12 transition-colors duration-300 hover:bg-white/[0.02] md:grid-cols-[auto_1fr_1fr] md:gap-12 md:py-16">
+                  <div className="label-micro flex items-center gap-3 text-gray-500 md:block">
+                    <span className="tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+                    <Icon
+                      className="mt-6 hidden h-7 w-7 text-accent transition-transform duration-300 group-hover:scale-110 md:block"
+                      aria-hidden="true"
+                    />
+                  </div>
+
+                  <h3 className="display-md text-balance text-chalk transition-colors duration-300 group-hover:text-accent">
+                    {service.name}
+                  </h3>
+
+                  <div>
+                    <p className="text-base leading-relaxed text-gray-400">
+                      {service.description}
+                    </p>
+                    <ul className="mt-6 space-y-2.5">
+                      {service.included.map((item) => (
+                        <li
+                          key={item}
+                          className="label-mono flex items-start gap-3 text-gray-500"
+                        >
+                          <span
+                            aria-hidden="true"
+                            className="mt-2 h-1 w-1 shrink-0 rounded-full bg-accent"
+                          />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
               </AnimatedReveal>
             );
           })}
-        </Stagger>
+        </div>
       </Container>
     </section>
   );

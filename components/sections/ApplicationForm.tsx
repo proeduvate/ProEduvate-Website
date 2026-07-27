@@ -32,10 +32,10 @@ export function ApplicationForm({ roleTitle, roleId }: { roleTitle: string; role
 
   if (submitted) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-off-white p-10 text-center" role="status">
+      <div className="rounded-2xl border border-white/10 bg-surface-2 p-10 text-center" role="status">
         <CheckCircle2 className="mx-auto h-10 w-10 text-success" aria-hidden="true" />
-        <h2 className="mt-4 text-xl font-medium text-black">Application received.</h2>
-        <p className="mt-2 text-gray-600">
+        <h2 className="mt-4 text-xl font-medium text-chalk">Application received.</h2>
+        <p className="mt-2 text-gray-400">
           Thanks for applying to {roleTitle}. We&apos;ll be in touch if there&apos;s a fit.
         </p>
       </div>
@@ -45,14 +45,14 @@ export function ApplicationForm({ roleTitle, roleId }: { roleTitle: string; role
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
       <div>
-        <label htmlFor="which-role" className="mb-1.5 block text-sm font-medium text-black">
+        <label htmlFor="which-role" className="mb-1.5 block text-sm font-medium text-chalk">
           Applying for
         </label>
         <input
           id="which-role"
           value={roleTitle}
           disabled
-          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600"
+          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-400"
         />
       </div>
 
@@ -119,7 +119,7 @@ export function ApplicationForm({ roleTitle, roleId }: { roleTitle: string; role
       </Field>
 
       <div>
-        <label className="flex items-start gap-3 text-sm text-gray-700">
+        <label className="flex items-start gap-3 text-sm text-gray-300">
           <input
             type="checkbox"
             className="mt-0.5 h-4 w-4 rounded border-gray-300 text-accent focus-visible:outline-2 focus-visible:outline-accent"
@@ -142,8 +142,8 @@ export function ApplicationForm({ roleTitle, roleId }: { roleTitle: string; role
 }
 
 function inputClass(hasError: boolean) {
-  return `w-full rounded-xl border bg-white px-4 py-3 text-sm text-black focus-visible:outline-2 focus-visible:outline-accent ${
-    hasError ? "border-red-400" : "border-gray-200"
+  return `w-full rounded-xl border bg-surface px-4 py-3 text-sm text-chalk focus-visible:outline-2 focus-visible:outline-accent ${
+    hasError ? "border-red-400" : "border-white/10"
   }`;
 }
 
@@ -160,7 +160,7 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-black">
+      <label htmlFor={htmlFor} className="mb-1.5 block text-sm font-medium text-chalk">
         {label}
       </label>
       {children}

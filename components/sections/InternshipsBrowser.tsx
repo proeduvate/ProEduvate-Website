@@ -54,13 +54,13 @@ export function InternshipsBrowser() {
           ))}
         </Stagger>
       ) : (
-        <div className="mt-14 rounded-2xl border border-gray-200 bg-off-white p-10 text-center">
-          <p className="text-lg font-medium text-black">No internships match your filters.</p>
-          <p className="mt-2 text-sm text-gray-600">
+        <div className="mt-14 rounded-2xl border border-white/10 bg-surface-2 p-10 text-center">
+          <p className="text-lg font-medium text-chalk">No internships match your filters.</p>
+          <p className="mt-2 text-sm text-gray-400">
             New tracks open regularly — check back soon or reach out directly.
           </p>
           <div className="mt-6">
-            <Button href="mailto:careers@proeduvate.in" variant="secondary" className="border border-gray-200">
+            <Button href="mailto:careers@proeduvate.in" variant="secondary" className="border border-white/10">
               Contact Us
             </Button>
           </div>

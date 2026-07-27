@@ -42,8 +42,8 @@ export function JobCard({
         ))}
       </div>
 
-      <h3 className="mt-4 text-xl font-medium text-black">{title}</h3>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{summary}</p>
+      <h3 className="mt-4 text-xl font-medium text-chalk">{title}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-400">{summary}</p>
 
       <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-gray-500">
         <span className="inline-flex items-center gap-1.5">

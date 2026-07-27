@@ -35,10 +35,10 @@ export function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="rounded-2xl border border-gray-200 bg-off-white p-10 text-center" role="status">
+      <div className="rounded-2xl border border-white/10 bg-surface-2 p-10 text-center" role="status">
         <CheckCircle2 className="mx-auto h-10 w-10 text-success" aria-hidden="true" />
-        <h2 className="mt-4 text-xl font-medium text-black">Message sent.</h2>
-        <p className="mt-2 text-gray-600">We usually reply within two business days.</p>
+        <h2 className="mt-4 text-xl font-medium text-chalk">Message sent.</h2>
+        <p className="mt-2 text-gray-400">We usually reply within two business days.</p>
       </div>
     );
   }
@@ -47,14 +47,14 @@ export function ContactForm() {
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-black">
+          <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-chalk">
             Name
           </label>
           <input id="name" type="text" className={inputClass(!!errors.name)} {...register("name")} />
           {errors.name && <ErrorText>{errors.name.message}</ErrorText>}
         </div>
         <div>
-          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-black">
+          <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-chalk">
             Email
           </label>
           <input
@@ -69,13 +69,13 @@ export function ContactForm() {
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <label htmlFor="company" className="mb-1.5 block text-sm font-medium text-black">
+          <label htmlFor="company" className="mb-1.5 block text-sm font-medium text-chalk">
             Company <span className="font-normal text-gray-400">(optional)</span>
           </label>
           <input id="company" type="text" className={inputClass(false)} {...register("company")} />
         </div>
         <div>
-          <label htmlFor="reason" className="mb-1.5 block text-sm font-medium text-black">
+          <label htmlFor="reason" className="mb-1.5 block text-sm font-medium text-chalk">
             Reason
           </label>
           <select id="reason" className={inputClass(false)} {...register("reason")}>
@@ -89,7 +89,7 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-black">
+        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-chalk">
           Message
         </label>
         <textarea
@@ -109,8 +109,8 @@ export function ContactForm() {
 }
 
 function inputClass(hasError: boolean) {
-  return `w-full rounded-xl border bg-white px-4 py-3 text-sm text-black focus-visible:outline-2 focus-visible:outline-accent ${
-    hasError ? "border-red-400" : "border-gray-200"
+  return `w-full rounded-xl border bg-surface px-4 py-3 text-sm text-chalk focus-visible:outline-2 focus-visible:outline-accent ${
+    hasError ? "border-red-400" : "border-white/10"
   }`;
 }
 

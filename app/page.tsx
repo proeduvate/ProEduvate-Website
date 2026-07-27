@@ -4,7 +4,7 @@ import { StatsBand } from "@/components/sections/StatsBand";
 import { Pillars } from "@/components/sections/Pillars";
 import { ProductsPreview } from "@/components/sections/ProductsPreview";
 import { ServicesPreview } from "@/components/sections/ServicesPreview";
-import { Statement } from "@/components/sections/Statement";
+import { SignalShowcase } from "@/components/sections/SignalShowcase";
 import { ValuesGrid } from "@/components/sections/ValuesGrid";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { CareersTeaser } from "@/components/sections/CareersTeaser";
@@ -19,10 +19,7 @@ export default function Home() {
       <Pillars />
       <ProductsPreview />
       <ServicesPreview />
-      <Statement>
-        We don&apos;t just build software. We build what education and
-        enterprise will run on next.
-      </Statement>
+      <SignalShowcase />
       <ValuesGrid />
       <Testimonials />
       <CareersTeaser />

@@ -1,52 +1,65 @@
 import { cn } from "@/lib/utils";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { MaskReveal } from "@/components/ui/MaskReveal";
 
+/**
+ * Section header on the site's display scale: a micro mono label paired
+ * with large, light-weight display type. The site is dark throughout, so
+ * the old `dark` prop no longer branches -- it is kept only so existing
+ * call sites don't break.
+ */
 export function SectionHeading({
   eyebrow,
   title,
   description,
   align = "left",
-  dark = false,
+  index,
   className,
 }: {
   eyebrow?: string;
   title: React.ReactNode;
   description?: React.ReactNode;
   align?: "left" | "center";
+  /** Optional section number, rendered alongside the eyebrow. */
+  index?: string;
+  /** @deprecated the site is always dark now. */
   dark?: boolean;
   className?: string;
 }) {
   return (
     <AnimatedReveal
-      className={cn(
-        "max-w-2xl",
-        align === "center" && "mx-auto text-center",
-        className
-      )}
+      y={0}
+      className={cn("max-w-4xl", align === "center" && "mx-auto text-center", className)}
     >
-      {eyebrow && (
-        <p
+      {(eyebrow || index) && (
+        <div
           className={cn(
-            "mb-3 text-xs font-semibold tracking-[0.2em] uppercase",
-            dark ? "text-accent-glow" : "text-accent"
+            "label-micro mb-6 flex items-center gap-3 text-accent",
+            align === "center" && "justify-center"
           )}
         >
-          {eyebrow}
-        </p>
+          {index && (
+            <>
+              <span className="text-gray-500 tabular-nums">{index}</span>
+              <span className="h-px w-6 bg-white/20" aria-hidden="true" />
+            </>
+          )}
+          {eyebrow && <span>{eyebrow}</span>}
+        </div>
       )}
-      <h2
-        className={cn(
-          "text-balance text-3xl font-medium sm:text-4xl md:text-5xl",
-          dark ? "text-white" : "text-black"
-        )}
-      >
-        {title}
-      </h2>
+
+      {/* Plain strings get the line-wipe reveal; richer nodes render as-is. */}
+      {typeof title === "string" ? (
+        <MaskReveal as="h2" text={title} className="display-lg text-balance text-chalk" />
+      ) : (
+        <h2 className="display-lg text-balance text-chalk">{title}</h2>
+      )}
+
       {description && (
         <p
           className={cn(
-            "mt-4 text-balance text-base sm:text-lg",
-            dark ? "text-gray-200" : "text-gray-600"
+            "text-balance mt-6 max-w-xl text-base text-gray-400 sm:text-lg",
+            align === "center" && "mx-auto"
           )}
         >
           {description}

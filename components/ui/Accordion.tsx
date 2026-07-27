@@ -9,7 +9,7 @@ export function Accordion({ items }: { items: { question: string; answer: string
   const idBase = useId();
 
   return (
-    <div className="divide-y divide-gray-200 border-y border-gray-200">
+    <div className="divide-y divide-white/10 border-y border-white/10">
       {items.map((item, i) => {
         const isOpen = openIndex === i;
         const panelId = `${idBase}-panel-${i}`;
@@ -22,7 +22,7 @@ export function Accordion({ items }: { items: { question: string; answer: string
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : i)}
-                className="flex w-full items-center justify-between gap-4 py-5 text-left text-base font-medium text-black hover:text-accent"
+                className="flex w-full items-center justify-between gap-4 py-5 text-left text-base font-medium text-chalk hover:text-accent"
               >
                 {item.question}
                 <ChevronDown
@@ -43,7 +43,7 @@ export function Accordion({ items }: { items: { question: string; answer: string
                 isOpen ? "grid-rows-[1fr] pb-5 opacity-100" : "grid-rows-[0fr] opacity-0"
               )}
             >
-              <p className="min-h-0 text-sm leading-relaxed text-gray-600">{item.answer}</p>
+              <p className="min-h-0 text-sm leading-relaxed text-gray-400">{item.answer}</p>
             </div>
           </div>
         );

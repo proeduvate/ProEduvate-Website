@@ -11,16 +11,16 @@ const items = [
 
 export function ProgramOverview() {
   return (
-    <section className="bg-white py-16 md:py-20">
+    <section className="bg-surface py-16 md:py-20">
       <Container>
         <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((item) => (
             <AnimatedReveal key={item.label}>
-              <div className="rounded-2xl border border-gray-200 bg-off-white p-6">
+              <div className="rounded-2xl border border-white/10 bg-surface-2 p-6">
                 <Badge tone="neutral" className="mb-3">
                   {item.label}
                 </Badge>
-                <p className="text-lg font-medium text-black">{item.value}</p>
+                <p className="text-lg font-medium text-chalk">{item.value}</p>
               </div>
             </AnimatedReveal>
           ))}

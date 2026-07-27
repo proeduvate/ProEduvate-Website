@@ -29,7 +29,7 @@ export function ServicesPreview() {
   const featured = services.slice(0, 4);
 
   return (
-    <section className="bg-off-white py-24 md:py-32">
+    <section className="bg-surface-2 py-24 md:py-32">
       <Container>
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <SectionHeading
@@ -38,7 +38,7 @@ export function ServicesPreview() {
             className="max-w-xl"
           />
           <AnimatedReveal delay={0.15}>
-            <Button href="/services" variant="secondary" className="border border-gray-200">
+            <Button href="/services" variant="secondary" className="border border-white/10">
               View All Services
             </Button>
           </AnimatedReveal>
@@ -51,8 +51,8 @@ export function ServicesPreview() {
               <AnimatedReveal key={service.slug} className="h-full">
                 <Card className="h-full">
                   <Icon className="h-8 w-8 text-accent" aria-hidden="true" />
-                  <h3 className="mt-5 text-lg font-medium text-black">{service.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  <h3 className="mt-5 text-lg font-medium text-chalk">{service.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-400">
                     {service.description}
                   </p>
                 </Card>

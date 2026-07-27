@@ -12,19 +12,19 @@ const steps = [
 
 export function Process() {
   return (
-    <section className="bg-off-white py-20 md:py-28">
+    <section className="bg-surface-2 py-20 md:py-28">
       <Container>
         <SectionHeading eyebrow="How We Work" title="A process built for momentum." align="center" />
 
         <Stagger className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {steps.map((step, i) => (
             <AnimatedReveal key={step.title} className="relative">
-              <div className="rounded-2xl border border-gray-200 bg-white p-6">
+              <div className="rounded-2xl border border-white/10 bg-surface p-6">
                 <span className="font-display text-3xl font-medium text-accent/30">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-3 text-lg font-medium text-black">{step.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">{step.description}</p>
+                <h3 className="mt-3 text-lg font-medium text-chalk">{step.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-gray-400">{step.description}</p>
               </div>
             </AnimatedReveal>
           ))}

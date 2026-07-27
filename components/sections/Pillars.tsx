@@ -28,7 +28,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function Pillars() {
   return (
-    <section className="bg-white py-24 md:py-32">
+    <section className="bg-surface py-24 md:py-32">
       <Container>
         <SectionHeading
           eyebrow="What We Do"
@@ -36,12 +36,12 @@ export function Pillars() {
           description="ProEduvate builds and ships across eight sectors, applying the same standard of craft to our own products and to client work alike."
         />
 
-        <div className="mt-16 border-t border-gray-200">
+        <div className="mt-16 border-t border-white/10">
           {sectors.map((sector, i) => {
             const Icon = iconMap[sector.icon];
             return (
               <AnimatedReveal key={sector.title} delay={i * 0.04}>
-                <div className="group relative border-b border-gray-200">
+                <div className="group relative border-b border-white/10">
                   <span
                     aria-hidden="true"
                     className="absolute top-0 left-0 h-full w-0.5 origin-top scale-y-0 bg-accent transition-transform duration-300 ease-out group-hover:scale-y-100"
@@ -51,7 +51,7 @@ export function Pillars() {
                       <span className="font-display text-sm text-gray-400 tabular-nums">
                         {String(i + 1).padStart(2, "0")}
                       </span>
-                      <h3 className="font-display text-2xl font-medium text-black transition-colors duration-300 group-hover:text-accent sm:text-3xl md:text-4xl">
+                      <h3 className="font-display text-2xl font-medium text-chalk transition-colors duration-300 group-hover:text-accent sm:text-3xl md:text-4xl">
                         {sector.title}
                       </h3>
                     </div>

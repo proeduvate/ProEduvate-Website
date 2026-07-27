@@ -1,8 +1,7 @@
 import { BrainCircuit, Users, Gem, Sparkles, LayoutGrid, type LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Card } from "@/components/ui/Card";
-import { Stagger, AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { reasons } from "@/data/why-choose-us";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -15,30 +14,39 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function WhyChooseUs() {
   return (
-    <section className="bg-white py-24 md:py-32">
+    <section className="bg-surface-2 py-24 md:py-32">
       <Container>
         <SectionHeading
+          index="03"
           eyebrow="Why ProEduvate"
           title="Why choose us."
           description="A few reasons clients keep coming back to build with us."
         />
 
-        <Stagger className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {reasons.map((reason) => {
+        <div className="mt-16 border-t border-white/10 md:mt-20">
+          {reasons.map((reason, i) => {
             const Icon = iconMap[reason.icon];
             return (
-              <AnimatedReveal key={reason.title} className="h-full">
-                <Card className="h-full">
-                  <Icon className="h-8 w-8 text-accent" aria-hidden="true" />
-                  <h3 className="mt-5 text-lg font-medium text-black">{reason.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                    {reason.description}
-                  </p>
-                </Card>
+              <AnimatedReveal key={reason.title} delay={i * 0.05}>
+                <div className="group grid grid-cols-1 items-baseline gap-4 border-b border-white/10 py-9 transition-colors duration-300 hover:bg-white/[0.02] md:grid-cols-[3rem_1fr_1.1fr] md:gap-10 md:py-12">
+                  <span className="label-micro text-gray-500 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <h3 className="flex items-center gap-4 font-display text-2xl font-normal tracking-tight text-chalk sm:text-3xl">
+                    <Icon
+                      className="h-6 w-6 shrink-0 text-accent transition-transform duration-300 group-hover:scale-110"
+                      aria-hidden="true"
+                    />
+                    {reason.title}
+                  </h3>
+
+                  <p className="text-base leading-relaxed text-gray-400">{reason.description}</p>
+                </div>
               </AnimatedReveal>
             );
           })}
-        </Stagger>
+        </div>
       </Container>
     </section>
   );

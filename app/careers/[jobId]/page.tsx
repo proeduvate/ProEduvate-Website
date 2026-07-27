@@ -100,25 +100,25 @@ export default async function JobDetailPage({
         </Container>
       </section>
 
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-surface py-20 md:py-28">
         <Container className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_320px]">
           <AnimatedReveal>
-            <p className="text-lg leading-relaxed text-gray-700">{job.summary}</p>
+            <p className="text-lg leading-relaxed text-gray-300">{job.summary}</p>
 
-            <h2 className="mt-10 text-xl font-medium text-black">Responsibilities</h2>
+            <h2 className="mt-10 text-xl font-medium text-chalk">Responsibilities</h2>
             <ul className="mt-4 space-y-2">
               {job.responsibilities.map((item) => (
-                <li key={item} className="flex gap-3 text-gray-700">
+                <li key={item} className="flex gap-3 text-gray-300">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                   {item}
                 </li>
               ))}
             </ul>
 
-            <h2 className="mt-10 text-xl font-medium text-black">Requirements</h2>
+            <h2 className="mt-10 text-xl font-medium text-chalk">Requirements</h2>
             <ul className="mt-4 space-y-2">
               {job.requirements.map((item) => (
-                <li key={item} className="flex gap-3 text-gray-700">
+                <li key={item} className="flex gap-3 text-gray-300">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                   {item}
                 </li>
@@ -127,10 +127,10 @@ export default async function JobDetailPage({
 
             {job.niceToHave && job.niceToHave.length > 0 && (
               <>
-                <h2 className="mt-10 text-xl font-medium text-black">Nice to Have</h2>
+                <h2 className="mt-10 text-xl font-medium text-chalk">Nice to Have</h2>
                 <ul className="mt-4 space-y-2">
                   {job.niceToHave.map((item) => (
-                    <li key={item} className="flex gap-3 text-gray-700">
+                    <li key={item} className="flex gap-3 text-gray-300">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                       {item}
                     </li>
@@ -141,8 +141,8 @@ export default async function JobDetailPage({
           </AnimatedReveal>
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
-            <div className="rounded-2xl border border-gray-200 bg-off-white p-6">
-              <p className="text-sm text-gray-600">
+            <div className="rounded-2xl border border-white/10 bg-surface-2 p-6">
+              <p className="text-sm text-gray-400">
                 Ready to apply? It takes about five minutes.
               </p>
               <Button href={`/careers/apply/${job.id}`} className="mt-4 w-full">

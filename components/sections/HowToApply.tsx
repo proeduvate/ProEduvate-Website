@@ -10,7 +10,7 @@ const steps = [
 
 export function HowToApply() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-surface py-20 md:py-28">
       <Container>
         <SectionHeading eyebrow="How to Apply" title="Three steps to get started." align="center" />
 
@@ -20,8 +20,8 @@ export function HowToApply() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 font-display text-xl font-semibold text-accent">
                 {i + 1}
               </div>
-              <h3 className="mt-4 text-lg font-medium text-black">{step.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">{step.description}</p>
+              <h3 className="mt-4 text-lg font-medium text-chalk">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-400">{step.description}</p>
             </AnimatedReveal>
           ))}
         </Stagger>

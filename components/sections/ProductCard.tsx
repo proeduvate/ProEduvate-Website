@@ -20,8 +20,8 @@ export function ProductCard({ product }: { product: Product }) {
         <Badge tone={statusTone[product.status]}>{product.status}</Badge>
       </div>
 
-      <h3 className="mt-5 text-xl font-medium text-black">{product.name}</h3>
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-600">{product.tagline}</p>
+      <h3 className="mt-5 text-xl font-medium text-chalk">{product.name}</h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-gray-400">{product.tagline}</p>
 
       <div className="mt-6 flex items-center justify-between">
         <Badge tone="neutral">{product.category}</Badge>

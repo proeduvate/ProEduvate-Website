@@ -42,7 +42,7 @@ export default function ContactPage() {
         description="Whether it's a partnership, a project, or a question about careers — we read every message."
       />
 
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-surface py-20 md:py-28">
         <Container className="grid grid-cols-1 gap-16 lg:grid-cols-[1.1fr_0.9fr]">
           <AnimatedReveal>
             <ContactForm />
@@ -54,14 +54,14 @@ export default function ContactPage() {
                 <a
                   key={detail.label}
                   href={detail.href}
-                  className="flex items-start gap-4 rounded-2xl border border-gray-200 bg-off-white p-5 transition-colors hover:border-accent/30"
+                  className="flex items-start gap-4 rounded-2xl border border-white/10 bg-surface-2 p-5 transition-colors hover:border-accent/30"
                 >
                   <detail.icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
                   <div>
                     <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                       {detail.label}
                     </p>
-                    <p className="mt-1 text-sm text-black">{detail.value}</p>
+                    <p className="mt-1 text-sm text-chalk">{detail.value}</p>
                   </div>
                 </a>
               ))}
@@ -79,7 +79,7 @@ export default function ContactPage() {
                   key={item.label}
                   href={item.href}
                   aria-label={item.label}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition-colors hover:border-accent hover:text-accent"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-gray-500 transition-colors hover:border-accent hover:text-accent"
                 >
                   <item.icon className="h-4 w-4" />
                 </a>
@@ -89,7 +89,7 @@ export default function ContactPage() {
         </Container>
       </section>
 
-      <section className="bg-off-white py-20 md:py-28">
+      <section className="bg-surface-2 py-20 md:py-28">
         <Container className="max-w-3xl">
           <SectionHeading eyebrow="FAQ" title="Common questions." align="center" />
           <div className="mt-10">

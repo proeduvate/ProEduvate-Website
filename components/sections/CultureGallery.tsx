@@ -15,7 +15,7 @@ const snapshots = [
 
 export function CultureGallery() {
   return (
-    <section className="bg-off-white py-24 md:py-32">
+    <section className="bg-surface-2 py-24 md:py-32">
       <Container>
         <SectionHeading eyebrow="Culture" title="A glimpse at how we work." align="center" />
 

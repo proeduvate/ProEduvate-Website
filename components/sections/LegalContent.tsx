@@ -9,16 +9,16 @@ export function LegalContent({
   sections: { heading: string; body: string[] }[];
 }) {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-surface py-20 md:py-28">
       <Container className="max-w-3xl">
         <AnimatedReveal>
           <p className="text-sm text-gray-500">Last updated: {lastUpdated}</p>
           <div className="mt-10 space-y-10">
             {sections.map((section) => (
               <div key={section.heading}>
-                <h2 className="text-xl font-medium text-black">{section.heading}</h2>
+                <h2 className="text-xl font-medium text-chalk">{section.heading}</h2>
                 {section.body.map((paragraph, i) => (
-                  <p key={i} className="mt-3 leading-relaxed text-gray-600">
+                  <p key={i} className="mt-3 leading-relaxed text-gray-400">
                     {paragraph}
                   </p>
                 ))}

@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
-import { Badge } from "@/components/ui/Badge";
+import { BracketFrame } from "@/components/ui/BracketFrame";
 
 export function PageHero({
   eyebrow,
@@ -14,8 +14,8 @@ export function PageHero({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden bg-black pt-40 pb-20 md:pt-48 md:pb-28">
-      <div className="bg-grid absolute inset-0" aria-hidden="true" />
+    <section className="relative overflow-hidden bg-surface pt-44 pb-24 md:pt-52 md:pb-32">
+      <div className="bg-grid absolute inset-0 opacity-60" aria-hidden="true" />
       <div
         className="absolute inset-0"
         aria-hidden="true"
@@ -24,16 +24,22 @@ export function PageHero({
             "radial-gradient(55% 60% at 20% 10%, color-mix(in srgb, var(--color-primary-2) 55%, transparent), transparent)",
         }}
       />
+      <BracketFrame />
+
       <Container className="relative">
         <AnimatedReveal>
-          <Badge tone="outline" className="mb-6">
-            {eyebrow}
-          </Badge>
-          <h1 className="text-balance max-w-3xl text-4xl font-medium text-white sm:text-5xl md:text-6xl">
-            {title}
-          </h1>
+          <div className="label-micro mb-8 flex items-center gap-3 text-accent">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
+            </span>
+            <span>{eyebrow}</span>
+          </div>
+
+          <h1 className="display-xl text-balance max-w-5xl text-chalk">{title}</h1>
+
           {description && (
-            <p className="text-balance mt-6 max-w-xl text-lg text-gray-300">{description}</p>
+            <p className="text-balance mt-8 max-w-xl text-lg text-gray-400">{description}</p>
           )}
           {children}
         </AnimatedReveal>

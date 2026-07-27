@@ -37,7 +37,7 @@ export default async function BlogPostPage({
   });
 
   return (
-    <section className="bg-white pt-32 pb-24 md:pt-40">
+    <section className="bg-surface pt-32 pb-24 md:pt-40">
       <Container className="max-w-2xl">
         <Link
           href="/blog"
@@ -51,12 +51,12 @@ export default async function BlogPostPage({
           <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
             {formattedDate} · {post.readingTime}
           </p>
-          <h1 className="mt-3 text-3xl font-medium text-black md:text-4xl">{post.title}</h1>
+          <h1 className="mt-3 text-3xl font-medium text-chalk md:text-4xl">{post.title}</h1>
           <p className="mt-3 text-sm text-gray-500">By {post.author}</p>
 
           <div className="mt-10 space-y-6">
             {post.content.map((paragraph, i) => (
-              <p key={i} className="leading-relaxed text-gray-700">
+              <p key={i} className="leading-relaxed text-gray-300">
                 {paragraph}
               </p>
             ))}

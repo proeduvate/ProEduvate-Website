@@ -23,7 +23,7 @@ export default function CareersPage() {
 
       <BenefitsGrid />
 
-      <section className="bg-off-white py-20 md:py-28">
+      <section className="bg-surface-2 py-20 md:py-28">
         <Container>
           <SectionHeading eyebrow="Open Positions" title="Find your next role." />
           <div className="mt-10">

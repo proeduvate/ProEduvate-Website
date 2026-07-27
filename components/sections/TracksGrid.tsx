@@ -24,7 +24,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function TracksGrid() {
   return (
-    <section className="bg-off-white py-20 md:py-28">
+    <section className="bg-surface-2 py-20 md:py-28">
       <Container>
         <SectionHeading eyebrow="Tracks" title="Pick the track that fits you." align="center" />
 
@@ -35,8 +35,8 @@ export function TracksGrid() {
               <AnimatedReveal key={track.name} className="h-full">
                 <Card className="h-full">
                   <Icon className="h-8 w-8 text-accent" aria-hidden="true" />
-                  <h3 className="mt-5 text-lg font-medium text-black">{track.name}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">{track.description}</p>
+                  <h3 className="mt-5 text-lg font-medium text-chalk">{track.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-400">{track.description}</p>
                 </Card>
               </AnimatedReveal>
             );

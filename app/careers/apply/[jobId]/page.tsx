@@ -32,7 +32,7 @@ export default async function ApplyPage({
   if (!job) notFound();
 
   return (
-    <section className="bg-white pt-32 pb-24 md:pt-40">
+    <section className="bg-surface pt-32 pb-24 md:pt-40">
       <Container className="max-w-2xl">
         <Link
           href={`/careers/${job.id}`}
@@ -46,8 +46,8 @@ export default async function ApplyPage({
           <p className="text-xs font-semibold tracking-[0.2em] text-accent uppercase">
             Application
           </p>
-          <h1 className="mt-2 text-3xl font-medium text-black md:text-4xl">{job.title}</h1>
-          <p className="mt-3 text-gray-600">
+          <h1 className="mt-2 text-3xl font-medium text-chalk md:text-4xl">{job.title}</h1>
+          <p className="mt-3 text-gray-400">
             Takes about five minutes. We review every application personally.
           </p>
 

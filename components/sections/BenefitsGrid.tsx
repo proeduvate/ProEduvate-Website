@@ -24,7 +24,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 export function BenefitsGrid() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section className="bg-surface py-20 md:py-28">
       <Container>
         <SectionHeading eyebrow="Why Work Here" title="Built for people who ship." align="center" />
 
@@ -35,8 +35,8 @@ export function BenefitsGrid() {
               <AnimatedReveal key={benefit.title} className="h-full">
                 <Card className="h-full">
                   <Icon className="h-8 w-8 text-accent" aria-hidden="true" />
-                  <h3 className="mt-5 text-lg font-medium text-black">{benefit.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                  <h3 className="mt-5 text-lg font-medium text-chalk">{benefit.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-400">
                     {benefit.description}
                   </p>
                 </Card>

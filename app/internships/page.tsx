@@ -27,7 +27,7 @@ export default function InternshipsPage() {
       <ProgramOverview />
       <TracksGrid />
 
-      <section id="open-roles" className="bg-white py-20 md:py-28">
+      <section id="open-roles" className="bg-surface py-20 md:py-28">
         <Container>
           <SectionHeading eyebrow="Open Internship Roles" title="Current openings." />
           <div className="mt-10">

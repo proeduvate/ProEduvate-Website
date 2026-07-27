@@ -19,14 +19,14 @@ export default function BlogPage() {
         title="Notes on AI, EdTech, and building software that lasts."
       />
 
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-surface py-20 md:py-28">
         <Container>
           <Stagger className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {posts.map((post) => (
               <AnimatedReveal key={post.slug} className="h-full">
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group flex h-full flex-col rounded-2xl border border-gray-200 bg-off-white p-7 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_20px_60px_-24px_rgba(20,113,240,0.25)]"
+                  className="group flex h-full flex-col rounded-2xl border border-white/10 bg-surface-2 p-7 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_20px_60px_-24px_rgba(20,113,240,0.25)]"
                 >
                   <p className="text-xs text-gray-500">
                     {new Date(post.date).toLocaleDateString("en-US", {
@@ -36,8 +36,8 @@ export default function BlogPage() {
                     })}{" "}
                     · {post.readingTime}
                   </p>
-                  <h2 className="mt-3 text-xl font-medium text-black">{post.title}</h2>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-600">
+                  <h2 className="mt-3 text-xl font-medium text-chalk">{post.title}</h2>
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-gray-400">
                     {post.excerpt}
                   </p>
                   <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent">

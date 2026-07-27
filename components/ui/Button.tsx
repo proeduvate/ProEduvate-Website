@@ -13,10 +13,10 @@ const base =
 const variants: Record<Variant, string> = {
   primary:
     "bg-accent text-white hover:bg-accent-2 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_-8px_var(--color-accent)] active:translate-y-0",
+  // Inverted pill -- reads as the high-contrast option on a dark canvas.
   secondary:
-    "bg-white text-black hover:-translate-y-0.5 hover:shadow-[0_8px_30px_-10px_rgba(0,0,0,0.4)] active:translate-y-0",
-  ghost:
-    "bg-transparent text-current hover:bg-gray-50 active:bg-gray-200/60",
+    "bg-chalk text-surface hover:-translate-y-0.5 hover:shadow-[0_8px_30px_-10px_rgba(255,255,255,0.35)] active:translate-y-0",
+  ghost: "bg-transparent text-current hover:bg-white/5 active:bg-white/10",
   "outline-light":
     "border border-white/25 text-white hover:border-white/60 hover:bg-white/10",
 };

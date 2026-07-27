@@ -9,7 +9,7 @@ export function ProductsPreview() {
   const featured = products.slice(0, 6);
 
   return (
-    <section className="bg-white py-24 md:py-32">
+    <section className="bg-surface py-24 md:py-32">
       <Container>
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
           <SectionHeading
@@ -19,7 +19,7 @@ export function ProductsPreview() {
             className="max-w-xl"
           />
           <AnimatedReveal delay={0.15}>
-            <Button href="/products" variant="secondary" className="border border-gray-200">
+            <Button href="/products" variant="secondary" className="border border-white/10">
               View All Products
             </Button>
           </AnimatedReveal>
