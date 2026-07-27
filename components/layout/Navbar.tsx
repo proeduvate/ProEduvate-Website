@@ -47,7 +47,7 @@ export function Navbar() {
       >
         <Container className="flex h-18 items-center justify-between py-4">
           <Link href="/" className="text-white">
-            <Logo variant="light" />
+            <Logo />
           </Link>
 
           <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">

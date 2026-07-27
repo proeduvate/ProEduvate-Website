@@ -1,21 +1,16 @@
 @import "tailwindcss";
 
 /*
- * ProEduvate design tokens.
- *
- * STUB: Colors below are a best-effort visual extraction from the supplied
- * logo (no pixel-accurate eyedropper was possible -- the asset was pasted
- * inline in chat, not saved to disk). Swap the hex values in this single
- * block once the exact brand hex codes are confirmed; every component
- * consumes these tokens, never a hardcoded hex.
+ * ProEduvate design tokens. Accent blue is pixel-sampled from the real
+ * brand logo (public/brand/logo-mark.png), not an approximation.
  */
 :root {
   --color-black: #030507;
   --color-primary: #081c3a;
   --color-primary-2: #0f2f5c;
-  --color-accent: #1471f0;
-  --color-accent-2: #3d8bff;
-  --color-accent-glow: #6fadff;
+  --color-accent: #0082fb;
+  --color-accent-2: #3aa0ff;
+  --color-accent-glow: #7cc2ff;
   --color-white: #ffffff;
   --color-off-white: #f5f7fa;
   --color-gray-50: #eef1f5;
@@ -25,6 +20,10 @@
   --color-gray-800: #232a36;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
+  /* Category accents for the /products command-deck grid only. */
+  --color-category-edtech: var(--color-accent);
+  --color-category-enterprise: #8457f5;
+  --color-category-ai: #14c9b8;
 }
 
 @theme inline {
@@ -43,12 +42,17 @@
   --color-gray-800: var(--color-gray-800);
   --color-success: var(--color-success);
   --color-warning: var(--color-warning);
+  --color-category-edtech: var(--color-category-edtech);
+  --color-category-enterprise: var(--color-category-enterprise);
+  --color-category-ai: var(--color-category-ai);
 
   --font-sans: var(--font-inter);
   --font-display: var(--font-space-grotesk);
 
   --animate-marquee: marquee 32s linear infinite;
   --animate-fade-up: fade-up 0.6s ease-out both;
+  --animate-aurora: aurora-drift 18s ease-in-out infinite;
+  --animate-aurora-slow: aurora-drift 26s ease-in-out infinite reverse;
 }
 
 @keyframes marquee {
@@ -68,6 +72,19 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Slow breathing glow used behind the hero's frame sequence. */
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate3d(5%, -4%, 0) scale(1.22);
+    opacity: 0.8;
   }
 }
 
@@ -131,4 +148,13 @@
       transparent 1px
     );
   background-size: 48px 48px;
+}
+
+/*
+ * Static film grain. Inline SVG turbulence rather than an image request, and
+ * deliberately not animated so it costs nothing after first paint.
+ */
+.bg-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
 }

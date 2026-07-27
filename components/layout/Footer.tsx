@@ -37,7 +37,7 @@ export function Footer() {
       <Container className="py-16 md:py-20">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-5">
           <div className="lg:col-span-2">
-            <Logo variant="light" />
+            <Logo />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-gray-400">
               We build AI-powered products for education and enterprise, and
               partner with clients who need the same craft applied to their own

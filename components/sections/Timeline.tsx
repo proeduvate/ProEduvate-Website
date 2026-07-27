@@ -11,7 +11,7 @@ export function Timeline() {
 
         <div className="mt-14 space-y-0">
           {timeline.map((milestone, i) => (
-            <AnimatedReveal key={milestone.year} delay={i * 0.05}>
+            <AnimatedReveal key={milestone.title} delay={i * 0.05}>
               <div className="grid grid-cols-[80px_1fr] gap-6 border-t border-gray-200 py-8 first:border-t sm:grid-cols-[120px_1fr]">
                 <span className="font-display text-2xl font-medium text-accent">
                   {milestone.year}

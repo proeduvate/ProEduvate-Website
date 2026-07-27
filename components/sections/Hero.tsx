@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { ParticleField } from "@/components/ui/ParticleField";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
@@ -24,6 +25,19 @@ const PHASE_TRANSFORM: Phase = { start: 0.28, end: 0.56, fadeIn: 0.05, fadeOut: 
 const PHASE_SIGNAL: Phase = { start: 0.61, end: 0.83, fadeIn: 0.05, fadeOut: 0.05 };
 const PHASE_LAUNCH: Phase = { start: 0.87, end: 1, fadeIn: 0.05, fadeOut: 0 };
 
+// Resting spots the scroll snaps to once the user stops scrolling -- one per
+// story beat, centered on each phase's fully-visible plateau.
+const SNAP_POINTS = [0, 0.42, 0.74, 0.97];
+const SNAP_MIN_DELTA = 0.035; // ignore scroll jitter smaller than this
+const SNAP_SETTLE_DELAY = 160; // ms of no scroll activity before snapping
+
+// The snap animation's duration scales with how far it travels, so it reads
+// as a continuation of the scroll rather than an abrupt jolt regardless of
+// how slowly the user was actually scrolling.
+const SNAP_MS_PER_UNIT = 6000; // ms of animation per full 0..1 of progress
+const SNAP_MIN_DURATION = 1200;
+const SNAP_MAX_DURATION = 3400;
+
 function pad(n: number) {
   return String(n).padStart(4, "0");
 }
@@ -37,11 +51,14 @@ function loadImage(src: string): Promise<HTMLImageElement> {
     const img = new window.Image();
     img.decoding = "async";
     img.onload = () => {
+      // decode() is a paint-jank optimization, not a correctness requirement
+      // -- drawImage will decode synchronously if needed anyway. Some
+      // environments never resolve/reject it, so race it against a timeout
+      // rather than let one stuck image stall the whole preload queue.
       if (typeof img.decode === "function") {
-        img
-          .decode()
-          .then(() => resolve(img))
-          .catch(() => resolve(img));
+        const decoded = img.decode().catch(() => {});
+        const timeout = new Promise<void>((r) => setTimeout(r, 1500));
+        Promise.race([decoded, timeout]).then(() => resolve(img));
       } else {
         resolve(img);
       }
@@ -109,8 +126,11 @@ export function Hero() {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const frameIndexRef = useRef(-1);
   const targetProgressRef = useRef(0);
+  const rawProgressRef = useRef(0);
   const renderProgressRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const snapIndexRef = useRef(0);
 
   const [status, setStatus] = useState<Status>("loading");
   const [loadedPct, setLoadedPct] = useState(0);
@@ -192,7 +212,96 @@ export function Hero() {
       const rect = section!.getBoundingClientRect();
       const viewport = sticky!.clientHeight;
       const total = rect.height - viewport;
-      targetProgressRef.current = total <= 0 ? 0 : Math.min(1, Math.max(0, -rect.top / total));
+      const raw = total <= 0 ? 0 : -rect.top / total;
+      rawProgressRef.current = raw;
+      targetProgressRef.current = Math.min(1, Math.max(0, raw));
+    }
+
+    // Hand-rolled scroll tween rather than scrollTo({behavior:"smooth"}):
+    // native smooth-scroll duration/easing is inconsistent across browsers
+    // (and doesn't animate at all in some headless/automated ones), so this
+    // keeps the snap animation reliable and gives full control over easing.
+    let snapAnimFrame: number | null = null;
+    let snapAnimLastSetY = 0;
+
+    function cancelSnapAnimation() {
+      if (snapAnimFrame) {
+        cancelAnimationFrame(snapAnimFrame);
+        snapAnimFrame = null;
+      }
+    }
+
+    function easeInOutCubic(t: number) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function animateScrollTo(targetY: number, duration: number) {
+      cancelSnapAnimation();
+      const startY = window.scrollY;
+      const distance = targetY - startY;
+      if (Math.abs(distance) < 1) return;
+      const startTime = performance.now();
+      snapAnimLastSetY = startY;
+
+      function step(now: number) {
+        // If scrollY drifted from what this tween last set, the user has
+        // taken over -- bail out and let their input drive normally.
+        if (Math.abs(window.scrollY - snapAnimLastSetY) > 2) {
+          snapAnimFrame = null;
+          return;
+        }
+
+        const t = Math.min(1, (now - startTime) / duration);
+        const y = startY + distance * easeInOutCubic(t);
+        window.scrollTo(0, y);
+        snapAnimLastSetY = y;
+
+        snapAnimFrame = t < 1 ? requestAnimationFrame(step) : null;
+      }
+
+      snapAnimFrame = requestAnimationFrame(step);
+    }
+
+    // Converts a 0..1 story-progress value into an absolute page scrollY and
+    // tweens there, at a duration proportional to how far it has to travel.
+    function scrollToProgress(p: number) {
+      const rect = section!.getBoundingClientRect();
+      const sectionTop = window.scrollY + rect.top;
+      const total = rect.height - sticky!.clientHeight;
+      const startProgress = Math.min(1, Math.max(0, rawProgressRef.current));
+      const duration = Math.min(
+        SNAP_MAX_DURATION,
+        Math.max(SNAP_MIN_DURATION, Math.abs(p - startProgress) * SNAP_MS_PER_UNIT)
+      );
+      animateScrollTo(sectionTop + p * total, duration);
+    }
+
+    // After scrolling settles, advance/retreat exactly one story beat in the
+    // direction the user was headed, or snap back if the move was too small
+    // to count as intentional. Skipped once the user has scrolled meaningfully
+    // past the pinned section so it never fights normal page scrolling.
+    function handleSettle() {
+      const raw = rawProgressRef.current;
+      if (raw <= -0.02 || raw >= 1.02) return;
+
+      const current = Math.min(1, Math.max(0, raw));
+      const restIndex = snapIndexRef.current;
+      const delta = current - SNAP_POINTS[restIndex];
+
+      let targetIndex = restIndex;
+      if (delta > SNAP_MIN_DELTA) {
+        targetIndex = Math.min(restIndex + 1, SNAP_POINTS.length - 1);
+      } else if (delta < -SNAP_MIN_DELTA) {
+        targetIndex = Math.max(restIndex - 1, 0);
+      }
+
+      snapIndexRef.current = targetIndex;
+      scrollToProgress(SNAP_POINTS[targetIndex]);
+    }
+
+    function scheduleSnapCheck() {
+      if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
+      snapTimerRef.current = setTimeout(handleSettle, SNAP_SETTLE_DELAY);
     }
 
     let lastSync = 0;
@@ -246,6 +355,7 @@ export function Hero() {
     function onScroll() {
       computeTargetProgress();
       ensureLooping();
+      scheduleSnapCheck();
     }
 
     function onResize() {
@@ -266,6 +376,8 @@ export function Hero() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
+      cancelSnapAnimation();
       root.style.scrollBehavior = previousScrollBehavior;
     };
   }, [status]);
@@ -300,6 +412,21 @@ export function Hero() {
           aria-label="ProEduvate product interfaces dissolving into the ProEduvate signal mark"
         />
 
+        {/* Breathing aurora glows — keep the frame feeling lit while parked. */}
+        <div
+          aria-hidden="true"
+          className="animate-[--animate-aurora] pointer-events-none absolute -top-1/4 -left-1/4 h-[70vh] w-[70vh] rounded-full blur-[130px]"
+          style={{ background: "color-mix(in srgb, var(--color-accent) 42%, transparent)" }}
+        />
+        <div
+          aria-hidden="true"
+          className="animate-[--animate-aurora-slow] pointer-events-none absolute -right-1/4 -bottom-1/4 h-[60vh] w-[60vh] rounded-full blur-[140px]"
+          style={{ background: "color-mix(in srgb, var(--color-primary-2) 60%, transparent)" }}
+        />
+
+        {/* Ambient particles — own rAF loop, so the hero stays alive between snaps. */}
+        <ParticleField className="pointer-events-none absolute inset-0 h-full w-full" />
+
         {/* Legibility scrims */}
         <div
           aria-hidden="true"
@@ -308,6 +435,12 @@ export function Hero() {
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black/70 to-transparent"
+        />
+
+        {/* Film grain for a bit of texture over the flat gradients. */}
+        <div
+          aria-hidden="true"
+          className="bg-grain pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-overlay"
         />
 
         {/* Phase 1: Product */}
@@ -319,7 +452,15 @@ export function Hero() {
             pointerEvents: opProduct > 0.5 ? "auto" : "none",
           }}
         >
-          <Container className="pt-24">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.68) 38%, rgba(0,0,0,0.25) 62%, transparent 78%)",
+            }}
+          />
+          <Container className="relative z-10 pt-24">
             <Badge tone="outline" className="mb-6">
               AI-Powered Product Company
             </Badge>
@@ -353,7 +494,7 @@ export function Hero() {
             transform: `translateY(${(1 - opTransform) * 16}px)`,
           }}
         >
-          <Container>
+          <Container className="relative z-10">
             <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-accent-2 uppercase">
               How we work
             </p>
@@ -371,7 +512,7 @@ export function Hero() {
             transform: `translateY(${(1 - opSignal) * 16}px)`,
           }}
         >
-          <Container>
+          <Container className="relative z-10">
             <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-accent-2 uppercase">
               Our signal
             </p>
@@ -393,7 +534,7 @@ export function Hero() {
             pointerEvents: opLaunch > 0.5 ? "auto" : "none",
           }}
         >
-          <Container>
+          <Container className="relative z-10">
             <p className="mb-4 text-xs font-semibold tracking-[0.2em] text-accent-2 uppercase">
               Always shipping
             </p>
@@ -421,6 +562,21 @@ export function Hero() {
             className="w-px bg-accent-2"
             style={{ height: `${progress * 100}%` }}
           />
+          {/* Tick per resting spot, lit once the scrub reaches it. */}
+          {SNAP_POINTS.map((point) => {
+            const reached = progress >= point - 0.02;
+            return (
+              <span
+                key={point}
+                className="absolute -left-[3px] h-[7px] w-[7px] -translate-y-1/2 rotate-45 border transition-colors duration-300"
+                style={{
+                  top: `${point * 100}%`,
+                  borderColor: reached ? "var(--color-accent-2)" : "rgba(255,255,255,0.3)",
+                  background: reached ? "var(--color-accent-2)" : "transparent",
+                }}
+              />
+            );
+          })}
         </div>
 
         {/* Scroll hint */}

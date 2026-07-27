@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/sections/PageHero";
+import { Quote } from "lucide-react";
+import { AboutHero } from "@/components/sections/AboutHero";
 import { Container } from "@/components/ui/Container";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { ValuesGrid } from "@/components/sections/ValuesGrid";
 import { Timeline } from "@/components/sections/Timeline";
+import { Achievements } from "@/components/sections/Achievements";
 import { TeamGrid } from "@/components/sections/TeamGrid";
 import { CultureGallery } from "@/components/sections/CultureGallery";
 
@@ -16,20 +18,19 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <PageHero
-        eyebrow="About Us"
-        title="Software built by people who care what it's for."
-        description="ProEduvate started as a small team frustrated with clunky institutional software — and grew into a product company building for EdTech and enterprise alike."
-      />
+      <AboutHero />
 
       <section className="bg-white py-24 md:py-32">
-        <Container className="grid grid-cols-1 gap-16 lg:grid-cols-2">
+        <Container className="grid grid-cols-1 gap-16 lg:grid-cols-[1.2fr_1fr]">
           <AnimatedReveal>
-            <p className="mb-3 text-xs font-semibold tracking-[0.2em] text-accent uppercase">
+            <Quote className="h-10 w-10 text-accent/30" aria-hidden="true" />
+            <p className="mt-4 text-xs font-semibold tracking-[0.2em] text-accent uppercase">
               Our Story
             </p>
-            <h2 className="text-3xl font-medium text-black md:text-4xl">Why we started.</h2>
-            <p className="mt-5 text-base leading-relaxed text-gray-600">
+            <h2 className="mt-2 text-4xl font-medium text-black md:text-5xl">
+              Why we started.
+            </h2>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-gray-600">
               {/* STUB: replace with the real founding story before launch. */}
               ProEduvate began with a simple frustration: the software institutions
               relied on to teach, assess, and administer was years behind the
@@ -41,30 +42,35 @@ export default function AboutPage() {
             </p>
           </AnimatedReveal>
 
-          <div className="grid grid-cols-1 gap-8">
+          <div className="grid grid-cols-1 gap-10">
             <AnimatedReveal delay={0.1}>
-              <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-                Mission
-              </p>
-              <p className="text-xl font-medium text-black md:text-2xl">
-                Build AI-powered software that makes learning and enterprise
-                work measurably better, not just more automated.
-              </p>
+              <div className="border-l-2 border-accent pl-6">
+                <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-accent uppercase">
+                  Mission
+                </p>
+                <p className="text-2xl font-medium text-black md:text-3xl">
+                  Build AI-powered software that makes learning and enterprise
+                  work measurably better, not just more automated.
+                </p>
+              </div>
             </AnimatedReveal>
             <AnimatedReveal delay={0.2}>
-              <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-accent uppercase">
-                Vision
-              </p>
-              <p className="text-xl font-medium text-black md:text-2xl">
-                A world where every institution and enterprise team has
-                access to software as capable as the biggest tech companies&apos;.
-              </p>
+              <div className="border-l-2 border-gray-200 pl-6">
+                <p className="mb-2 text-xs font-semibold tracking-[0.2em] text-accent uppercase">
+                  Vision
+                </p>
+                <p className="text-2xl font-medium text-black md:text-3xl">
+                  A world where every institution and enterprise team has
+                  access to software as capable as the biggest tech companies&apos;.
+                </p>
+              </div>
             </AnimatedReveal>
           </div>
         </Container>
       </section>
 
       <Timeline />
+      <Achievements />
       <ValuesGrid expanded />
       <TeamGrid />
       <CultureGallery />

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
-import { PageHero } from "@/components/sections/PageHero";
-import { ProductsFilterGrid } from "@/components/sections/ProductsFilterGrid";
-import { CtaBand } from "@/components/sections/CtaBand";
+import { Button } from "@/components/ui/Button";
+import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
+import { ProductsConsoleHero } from "@/components/sections/ProductsConsoleHero";
+import { ProductsScrollStory } from "@/components/sections/ProductsScrollStory";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -13,24 +14,28 @@ export const metadata: Metadata = {
 export default function ProductsPage() {
   return (
     <>
-      <PageHero
-        eyebrow="Our Products"
-        title="Products we build and run ourselves."
-        description="ProEduvate is a product company first. This page is an intentionally minimal overview — full detail, screenshots, and documentation live on our dedicated product portfolio site."
-      />
+      <ProductsConsoleHero />
 
-      <section className="bg-white py-20 md:py-28">
-        <Container>
-          <ProductsFilterGrid />
+      <ProductsScrollStory />
+
+      <section className="border-t border-white/10 bg-black py-20 md:py-28">
+        <Container className="text-center">
+          <AnimatedReveal>
+            <h2 className="text-balance mx-auto max-w-2xl text-2xl font-medium text-white sm:text-3xl md:text-4xl">
+              Have a product idea or partnership in mind?
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-gray-400">
+              We&apos;re always open to conversations about new products, integrations, or
+              institutional partnerships.
+            </p>
+            <div className="mt-8">
+              <Button href="/contact" size="lg">
+                Get in Touch
+              </Button>
+            </div>
+          </AnimatedReveal>
         </Container>
       </section>
-
-      <CtaBand
-        title="Have a product idea or partnership in mind?"
-        description="We're always open to conversations about new products, integrations, or institutional partnerships."
-        ctaLabel="Get in Touch"
-        ctaHref="/contact"
-      />
     </>
   );
 }

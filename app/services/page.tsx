@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/sections/PageHero";
 import { ServicesGrid } from "@/components/sections/ServicesGrid";
+import { DomainsGrid } from "@/components/sections/DomainsGrid";
+import { WhyChooseUs } from "@/components/sections/WhyChooseUs";
+import { CustomProjectsGrid } from "@/components/sections/CustomProjectsGrid";
 import { Process } from "@/components/sections/Process";
 import { LogoStrip } from "@/components/sections/LogoStrip";
 import { CtaBand } from "@/components/sections/CtaBand";
@@ -22,6 +25,9 @@ export default function ServicesPage() {
       />
 
       <ServicesGrid />
+      <DomainsGrid />
+      <WhyChooseUs />
+      <CustomProjectsGrid />
       <Process />
       <LogoStrip dark={false} label="Technologies we build with" items={techStack} />
 
