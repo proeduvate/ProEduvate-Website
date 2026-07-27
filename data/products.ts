@@ -201,11 +201,11 @@ export const products: Product[] = [
     externalUrl: "#",
   },
   {
-    slug: "promtogen",
-    name: "Promtogen",
+    slug: "promptogen",
+    name: "PromptoGen",
     tagline: "Turns plain text or an image into a proper prompt.",
     description:
-      "Promtogen is an advanced AI tool that converts an ordinary text message into a real prompt, and an image into a detailed one.",
+      "PromptoGen is an advanced AI tool that converts an ordinary text message into a real prompt, and an image into a detailed one.",
     category: "AI",
     status: "Live",
     initials: "PG",
