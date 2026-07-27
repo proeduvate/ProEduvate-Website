@@ -130,9 +130,32 @@ export function ProductStoryPanel({
 
           <AnimatedReveal delay={0.16}>
             <p className={cn("mt-6 max-w-lg text-lg text-gray-400 sm:text-xl", isRight && "ml-auto")}>
-              {product.tagline}
+              {product.description}
             </p>
           </AnimatedReveal>
+
+          {product.highlights && (
+            <AnimatedReveal delay={0.22}>
+              <ul className={cn("mt-6 max-w-lg space-y-2", isRight && "ml-auto")}>
+                {product.highlights.map((item) => (
+                  <li
+                    key={item}
+                    className={cn(
+                      "flex items-start gap-2.5 text-sm text-gray-500",
+                      isRight && "flex-row-reverse text-right"
+                    )}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="mt-1.5 h-1 w-1 shrink-0 rounded-full"
+                      style={{ background: accent }}
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </AnimatedReveal>
+          )}
 
           {product.metric && (
             <AnimatedReveal delay={0.24}>

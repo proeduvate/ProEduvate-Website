@@ -16,12 +16,17 @@ export function CustomProjectsGrid() {
 
         <Stagger className="mt-14 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {customProjects.map((project, i) => (
-            <AnimatedReveal key={project}>
-              <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4 transition-colors duration-300 hover:border-accent/40">
-                <span className="font-display text-sm text-gray-500 tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="text-sm font-medium text-white">{project}</span>
+            <AnimatedReveal key={project.name} className="h-full">
+              <div className="flex h-full flex-col rounded-xl border border-white/10 bg-white/[0.03] p-5 transition-colors duration-300 hover:border-accent/40">
+                <div className="flex items-center gap-3">
+                  <span className="font-display text-sm text-gray-500 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm font-medium text-white">{project.name}</span>
+                </div>
+                <p className="mt-2.5 text-sm leading-relaxed text-gray-500">
+                  {project.description}
+                </p>
               </div>
             </AnimatedReveal>
           ))}

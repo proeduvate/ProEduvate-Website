@@ -1,8 +1,7 @@
 // `externalUrl` intentionally defaults to a local stub route ("#") so it is
 // a one-line change to point at the future dedicated portfolio site.
-// No `metric`/`sparkline` data is set on any product below -- these are
-// real, named ProEduvate products, so we don't fabricate usage numbers for
-// them the way the earlier placeholder demo set had.
+// No `metric`/`sparkline` data is set on any product -- these are real,
+// named ProEduvate products, so we don't fabricate usage numbers for them.
 
 export type ProductCategory = "EdTech" | "IT & Enterprise" | "AI";
 export type ProductStatus = "Live" | "Beta" | "Coming Soon";
@@ -15,7 +14,12 @@ export interface ProductMetric {
 export interface Product {
   slug: string;
   name: string;
+  /** One-line summary, used in the homepage preview cards. */
   tagline: string;
+  /** Fuller description, used on the /products story panels. */
+  description: string;
+  /** Optional feature bullets shown alongside the description. */
+  highlights?: string[];
   category: ProductCategory;
   status: ProductStatus;
   initials: string;
@@ -26,63 +30,83 @@ export interface Product {
 
 export const products: Product[] = [
   {
-    slug: "hackathon-portal",
-    name: "Hackathon Portal",
-    tagline: "Running and managing ProEduvate's hackathons end to end.",
+    slug: "hackzen",
+    name: "HackZen",
+    tagline: "A hackathon platform built to stretch young innovators.",
+    description:
+      "HackZen is where hackathons get run — bringing young minds together around genuinely challenging problem statements.",
+    highlights: [
+      "Students take part in live hackathons",
+      "Organisations host their own events on the platform",
+      "A personalised AI assistant sharpens problem statements and development direction",
+      "Mentors track and guide their teams' progress",
+    ],
     category: "EdTech",
     status: "Beta",
-    initials: "HP",
+    initials: "HZ",
     externalUrl: "#",
   },
   {
-    slug: "testing-portal",
-    name: "Testing Portal",
-    tagline: "Centralized QA and testing workflows for our product line.",
+    slug: "testsync",
+    name: "TestSync",
+    tagline: "Real-time user testing for developers and startups.",
+    description:
+      "TestSync connects developers and startups with real users for live testing in whichever area they need — and testers get paid for the sessions they run.",
     category: "IT & Enterprise",
     status: "Live",
-    initials: "TP",
+    initials: "TS",
     externalUrl: "#",
   },
   {
-    slug: "internship-portal",
-    name: "Internship Portal",
-    tagline: "Applications, tracking, and onboarding for interns in one place.",
+    slug: "prointern",
+    name: "ProIntern",
+    tagline: "A one-month internship on a real project, assessed by AI.",
+    description:
+      "ProIntern places students inside a real project module for a one-month internship, with their learning and performance evaluated by AI.",
     category: "EdTech",
     status: "Beta",
-    initials: "IP",
+    initials: "PI",
     externalUrl: "#",
   },
   {
-    slug: "mom-tool",
-    name: "MoM Tool",
-    tagline: "Turns meeting notes into clean, shareable minutes automatically.",
+    slug: "minanalyzer",
+    name: "MinAnalyzer",
+    tagline: "Records, summarises, and pulls insight out of every meeting.",
+    description:
+      "MinAnalyzer records online meetings, summarises them into clean minutes, and surfaces the insights worth acting on.",
     category: "IT & Enterprise",
     status: "Beta",
-    initials: "MT",
+    initials: "MA",
     externalUrl: "#",
   },
   {
     slug: "codoai",
     name: "CodoAI",
-    tagline: "An AI pair-programmer for faster, cleaner code reviews.",
-    category: "AI",
+    tagline: "Gamified coding practice with an AI guide in real time.",
+    description:
+      "CodoAI is a coding practice platform with a gamified, Gen Z feel — and an AI assistant guiding you live as you write code.",
+    category: "EdTech",
     status: "Live",
     initials: "CA",
     externalUrl: "#",
   },
   {
-    slug: "lms-portal",
-    name: "LMS Portal",
-    tagline: "A learning management system, built the ProEduvate way.",
+    slug: "learnova",
+    name: "Learnova",
+    tagline: "A personal learning portal built around placement prep.",
+    description:
+      "Learnova is a personal learning portal where individuals study and prepare themselves for placements.",
     category: "EdTech",
     status: "Beta",
-    initials: "LP",
+    initials: "LN",
     externalUrl: "#",
   },
   {
     slug: "crictator",
     name: "Crictator",
-    tagline: "Live cricket scoring and stats, built for fans.",
+    tagline: "Cricket simulation with realistic player and pitch modelling.",
+    description:
+      "Crictator simulates cricket matches under realistic conditions, with a live player model covering physical fitness, mindset, pitch conditions and more.",
     category: "IT & Enterprise",
     status: "Coming Soon",
     initials: "CR",
@@ -91,34 +115,42 @@ export const products: Product[] = [
   {
     slug: "medvault",
     name: "Medvault",
-    tagline: "A secure digital vault for patient health records.",
+    tagline: "E-card medical records for emergencies and new consultations.",
+    description:
+      "Medvault stores a person's medical record on an e-card, ready for an emergency or a first visit to a new doctor.",
     category: "IT & Enterprise",
     status: "Coming Soon",
     initials: "MV",
     externalUrl: "#",
   },
   {
-    slug: "gdbot",
-    name: "GDBot",
-    tagline: "AI-moderated group discussion practice for interview prep.",
+    slug: "gd-bot",
+    name: "GD Bot",
+    tagline: "Practise group discussions against AI, then get the analytics.",
+    description:
+      "GD Bot is an AI-based group discussion platform where individuals practise and compete against AI, then get a report on exactly where to improve.",
     category: "AI",
     status: "Beta",
     initials: "GD",
     externalUrl: "#",
   },
   {
-    slug: "interview-bot",
-    name: "Interview Bot",
-    tagline: "AI mock interviews with real-time feedback.",
+    slug: "tailon-ai",
+    name: "Tailon AI",
+    tagline: "AI interview rounds to practise on before the real thing.",
+    description:
+      "Tailon AI is an AI-based interview practice platform for anyone working through interview preparation.",
     category: "AI",
     status: "Beta",
-    initials: "IB",
+    initials: "TA",
     externalUrl: "#",
   },
   {
     slug: "voltvision",
-    name: "VoltVision",
-    tagline: "Computer-vision monitoring for electrical infrastructure.",
+    name: "Voltvision",
+    tagline: "Drone software that cuts energy waste in industrial zones.",
+    description:
+      "Voltvision is a drone-based software solution for reducing energy wastage across industrial zones, running alerts 24/7.",
     category: "AI",
     status: "Coming Soon",
     initials: "VV",
@@ -127,8 +159,10 @@ export const products: Product[] = [
   {
     slug: "varalaru-ulagam",
     name: "Varalaru Ulagam",
-    tagline: "A Tamil-language history learning experience.",
-    category: "EdTech",
+    tagline: "XR heritage preservation with an AI tour guide.",
+    description:
+      "Varalaru Ulagam is an XR solution for preserving heritage sites and promoting tourism, with an AI historic tour guide accompanying visitors.",
+    category: "AI",
     status: "Coming Soon",
     initials: "VU",
     externalUrl: "#",
@@ -136,16 +170,20 @@ export const products: Product[] = [
   {
     slug: "soft-skills-portal",
     name: "Soft Skills Portal",
-    tagline: "Structured soft-skills training and assessment.",
+    tagline: "Soft skills training through AI scenarios and questioning.",
+    description:
+      "The Soft Skills Portal builds individual soft skills through AI-driven scenario justification and questionnaires.",
     category: "EdTech",
     status: "Beta",
     initials: "SS",
     externalUrl: "#",
   },
   {
-    slug: "clinic-management-system",
+    slug: "cms",
     name: "Clinic Management System",
-    tagline: "Appointments, records, and billing for clinics.",
+    tagline: "Clinic management, organised the way doctors actually work.",
+    description:
+      "CMS is a management portal that gives doctors an efficient view of how their clinic is running, in a doctor's own terms.",
     category: "IT & Enterprise",
     status: "Beta",
     initials: "CM",
@@ -154,7 +192,9 @@ export const products: Product[] = [
   {
     slug: "camseye",
     name: "CamsEye",
-    tagline: "AI-powered camera monitoring and alerts.",
+    tagline: "CCTV monitoring with advanced analytics and detection reports.",
+    description:
+      "CamsEye monitors and detects across CCTV camera feeds, with advanced analytics and detection reporting.",
     category: "AI",
     status: "Coming Soon",
     initials: "CE",
@@ -162,11 +202,26 @@ export const products: Product[] = [
   },
   {
     slug: "promtogen",
-    name: "PromptoGen",
-    tagline: "Generates and refines prompts for any LLM workflow.",
+    name: "Promtogen",
+    tagline: "Turns plain text or an image into a proper prompt.",
+    description:
+      "Promtogen is an advanced AI tool that converts an ordinary text message into a real prompt, and an image into a detailed one.",
     category: "AI",
     status: "Live",
     initials: "PG",
+    externalUrl: "#",
+  },
+  {
+    slug: "research-hub",
+    name: "Research Hub",
+    tagline: "Research tools and converters for sharper insight.",
+    description:
+      "Research Hub gathers a range of research tools and converters in one place, for better insights and a clearer research direction.",
+    category: "AI",
+    // NOTE: no build status was supplied for this one -- defaulted to
+    // "Coming Soon". Confirm before launch.
+    status: "Coming Soon",
+    initials: "RH",
     externalUrl: "#",
   },
 ];
