@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ParticleField } from "@/components/ui/ParticleField";
+import { HeroHud } from "@/components/ui/HeroHud";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
 
@@ -86,6 +87,14 @@ async function loadSequence(
 
   await Promise.all(new Array(Math.min(concurrency, urls.length)).fill(0).map(worker));
   return results;
+}
+
+// Label for the HUD readout -- whichever story beat the scrub is nearest to.
+function phaseLabel(p: number) {
+  if (p < 0.24) return "Product";
+  if (p < 0.585) return "Transform";
+  if (p < 0.85) return "Signal";
+  return "Launch";
 }
 
 function phaseOpacity(p: number, phase: Phase) {
@@ -441,6 +450,13 @@ export function Hero() {
         <div
           aria-hidden="true"
           className="bg-grain pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-overlay"
+        />
+
+        {/* Synthetic HUD — scan sweep, brackets, live readout. */}
+        <HeroHud
+          progress={progress}
+          label={phaseLabel(progress)}
+          showTelemetry={status === "ready"}
         />
 
         {/* Phase 1: Product */}

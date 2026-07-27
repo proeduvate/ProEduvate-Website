@@ -53,6 +53,8 @@
   --animate-fade-up: fade-up 0.6s ease-out both;
   --animate-aurora: aurora-drift 18s ease-in-out infinite;
   --animate-aurora-slow: aurora-drift 26s ease-in-out infinite reverse;
+  --animate-hero-scan: hero-scan 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-bracket: bracket-pulse 4s ease-in-out infinite;
 }
 
 @keyframes marquee {
@@ -72,6 +74,35 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Light bar that sweeps down the hero, so there is always something moving. */
+@keyframes hero-scan {
+  0% {
+    transform: translateY(-15vh);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(115vh);
+    opacity: 0;
+  }
+}
+
+/* Corner brackets easing in and out around the hero frame. */
+@keyframes bracket-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
   }
 }
 
