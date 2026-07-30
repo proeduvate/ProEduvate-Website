@@ -6,7 +6,7 @@ import { ProductsPreview } from "@/components/sections/ProductsPreview";
 import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import { SignalShowcase } from "@/components/sections/SignalShowcase";
 import { ValuesGrid } from "@/components/sections/ValuesGrid";
-import { Testimonials } from "@/components/sections/Testimonials";
+import { InternReviews } from "@/components/sections/InternReviews";
 import { CareersTeaser } from "@/components/sections/CareersTeaser";
 import { FinalCta } from "@/components/sections/FinalCta";
 
@@ -21,7 +21,7 @@ export default function Home() {
       <ServicesPreview />
       <SignalShowcase />
       <ValuesGrid />
-      <Testimonials />
+      <InternReviews />
       <CareersTeaser />
       <FinalCta />
     </>
