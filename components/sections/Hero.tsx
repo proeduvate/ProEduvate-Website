@@ -15,7 +15,6 @@ const MOBILE_FRAME_COUNT = 120;
 const MOBILE_BREAKPOINT = 768;
 const SCROLL_VH = 450;
 const LOAD_CONCURRENCY = 10;
-const LERP_FACTOR = 0.18;
 
 type Status = "loading" | "ready" | "reduced";
 
@@ -26,18 +25,30 @@ const PHASE_TRANSFORM: Phase = { start: 0.28, end: 0.56, fadeIn: 0.05, fadeOut: 
 const PHASE_SIGNAL: Phase = { start: 0.61, end: 0.83, fadeIn: 0.05, fadeOut: 0.05 };
 const PHASE_LAUNCH: Phase = { start: 0.87, end: 1, fadeIn: 0.05, fadeOut: 0 };
 
-// Resting spots the scroll snaps to once the user stops scrolling -- one per
-// story beat, centered on each phase's fully-visible plateau.
-const SNAP_POINTS = [0, 0.42, 0.74, 0.97];
-const SNAP_MIN_DELTA = 0.035; // ignore scroll jitter smaller than this
-const SNAP_SETTLE_DELAY = 160; // ms of no scroll activity before snapping
+// Where each story beat begins -- used for the ticks on the progress rail.
+const PHASE_MARKERS = [
+  PHASE_PRODUCT.start,
+  PHASE_TRANSFORM.start,
+  PHASE_SIGNAL.start,
+  PHASE_LAUNCH.start,
+];
 
-// The snap animation's duration scales with how far it travels, so it reads
-// as a continuation of the scroll rather than an abrupt jolt regardless of
-// how slowly the user was actually scrolling.
-const SNAP_MS_PER_UNIT = 6000; // ms of animation per full 0..1 of progress
-const SNAP_MIN_DURATION = 1200;
-const SNAP_MAX_DURATION = 3400;
+/*
+ * Playback model: the sequence never fully stops once it has been started.
+ *
+ * `DRIFT_RATE` is the baseline speed the frames advance at while the user is
+ * anywhere inside the pinned section. Scrolling adds momentum on top of that,
+ * which decays back down to the baseline -- so a fast flick reacts
+ * immediately but always eases back to the same steady crawl rather than
+ * either stopping dead or running away.
+ *
+ * The one exception is the very start: nothing moves until the user has
+ * scrolled at least once, so the hero holds on frame 0 on load.
+ */
+const DRIFT_RATE = 0.018; // progress units per second at rest
+const SCROLL_IMPULSE = 0.00055; // progress units added per px of scroll
+const MOMENTUM_DECAY = 2.4; // how quickly extra speed bleeds off, per second
+const MAX_RATE = 0.42; // ceiling on progress units per second
 
 function pad(n: number) {
   return String(n).padStart(4, "0");
@@ -134,12 +145,9 @@ export function Hero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const frameIndexRef = useRef(-1);
-  const targetProgressRef = useRef(0);
   const rawProgressRef = useRef(0);
   const renderProgressRef = useRef(0);
   const rafRef = useRef<number | null>(null);
-  const snapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const snapIndexRef = useRef(0);
 
   const [status, setStatus] = useState<Status>("loading");
   const [loadedPct, setLoadedPct] = useState(0);
@@ -223,106 +231,49 @@ export function Hero() {
       const total = rect.height - viewport;
       const raw = total <= 0 ? 0 : -rect.top / total;
       rawProgressRef.current = raw;
-      targetProgressRef.current = Math.min(1, Math.max(0, raw));
     }
 
-    // Hand-rolled scroll tween rather than scrollTo({behavior:"smooth"}):
-    // native smooth-scroll duration/easing is inconsistent across browsers
-    // (and doesn't animate at all in some headless/automated ones), so this
-    // keeps the snap animation reliable and gives full control over easing.
-    let snapAnimFrame: number | null = null;
-    let snapAnimLastSetY = 0;
-
-    function cancelSnapAnimation() {
-      if (snapAnimFrame) {
-        cancelAnimationFrame(snapAnimFrame);
-        snapAnimFrame = null;
-      }
-    }
-
-    function easeInOutCubic(t: number) {
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    }
-
-    function animateScrollTo(targetY: number, duration: number) {
-      cancelSnapAnimation();
-      const startY = window.scrollY;
-      const distance = targetY - startY;
-      if (Math.abs(distance) < 1) return;
-      const startTime = performance.now();
-      snapAnimLastSetY = startY;
-
-      function step(now: number) {
-        // If scrollY drifted from what this tween last set, the user has
-        // taken over -- bail out and let their input drive normally.
-        if (Math.abs(window.scrollY - snapAnimLastSetY) > 2) {
-          snapAnimFrame = null;
-          return;
-        }
-
-        const t = Math.min(1, (now - startTime) / duration);
-        const y = startY + distance * easeInOutCubic(t);
-        window.scrollTo(0, y);
-        snapAnimLastSetY = y;
-
-        snapAnimFrame = t < 1 ? requestAnimationFrame(step) : null;
-      }
-
-      snapAnimFrame = requestAnimationFrame(step);
-    }
-
-    // Converts a 0..1 story-progress value into an absolute page scrollY and
-    // tweens there, at a duration proportional to how far it has to travel.
-    function scrollToProgress(p: number) {
-      const rect = section!.getBoundingClientRect();
-      const sectionTop = window.scrollY + rect.top;
-      const total = rect.height - sticky!.clientHeight;
-      const startProgress = Math.min(1, Math.max(0, rawProgressRef.current));
-      const duration = Math.min(
-        SNAP_MAX_DURATION,
-        Math.max(SNAP_MIN_DURATION, Math.abs(p - startProgress) * SNAP_MS_PER_UNIT)
-      );
-      animateScrollTo(sectionTop + p * total, duration);
-    }
-
-    // After scrolling settles, advance/retreat exactly one story beat in the
-    // direction the user was headed, or snap back if the move was too small
-    // to count as intentional. Skipped once the user has scrolled meaningfully
-    // past the pinned section so it never fights normal page scrolling.
-    function handleSettle() {
-      const raw = rawProgressRef.current;
-      if (raw <= -0.02 || raw >= 1.02) return;
-
-      const current = Math.min(1, Math.max(0, raw));
-      const restIndex = snapIndexRef.current;
-      const delta = current - SNAP_POINTS[restIndex];
-
-      let targetIndex = restIndex;
-      if (delta > SNAP_MIN_DELTA) {
-        targetIndex = Math.min(restIndex + 1, SNAP_POINTS.length - 1);
-      } else if (delta < -SNAP_MIN_DELTA) {
-        targetIndex = Math.max(restIndex - 1, 0);
-      }
-
-      snapIndexRef.current = targetIndex;
-      scrollToProgress(SNAP_POINTS[targetIndex]);
-    }
-
-    function scheduleSnapCheck() {
-      if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
-      snapTimerRef.current = setTimeout(handleSettle, SNAP_SETTLE_DELAY);
-    }
-
+    // --- playback state ----------------------------------------------
+    // `momentum` is signed extra speed on top of the baseline drift, so an
+    // upward flick briefly runs the sequence backwards before it settles
+    // forward again. It always decays toward zero, which is what pulls the
+    // speed back to the baseline instead of letting a fast scroll run away.
+    let momentum = 0;
+    let started = false;
+    let lastScrollY = window.scrollY;
     let lastSync = 0;
-    let looping = false;
+    let lastFrameTime = performance.now();
+    let onScreen = true;
+    let running = false;
 
-    function tick() {
-      renderProgressRef.current +=
-        (targetProgressRef.current - renderProgressRef.current) * LERP_FACTOR;
-      const settled =
-        Math.abs(targetProgressRef.current - renderProgressRef.current) < 0.0006;
-      if (settled) {
-        renderProgressRef.current = targetProgressRef.current;
+    function onScroll() {
+      const y = window.scrollY;
+      const delta = y - lastScrollY;
+      lastScrollY = y;
+      computeTargetProgress();
+
+      // The hero holds on frame 0 until the first scroll of the session.
+      if (delta !== 0) started = true;
+
+      const ceiling = MAX_RATE - DRIFT_RATE;
+      momentum = Math.max(-MAX_RATE, Math.min(ceiling, momentum + delta * SCROLL_IMPULSE));
+      start();
+    }
+
+    function tick(now: number) {
+      const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
+      lastFrameTime = now;
+
+      // Exponential decay back to the baseline drift rate.
+      momentum *= Math.exp(-MOMENTUM_DECAY * dt);
+      if (Math.abs(momentum) < 0.0004) momentum = 0;
+
+      if (started) {
+        const velocity = DRIFT_RATE + momentum;
+        renderProgressRef.current = Math.min(
+          1,
+          Math.max(0, renderProgressRef.current + velocity * dt)
+        );
       }
 
       const images = imagesRef.current;
@@ -340,53 +291,64 @@ export function Hero() {
         }
       }
 
-      const now = performance.now();
       if (now - lastSync > 32) {
         lastSync = now;
         setProgress(renderProgressRef.current);
       }
 
-      // Idle once the lerp has caught up: keep the tab from spinning the
-      // render loop forever. A new scroll/resize event restarts it.
-      if (settled) {
-        looping = false;
-        return;
-      }
+      // Deliberately keeps running even at rest -- the baseline drift means
+      // there is always something to advance. Gated on visibility below so it
+      // costs nothing off-screen or in a background tab.
+      if (running) rafRef.current = requestAnimationFrame(tick);
+    }
+
+    function start() {
+      if (running || !onScreen || document.hidden) return;
+      running = true;
+      lastFrameTime = performance.now();
       rafRef.current = requestAnimationFrame(tick);
     }
 
-    function ensureLooping() {
-      if (looping) return;
-      looping = true;
-      rafRef.current = requestAnimationFrame(tick);
-    }
-
-    function onScroll() {
-      computeTargetProgress();
-      ensureLooping();
-      scheduleSnapCheck();
+    function stop() {
+      running = false;
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     }
 
     function onResize() {
       resizeCanvas();
       computeTargetProgress();
-      ensureLooping();
+      start();
     }
+
+    function onVisibility() {
+      if (document.hidden) stop();
+      else start();
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        onScreen = entry.isIntersecting;
+        if (onScreen) start();
+        else stop();
+      },
+      { threshold: 0 }
+    );
 
     resizeCanvas();
     computeTargetProgress();
-    renderProgressRef.current = targetProgressRef.current;
 
+    observer.observe(section);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
-    ensureLooping();
+    document.addEventListener("visibilitychange", onVisibility);
+    start();
 
     return () => {
+      stop();
+      observer.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (snapTimerRef.current) clearTimeout(snapTimerRef.current);
-      cancelSnapAnimation();
+      document.removeEventListener("visibilitychange", onVisibility);
       root.style.scrollBehavior = previousScrollBehavior;
     };
   }, [status]);
@@ -488,17 +450,6 @@ export function Hero() {
               partners with institutions and companies who need the same craft applied to their
               own software.
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <Button href="/products" size="lg">
-                Explore Our Products
-              </Button>
-              <Button href="/careers" variant="outline-light" size="lg">
-                We&apos;re Hiring
-                <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-white">
-                  {openRoles}
-                </span>
-              </Button>
-            </div>
           </Container>
         </div>
 
@@ -578,8 +529,8 @@ export function Hero() {
             className="w-px bg-accent-2"
             style={{ height: `${progress * 100}%` }}
           />
-          {/* Tick per resting spot, lit once the scrub reaches it. */}
-          {SNAP_POINTS.map((point) => {
+          {/* Tick per story beat, lit once playback reaches it. */}
+          {PHASE_MARKERS.map((point) => {
             const reached = progress >= point - 0.02;
             return (
               <span

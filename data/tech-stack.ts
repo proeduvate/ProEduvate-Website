@@ -12,10 +12,7 @@ export const techStack: string[] = [
 ];
 
 export const clientLogos: string[] = [
-  "Meridian Institute",
-  "Northbridge Systems",
-  "Horizon Learning Trust",
-  "Fieldstone Analytics",
-  "Alderwood University",
-  "Cascade Enterprise Group",
+  "Agni College of Technology",
+  "Rajalakshmi Institute of Technology",
+  "Vel Tech Rangarajan Dr. Sagunthala R&D Institute of Science and Technology",
 ];
