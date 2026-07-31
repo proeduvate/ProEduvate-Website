@@ -3,7 +3,7 @@ import { Quote } from "lucide-react";
 import { AboutHero } from "@/components/sections/AboutHero";
 import { Container } from "@/components/ui/Container";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
-import { ValuesGrid } from "@/components/sections/ValuesGrid";
+import { GrowthRoadmap } from "@/components/sections/GrowthRoadmap";
 import { Timeline } from "@/components/sections/Timeline";
 import { Achievements } from "@/components/sections/Achievements";
 import { TeamGrid } from "@/components/sections/TeamGrid";
@@ -71,7 +71,7 @@ export default function AboutPage() {
 
       <Timeline />
       <Achievements />
-      <ValuesGrid expanded />
+      <GrowthRoadmap expanded />
       <TeamGrid />
       <CultureGallery />
     </>
