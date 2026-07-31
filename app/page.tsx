@@ -1,7 +1,7 @@
 import { Hero } from "@/components/sections/Hero";
 import { LogoStrip } from "@/components/sections/LogoStrip";
 import { StatsBand } from "@/components/sections/StatsBand";
-import { Pillars } from "@/components/sections/Pillars";
+import { SectorRing } from "@/components/sections/SectorRing";
 import { ProductsPreview } from "@/components/sections/ProductsPreview";
 import { ServicesPreview } from "@/components/sections/ServicesPreview";
 import { SignalShowcase } from "@/components/sections/SignalShowcase";
@@ -16,7 +16,7 @@ export default function Home() {
       <Hero />
       <LogoStrip />
       <StatsBand />
-      <Pillars />
+      <SectorRing />
       <ProductsPreview />
       <ServicesPreview />
       <SignalShowcase />
