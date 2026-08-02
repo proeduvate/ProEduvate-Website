@@ -13,7 +13,7 @@ import { internships } from "@/data/internships";
 const DESKTOP_FRAME_COUNT = 240;
 const MOBILE_FRAME_COUNT = 120;
 const MOBILE_BREAKPOINT = 768;
-const SCROLL_VH = 450;
+const SCROLL_VH = 260;
 const LOAD_CONCURRENCY = 10;
 
 type Status = "loading" | "ready" | "reduced";
@@ -34,21 +34,30 @@ const PHASE_MARKERS = [
 ];
 
 /*
- * Playback model: the sequence never fully stops once it has been started.
+ * Playback model: scroll position is the single source of truth.
  *
- * `DRIFT_RATE` is the baseline speed the frames advance at while the user is
- * anywhere inside the pinned section. Scrolling adds momentum on top of that,
- * which decays back down to the baseline -- so a fast flick reacts
- * immediately but always eases back to the same steady crawl rather than
- * either stopping dead or running away.
+ * Progress is a pure function of how far the pinned section has been
+ * scrolled through, so frame 0 sits exactly at the top of the section and the
+ * last frame exactly at the bottom. That coupling is what guarantees the
+ * sequence always plays out completely before the next section can appear,
+ * and -- just as importantly -- rewinds all the way to frame 0 before the
+ * page can scroll back above the hero.
  *
- * The one exception is the very start: nothing moves until the user has
- * scrolled at least once, so the hero holds on frame 0 on load.
+ * A previous version advanced progress on a timer instead, which let the
+ * frame index and the scroll position drift apart: you could reach the end of
+ * the section with the animation only part-way through, and scrolling up left
+ * it stranded mid-sequence.
+ *
+ * Automatic playback is layered on top as a gentle auto-scroll rather than a
+ * separate progress clock. Moving the scroll position is what keeps the two
+ * in lockstep -- anything else reintroduces exactly the drift described
+ * above. It only runs once the user has scrolled at least once, pauses while
+ * they are actively scrolling, and stops dead at the end of the sequence so
+ * it never drags anyone out of the hero.
  */
-const DRIFT_RATE = 0.018; // progress units per second at rest
-const SCROLL_IMPULSE = 0.00055; // progress units added per px of scroll
-const MOMENTUM_DECAY = 2.4; // how quickly extra speed bleeds off, per second
-const MAX_RATE = 0.42; // ceiling on progress units per second
+const SMOOTHING = 14; // how fast the rendered frame chases the scroll target
+const AUTOPLAY_SECONDS = 9; // a full automatic playthrough, start to finish
+const AUTOPLAY_IDLE_MS = 700; // quiet period before autoplay picks up again
 
 function pad(n: number) {
   return String(n).padStart(4, "0");
@@ -225,22 +234,25 @@ export function Hero() {
       frameIndexRef.current = -1;
     }
 
+    // Total scrollable distance through the pinned section, in px.
+    function scrollSpan() {
+      return Math.max(1, section!.getBoundingClientRect().height - sticky!.clientHeight);
+    }
+
     function computeTargetProgress() {
       const rect = section!.getBoundingClientRect();
-      const viewport = sticky!.clientHeight;
-      const total = rect.height - viewport;
-      const raw = total <= 0 ? 0 : -rect.top / total;
-      rawProgressRef.current = raw;
+      const raw = -rect.top / Math.max(1, rect.height - sticky!.clientHeight);
+      rawProgressRef.current = Math.min(1, Math.max(0, raw));
     }
 
     // --- playback state ----------------------------------------------
-    // `momentum` is signed extra speed on top of the baseline drift, so an
-    // upward flick briefly runs the sequence backwards before it settles
-    // forward again. It always decays toward zero, which is what pulls the
-    // speed back to the baseline instead of letting a fast scroll run away.
-    let momentum = 0;
     let started = false;
     let lastScrollY = window.scrollY;
+    // px of scroll this component applied itself and has not yet seen come
+    // back through the scroll event -- subtracted out so autoplay doesn't
+    // read its own movement as the user taking over.
+    let selfScrolled = 0;
+    let lastUserScrollAt = 0;
     let lastSync = 0;
     let lastFrameTime = performance.now();
     let onScreen = true;
@@ -248,15 +260,17 @@ export function Hero() {
 
     function onScroll() {
       const y = window.scrollY;
-      const delta = y - lastScrollY;
+      const userDelta = y - lastScrollY - selfScrolled;
       lastScrollY = y;
+      selfScrolled = 0;
+
+      if (Math.abs(userDelta) > 0.5) {
+        lastUserScrollAt = performance.now();
+        // The hero holds on frame 0 until the first real scroll.
+        started = true;
+      }
+
       computeTargetProgress();
-
-      // The hero holds on frame 0 until the first scroll of the session.
-      if (delta !== 0) started = true;
-
-      const ceiling = MAX_RATE - DRIFT_RATE;
-      momentum = Math.max(-MAX_RATE, Math.min(ceiling, momentum + delta * SCROLL_IMPULSE));
       start();
     }
 
@@ -264,17 +278,38 @@ export function Hero() {
       const dt = Math.min(0.05, (now - lastFrameTime) / 1000);
       lastFrameTime = now;
 
-      // Exponential decay back to the baseline drift rate.
-      momentum *= Math.exp(-MOMENTUM_DECAY * dt);
-      if (Math.abs(momentum) < 0.0004) momentum = 0;
+      computeTargetProgress();
+      const target = rawProgressRef.current;
 
-      if (started) {
-        const velocity = DRIFT_RATE + momentum;
-        renderProgressRef.current = Math.min(
-          1,
-          Math.max(0, renderProgressRef.current + velocity * dt)
-        );
+      // Autoplay: nudge the scroll position forward, never the frame index
+      // directly, so progress and scroll can't come apart.
+      //
+      // "Pending" covers the window where autoplay is merely waiting out the
+      // user's last scroll. The loop has to stay alive through that wait --
+      // idling out there would mean nothing ever restarts it and autoplay
+      // would silently never resume.
+      const autoplayPending =
+        started && onScreen && target < 1 && section!.getBoundingClientRect().top <= 0;
+      const autoplaying = autoplayPending && now - lastUserScrollAt > AUTOPLAY_IDLE_MS;
+
+      if (autoplaying) {
+        const step = (scrollSpan() / AUTOPLAY_SECONDS) * dt;
+        const before = window.scrollY;
+        window.scrollBy(0, step);
+        // Whatever the browser actually applied (it clamps at the document
+        // end) is what we have to discount from the next scroll event.
+        selfScrolled += window.scrollY - before;
+        computeTargetProgress();
       }
+
+      // Ease the rendered frame toward the scroll target. Frame-rate
+      // independent, and it always converges on the target rather than
+      // accumulating its own position.
+      const k = 1 - Math.exp(-SMOOTHING * dt);
+      const current = renderProgressRef.current;
+      const next = current + (rawProgressRef.current - current) * k;
+      renderProgressRef.current =
+        Math.abs(rawProgressRef.current - next) < 0.0004 ? rawProgressRef.current : next;
 
       const images = imagesRef.current;
       if (images.length > 0) {
@@ -296,9 +331,13 @@ export function Hero() {
         setProgress(renderProgressRef.current);
       }
 
-      // Deliberately keeps running even at rest -- the baseline drift means
-      // there is always something to advance. Gated on visibility below so it
-      // costs nothing off-screen or in a background tab.
+      // Idle out once the frame has caught up and autoplay has nothing left
+      // to do; the scroll listener restarts the loop.
+      if (!autoplayPending && renderProgressRef.current === rawProgressRef.current) {
+        running = false;
+        return;
+      }
+
       if (running) rafRef.current = requestAnimationFrame(tick);
     }
 

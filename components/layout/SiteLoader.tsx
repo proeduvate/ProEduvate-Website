@@ -21,9 +21,15 @@ const LogoLoaderScene = dynamic(() => import("@/components/ui/LogoLoaderScene"),
  */
 const MAX_VISIBLE_MS = 6000;
 
+// Content fades before the curtain does. Tearing a WebGL context down while
+// its canvas is still partly visible flashes, so the scene is fully
+// transparent by the time the overlay unmounts.
+const EXIT_FADE_MS = 300;
+
 export function SiteLoader() {
   const shouldReduceMotion = useReducedMotion();
   const [visible, setVisible] = useState(true);
+  const [exiting, setExiting] = useState(false);
   const [progress, setProgress] = useState(0);
   const loadedRef = useRef(false);
 
@@ -50,10 +56,17 @@ export function SiteLoader() {
     // to notice. requestAnimationFrame is throttled or paused in background
     // tabs, so a rAF-dependent dismissal can leave the curtain up over the
     // whole site.
+    let handoff: ReturnType<typeof setTimeout> | undefined;
+
+    function dismiss() {
+      setProgress(1);
+      setExiting(true);
+      handoff = setTimeout(() => setVisible(false), EXIT_FADE_MS);
+    }
+
     const cap = setTimeout(() => {
       loadedRef.current = true;
-      setProgress(1);
-      setVisible(false);
+      dismiss();
     }, MAX_VISIBLE_MS);
 
     function tick(now: number) {
@@ -65,8 +78,7 @@ export function SiteLoader() {
       setProgress(value);
 
       if (value > 0.995) {
-        setProgress(1);
-        setTimeout(() => setVisible(false), 420);
+        dismiss();
         return;
       }
       raf = requestAnimationFrame(tick);
@@ -76,6 +88,7 @@ export function SiteLoader() {
     return () => {
       cancelAnimationFrame(raf);
       clearTimeout(cap);
+      if (handoff) clearTimeout(handoff);
       window.removeEventListener("load", finish);
     };
   }, [shouldReduceMotion]);
@@ -98,11 +111,23 @@ export function SiteLoader() {
             style={{ background: "var(--color-accent)" }}
           />
 
-          <div className="relative h-[46vh] max-h-[420px] w-full max-w-[420px]">
+          <div
+            className="relative h-[46vh] max-h-[420px] w-full max-w-[420px] transition-opacity ease-out"
+            style={{
+              opacity: exiting ? 0 : 1,
+              transitionDuration: `${EXIT_FADE_MS - 60}ms`,
+            }}
+          >
             <LogoLoaderScene progress={progress} />
           </div>
 
-          <div className="relative mt-2 flex flex-col items-center gap-4">
+          <div
+            className="relative mt-2 flex flex-col items-center gap-4 transition-opacity ease-out"
+            style={{
+              opacity: exiting ? 0 : 1,
+              transitionDuration: `${EXIT_FADE_MS - 60}ms`,
+            }}
+          >
             <p className="label-micro text-accent">Initialising</p>
             <div className="h-px w-52 overflow-hidden bg-white/10">
               <div

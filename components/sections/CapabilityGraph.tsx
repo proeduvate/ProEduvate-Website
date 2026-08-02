@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { Container } from "@/components/ui/Container";
@@ -25,6 +26,15 @@ import { services } from "@/data/services";
  */
 
 const BRANCH_COUNT = 6;
+// Horizontal step between stacked nodes: each one sits further out than the
+// one below it, so the two arms open away from the hub into a V.
+//
+// The staircase is anchored at the middle of each branch rather than at
+// either end. Anchoring at the inner end throws the top nodes off the side of
+// the viewport; anchoring at the outer end walks the bottom nodes into the
+// hub. Centring splits the offset between the two and keeps both clear.
+const V_STEP = 20;
+const V_CENTRE = (BRANCH_COUNT - 1) / 2;
 
 type NodeItem = { name: string; meta: string; href: string };
 
@@ -72,19 +82,28 @@ function Branch({
       </p>
 
       <ul className={cn("space-y-3", isLeft && "md:text-right")}>
-        {items.map((item, i) => (
+        {items.map((item, i) => {
+          // Negative for the nodes below the middle (nearer the hub),
+          // positive for the ones above it.
+          const outward = (V_CENTRE - i) * V_STEP;
+          return (
           <li key={item.name}>
             <Link
               href={item.href}
               className={cn(
                 "group relative flex items-center gap-3 border border-white/10 bg-white/[0.03] px-5 py-3.5 transition-all duration-300",
                 "hover:border-accent/60 hover:bg-accent/[0.06]",
+                // The V only exists from md up -- the stacked mobile layout
+                // has no room for it. Mid-range desktops get a reduced offset
+                // so the outermost nodes stay inside the viewport.
+                "[--v-shift:0px] md:[--v-shift:calc(var(--v-target)*0.55)] 2xl:[--v-shift:var(--v-target)]",
                 isLeft ? "md:flex-row-reverse" : ""
               )}
               style={{
-                // Stagger depth so the column reads as a receding row of
-                // nodes rather than a flat list.
-                transform: `translateZ(${(BRANCH_COUNT - i) * 9}px)`,
+                // Depth stagger plus the V offset. Both live in one transform
+                // because the second would otherwise overwrite the first.
+                transform: `translateX(var(--v-shift)) translateZ(${(BRANCH_COUNT - i) * 9}px)`,
+                ["--v-target" as string]: `${isLeft ? -outward : outward}px`,
               }}
             >
               {/* Connector stub pointing back toward the hub. */}
@@ -111,7 +130,8 @@ function Branch({
               </span>
             </Link>
           </li>
-        ))}
+          );
+        })}
       </ul>
 
       <div className={cn("mt-6", isLeft && "md:text-right")}>
@@ -197,7 +217,7 @@ export function CapabilityGraph() {
                 className="flex shrink-0 flex-col items-center"
                 style={{ transform: "translateZ(70px)" }}
               >
-                <div className="relative flex h-32 w-32 items-center justify-center rounded-full border border-accent/40 bg-accent/[0.07]">
+                <div className="relative flex h-36 w-36 items-center justify-center rounded-full border border-accent/40 bg-accent/[0.07]">
                   <span
                     aria-hidden="true"
                     className="absolute inset-0 animate-ping rounded-full border border-accent/25"
@@ -208,11 +228,16 @@ export function CapabilityGraph() {
                     className="absolute -inset-6 rounded-full opacity-40 blur-2xl"
                     style={{ background: "var(--color-accent)" }}
                   />
-                  <span className="relative text-center font-display text-sm leading-tight text-chalk">
-                    Pro
-                    <br />
-                    Eduvate
-                  </span>
+                  {/* The mark is a wide lockup (3234x900), not a square
+                      glyph, so it is sized by width and left to find its own
+                      height inside the circle. */}
+                  <Image
+                    src="/brand/logo-mark.png"
+                    alt="ProEduvate"
+                    width={192}
+                    height={53}
+                    className="relative h-auto w-24 object-contain"
+                  />
                 </div>
                 <span className="label-micro mt-4 text-gray-500">The hub</span>
               </div>

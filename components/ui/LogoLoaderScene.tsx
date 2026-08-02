@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -12,10 +12,11 @@ import * as THREE from "three";
  */
 
 const ACCENT = new THREE.Color("#0082fb");
+const MARK_ASPECT = 3234 / 900;
 
 function Mark({ progress }: { progress: number }) {
   const group = useRef<THREE.Group>(null);
-  const texture = useLoader(THREE.TextureLoader, "/icon.png");
+  const texture = useLoader(THREE.TextureLoader, "/brand/logo-mark.png");
 
   useFrame((state, delta) => {
     if (!group.current) return;
@@ -27,7 +28,9 @@ function Mark({ progress }: { progress: number }) {
   return (
     <group ref={group}>
       <mesh>
-        <planeGeometry args={[1.5, 1.5]} />
+        {/* The mark is a 3234x900 lockup; the plane has to carry that same
+            aspect or the texture renders squashed. */}
+        <planeGeometry args={[2.7, 2.7 / MARK_ASPECT]} />
         <meshBasicMaterial map={texture} transparent toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
     </group>
@@ -75,8 +78,13 @@ export default function LogoLoaderScene({ progress }: { progress: number }) {
       dpr={[1, 1.75]}
       gl={{ antialias: true, alpha: true }}
     >
-      <Mark progress={progress} />
+      {/* The rings render immediately; the mark waits on its texture. Without
+          this boundary a texture that fails or arrives late suspends (or
+          throws out of) the whole canvas, which shows up as a flash. */}
       <Rings progress={progress} />
+      <Suspense fallback={null}>
+        <Mark progress={progress} />
+      </Suspense>
     </Canvas>
   );
 }

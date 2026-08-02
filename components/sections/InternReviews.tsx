@@ -8,6 +8,67 @@ import { cn } from "@/lib/utils";
 import { internReviews } from "@/data/intern-reviews";
 
 /**
+ * Depth backdrop for the reviews: a receding floor grid with a row of quote
+ * glyphs suspended at different distances above it.
+ *
+ * Purely decorative, so it is aria-hidden and driven entirely by CSS 3D and
+ * keyframes -- no rAF loop and no WebGL context competing with the sections
+ * either side of it. Sizes are in vw/vh so the perspective holds up across
+ * viewports.
+ */
+function ReviewsBackdrop() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 motion-reduce:hidden"
+      style={{ perspective: "900px", perspectiveOrigin: "50% 30%" }}
+    >
+      {/* Receding floor */}
+      <div
+        className="bg-grid absolute inset-x-[-25%] bottom-[-10%] h-[70%] opacity-[0.28]"
+        style={{
+          transform: "rotateX(74deg)",
+          transformOrigin: "50% 100%",
+          maskImage: "linear-gradient(to top, black, transparent 78%)",
+          WebkitMaskImage: "linear-gradient(to top, black, transparent 78%)",
+        }}
+      />
+
+      {/* Floating quote marks at staggered depths */}
+      {[
+        { left: "8%", top: "18%", z: -260, size: 190, delay: "0s" },
+        { left: "38%", top: "8%", z: -420, size: 130, delay: "-5s" },
+        { left: "72%", top: "22%", z: -190, size: 220, delay: "-9s" },
+        { left: "88%", top: "58%", z: -340, size: 150, delay: "-3s" },
+      ].map((q) => (
+        <span
+          key={q.left}
+          className="animate-[--animate-aurora-slow] absolute font-display leading-none text-accent/[0.07] select-none"
+          style={{
+            left: q.left,
+            top: q.top,
+            fontSize: `${q.size}px`,
+            transform: `translateZ(${q.z}px)`,
+            animationDelay: q.delay,
+          }}
+        >
+          &rdquo;
+        </span>
+      ))}
+
+      {/* Horizon glow where the floor meets the cards */}
+      <div
+        className="absolute inset-x-0 bottom-[28%] h-[30vh] opacity-30 blur-[100px]"
+        style={{
+          background:
+            "radial-gradient(60% 100% at 50% 100%, var(--color-accent), transparent 70%)",
+        }}
+      />
+    </div>
+  );
+}
+
+/**
  * Horizontally scrollable intern reviews, three per view on desktop.
  *
  * Uses native scroll with CSS scroll-snap rather than a transform-based
@@ -48,8 +109,10 @@ export function InternReviews() {
   }
 
   return (
-    <section className="border-y border-white/10 bg-surface-2 py-24 md:py-32">
-      <Container>
+    <section className="relative overflow-hidden border-y border-white/10 bg-surface-2 py-24 md:py-32">
+      <ReviewsBackdrop />
+
+      <Container className="relative">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHeading
             index="04"
