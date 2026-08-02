@@ -12,19 +12,77 @@ import { customProjects } from "@/data/custom-projects";
  * Client work as tiles that raise a 3D preview card on hover.
  *
  * The popup renders inside the hovered tile rather than in a portal, so it
- * inherits the tile's stacking context and needs no positioning maths.
+ * inherits the tile's stacking context. Its position is chosen per-tile
+ * against the viewport (see `choosePlacement`) -- always opening upward
+ * pushed the card off the top of the screen for tiles in the first row.
  *
  * Touch has no hover, so tapping a tile toggles its preview and pointer
  * events are filtered by `pointerType` -- without that filter a tap fires
  * both enter and click, and the card opens and closes in the same gesture.
  */
+
+/** Popup footprint, in px. Fixed so placement can be decided before mount. */
+const POPUP_W = 320;
+// Measured at 396px with a three-line description; rounded up so a tile with
+// just under the real height above it doesn't pick "above" and clip.
+const POPUP_H = 410;
+const GAP = 10;
+
+/**
+ * Picks the first position that actually fits in the viewport, preferring
+ * above the tile and falling back to the sides before going below.
+ *
+ * Measured from the tile, not the popup: the popup does not exist yet at
+ * decision time, so its footprint is fixed above and the choice is made up
+ * front rather than flashing in the wrong place and correcting.
+ *
+ * Returns raw offsets rather than Tailwind translate classes. Framer Motion
+ * owns the `transform` property while animating, so anything centred with
+ * `-translate-x-1/2` would be overwritten on the first frame and the popup
+ * would jump half its width sideways.
+ */
+function choosePlacement(rect: DOMRect): React.CSSProperties {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const centreX = { left: "50%", marginLeft: -POPUP_W / 2 };
+
+  if (rect.top >= POPUP_H + GAP) {
+    return { bottom: "100%", marginBottom: GAP, transformOrigin: "bottom center", ...centreX };
+  }
+
+  // Side placements anchor to whichever edge of the tile leaves room, so the
+  // popup never runs off the bottom of the window.
+  const vertical: React.CSSProperties =
+    vh - rect.top >= POPUP_H + GAP ? { top: 0 } : { bottom: 0 };
+
+  if (vw - rect.right >= POPUP_W + GAP) {
+    return { left: "100%", marginLeft: GAP, transformOrigin: "left center", ...vertical };
+  }
+  if (rect.left >= POPUP_W + GAP) {
+    return { right: "100%", marginRight: GAP, transformOrigin: "right center", ...vertical };
+  }
+  if (vh - rect.bottom >= POPUP_H + GAP) {
+    return { top: "100%", marginTop: GAP, transformOrigin: "top center", ...centreX };
+  }
+
+  // Nothing fits cleanly. Above overlaps neighbouring tiles rather than
+  // leaving the viewport, which is the least-bad outcome.
+  return { bottom: "100%", marginBottom: GAP, transformOrigin: "bottom center", ...centreX };
+}
+
 export function CustomProjectsGrid() {
   const shouldReduceMotion = useReducedMotion();
   const [active, setActive] = useState<number | null>(null);
+  const [placement, setPlacement] = useState<React.CSSProperties>({});
   const sectionRef = useRef<HTMLElement>(null);
   // Click events carry no pointerType, so it is captured on pointerdown and
   // read back in the click handler.
   const lastPointerType = useRef<string>("mouse");
+
+  function open(index: number, el: HTMLElement) {
+    setPlacement(choosePlacement(el.getBoundingClientRect()));
+    setActive(index);
+  }
 
   // Tapping outside an open preview dismisses it.
   useEffect(() => {
@@ -62,7 +120,7 @@ export function CustomProjectsGrid() {
                 <button
                   type="button"
                   onPointerEnter={(e) => {
-                    if (e.pointerType !== "touch") setActive(i);
+                    if (e.pointerType !== "touch") open(i, e.currentTarget);
                   }}
                   onPointerLeave={(e) => {
                     if (e.pointerType !== "touch") setActive(null);
@@ -70,17 +128,18 @@ export function CustomProjectsGrid() {
                   onPointerDown={(e) => {
                     lastPointerType.current = e.pointerType;
                   }}
-                  onClick={() => {
+                  onClick={(e) => {
                     // Only touch toggles. With a mouse, pointerenter has
                     // already opened this tile, so a toggle here would close
                     // it again on the very same gesture.
                     if (lastPointerType.current === "touch") {
-                      setActive((prev) => (prev === i ? null : i));
+                      if (active === i) setActive(null);
+                      else open(i, e.currentTarget);
                     } else {
-                      setActive(i);
+                      open(i, e.currentTarget);
                     }
                   }}
-                  onFocus={() => setActive(i)}
+                  onFocus={(e) => open(i, e.currentTarget)}
                   onBlur={() => setActive(null)}
                   aria-expanded={isActive}
                   aria-label={`${project.name}. ${project.description}`}
@@ -122,15 +181,15 @@ export function CustomProjectsGrid() {
                           : { opacity: 0, y: 8, z: -40, rotateX: -8, scale: 0.96 }
                       }
                       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      className="pointer-events-none absolute inset-x-0 bottom-full z-30 mb-2 origin-bottom overflow-hidden border border-accent/50 bg-surface-2 shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)]"
-                      style={{ transformStyle: "preserve-3d" }}
+                      className="pointer-events-none absolute z-30 overflow-hidden border border-accent/50 bg-surface-2 shadow-[0_28px_70px_-24px_rgba(0,0,0,0.9)]"
+                      style={{ transformStyle: "preserve-3d", width: POPUP_W, ...placement }}
                     >
                       <div className="relative aspect-[4/3] w-full">
                         <Image
                           src={project.image}
                           alt=""
                           fill
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          sizes={`${POPUP_W}px`}
                           className="object-cover"
                         />
                         <span
@@ -141,7 +200,7 @@ export function CustomProjectsGrid() {
                       <div className="p-5">
                         <p className="label-micro text-accent">Preview</p>
                         <p className="mt-2 font-display text-lg text-chalk">{project.name}</p>
-                        <p className="mt-2 text-sm leading-relaxed text-gray-400">
+                        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-gray-400">
                           {project.description}
                         </p>
                       </div>

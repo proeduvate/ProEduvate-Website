@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ParticleDepthField } from "@/components/ui/ParticleDepthField";
 
 const steps = [
   {
@@ -46,6 +47,9 @@ export function Process() {
 
   return (
     <section className="relative overflow-hidden bg-surface-2 py-20 md:py-28">
+      {/* Held back to 60% so the chain and step markers stay the focus -- the
+          domains section runs the same field at full strength. */}
+      <ParticleDepthField className="pointer-events-none absolute inset-0 h-full w-full opacity-60" />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden="true" />
 
       <Container className="relative">
