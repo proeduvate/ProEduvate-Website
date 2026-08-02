@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { AboutHero } from "@/components/sections/AboutHero";
 import { FoundingStory } from "@/components/sections/FoundingStory";
 import { GrowthRoadmap } from "@/components/sections/GrowthRoadmap";
-import { Timeline } from "@/components/sections/Timeline";
+import { TimelineRail } from "@/components/sections/TimelineRail";
 import { Achievements } from "@/components/sections/Achievements";
-import { TeamGrid } from "@/components/sections/TeamGrid";
+import { OrgChart } from "@/components/sections/OrgChart";
 import { CultureGallery } from "@/components/sections/CultureGallery";
 
 export const metadata: Metadata = {
@@ -18,10 +18,10 @@ export default function AboutPage() {
     <>
       <AboutHero />
       <FoundingStory />
-      <Timeline />
+      <TimelineRail />
       <Achievements />
       <GrowthRoadmap expanded />
-      <TeamGrid />
+      <OrgChart />
       <CultureGallery />
     </>
   );
