@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import { motion, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BracketFrame } from "@/components/ui/BracketFrame";
+import { usePointerTilt } from "@/lib/usePointerTilt";
 import { cn } from "@/lib/utils";
 import { products } from "@/data/products";
 import { services } from "@/data/services";
@@ -148,36 +148,7 @@ function Branch({
 }
 
 export function CapabilityGraph() {
-  const shouldReduceMotion = useReducedMotion();
-  const stageRef = useRef<HTMLDivElement>(null);
-
-  const px = useSpring(0, { stiffness: 120, damping: 22 });
-  const py = useSpring(0, { stiffness: 120, damping: 22 });
-  const rotateY = useTransform(px, [-1, 1], [-7, 7]);
-  const rotateX = useTransform(py, [-1, 1], [5, -5]);
-
-  useEffect(() => {
-    if (shouldReduceMotion) return;
-    const el = stageRef.current;
-    if (!el) return;
-
-    function onMove(e: PointerEvent) {
-      const rect = el!.getBoundingClientRect();
-      px.set(((e.clientX - rect.left) / rect.width) * 2 - 1);
-      py.set(((e.clientY - rect.top) / rect.height) * 2 - 1);
-    }
-    function onLeave() {
-      px.set(0);
-      py.set(0);
-    }
-
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", onLeave);
-    return () => {
-      el.removeEventListener("pointermove", onMove);
-      el.removeEventListener("pointerleave", onLeave);
-    };
-  }, [shouldReduceMotion, px, py]);
+  const { ref: tiltRef, style: tiltStyle } = usePointerTilt();
 
   return (
     <section className="relative overflow-hidden border-y border-white/10 bg-surface-2 py-24 md:py-32">
@@ -194,14 +165,8 @@ export function CapabilityGraph() {
         />
       </Container>
 
-      <div ref={stageRef} className="relative mt-16" style={{ perspective: "1500px" }}>
-        <motion.div
-          style={
-            shouldReduceMotion
-              ? undefined
-              : { rotateX, rotateY, transformStyle: "preserve-3d" }
-          }
-        >
+      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "1500px" }}>
+        <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <div className="flex flex-col items-stretch gap-12 md:flex-row md:items-center md:gap-8 lg:gap-16">
               <Branch

@@ -17,7 +17,7 @@ export function Timeline() {
                   {milestone.year}
                 </span>
                 <div>
-                  <h3 className="text-lg font-medium text-chalk">{milestone.title}</h3>
+                  <h3 className="font-display text-lg font-normal text-chalk">{milestone.title}</h3>
                   <p className="mt-1 text-sm leading-relaxed text-gray-400">
                     {milestone.description}
                   </p>

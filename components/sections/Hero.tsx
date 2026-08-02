@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -9,14 +9,15 @@ import { ParticleField } from "@/components/ui/ParticleField";
 import { HeroHud } from "@/components/ui/HeroHud";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
+import {
+  getHeroFramesServerSnapshot,
+  getHeroFramesSnapshot,
+  getHeroImages,
+  startHeroFramePreload,
+  subscribeHeroFrames,
+} from "@/lib/hero-frames";
 
-const DESKTOP_FRAME_COUNT = 240;
-const MOBILE_FRAME_COUNT = 120;
-const MOBILE_BREAKPOINT = 768;
 const SCROLL_VH = 260;
-const LOAD_CONCURRENCY = 10;
-
-type Status = "loading" | "ready" | "reduced";
 
 type Phase = { start: number; end: number; fadeIn: number; fadeOut: number };
 
@@ -58,56 +59,6 @@ const PHASE_MARKERS = [
 const SMOOTHING = 14; // how fast the rendered frame chases the scroll target
 const AUTOPLAY_SECONDS = 9; // a full automatic playthrough, start to finish
 const AUTOPLAY_IDLE_MS = 700; // quiet period before autoplay picks up again
-
-function pad(n: number) {
-  return String(n).padStart(4, "0");
-}
-
-function frameUrl(isMobile: boolean, index: number) {
-  return `/hero-frames/${isMobile ? "mobile" : "desktop"}/frame_${pad(index)}.webp`;
-}
-
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const img = new window.Image();
-    img.decoding = "async";
-    img.onload = () => {
-      // decode() is a paint-jank optimization, not a correctness requirement
-      // -- drawImage will decode synchronously if needed anyway. Some
-      // environments never resolve/reject it, so race it against a timeout
-      // rather than let one stuck image stall the whole preload queue.
-      if (typeof img.decode === "function") {
-        const decoded = img.decode().catch(() => {});
-        const timeout = new Promise<void>((r) => setTimeout(r, 1500));
-        Promise.race([decoded, timeout]).then(() => resolve(img));
-      } else {
-        resolve(img);
-      }
-    };
-    img.onerror = reject;
-    img.src = src;
-  });
-}
-
-async function loadSequence(
-  urls: string[],
-  concurrency: number,
-  onEach: () => void
-): Promise<HTMLImageElement[]> {
-  const results: HTMLImageElement[] = new Array(urls.length);
-  let cursor = 0;
-
-  async function worker() {
-    while (cursor < urls.length) {
-      const i = cursor++;
-      results[i] = await loadImage(urls[i]);
-      onEach();
-    }
-  }
-
-  await Promise.all(new Array(Math.min(concurrency, urls.length)).fill(0).map(worker));
-  return results;
-}
 
 // Label for the HUD readout -- whichever story beat the scrub is nearest to.
 function phaseLabel(p: number) {
@@ -158,52 +109,29 @@ export function Hero() {
   const renderProgressRef = useRef(0);
   const rafRef = useRef<number | null>(null);
 
-  const [status, setStatus] = useState<Status>("loading");
-  const [loadedPct, setLoadedPct] = useState(0);
-  const [posterSrc, setPosterSrc] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
 
-  // Kick off preload once on mount: check reduced-motion, pick a frame set for
-  // the viewport, then load every frame with a bounded-concurrency queue.
+  // The sequence is owned by the shared store so the site loader can wait on
+  // the same download rather than dismissing while it is still in flight.
+  const frames = useSyncExternalStore(
+    subscribeHeroFrames,
+    getHeroFramesSnapshot,
+    getHeroFramesServerSnapshot
+  );
+
   useEffect(() => {
-    let cancelled = false;
-
-    // Deferred a microtask so the state updates below happen from an async
-    // continuation rather than synchronously in the effect body.
-    Promise.resolve().then(() => {
-      if (cancelled) return;
-
-      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduceMotion) {
-        setStatus("reduced");
-        return;
-      }
-
-      const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
-      const frameCount = isMobile ? MOBILE_FRAME_COUNT : DESKTOP_FRAME_COUNT;
-      setPosterSrc(frameUrl(isMobile, 1));
-
-      const urls = Array.from({ length: frameCount }, (_, i) => frameUrl(isMobile, i + 1));
-      let loaded = 0;
-
-      loadSequence(urls, LOAD_CONCURRENCY, () => {
-        loaded += 1;
-        if (!cancelled) setLoadedPct(Math.round((loaded / frameCount) * 100));
-      })
-        .then((images) => {
-          if (cancelled) return;
-          imagesRef.current = images;
-          setStatus("ready");
-        })
-        .catch(() => {
-          if (!cancelled) setStatus("reduced");
-        });
-    });
-
-    return () => {
-      cancelled = true;
-    };
+    startHeroFramePreload();
   }, []);
+
+  const status = frames.status;
+  const posterSrc = frames.poster;
+  const loadedPct = frames.total === 0 ? 0 : Math.round((frames.loaded / frames.total) * 100);
+
+  // Declared before the render-loop effect below so the images are in place
+  // by the time it runs (effects fire in declaration order).
+  useEffect(() => {
+    if (status === "ready") imagesRef.current = getHeroImages();
+  }, [status]);
 
   // Scroll-to-frame render loop. Only mounted once every frame is decoded.
   useEffect(() => {
@@ -392,7 +320,9 @@ export function Hero() {
     };
   }, [status]);
 
-  if (status === "reduced") {
+  // A failed sequence falls back to the same static hero as reduced-motion --
+  // better a correct still frame than an empty canvas.
+  if (status === "reduced" || status === "failed") {
     return <StaticHero openRoles={openRoles} />;
   }
 
