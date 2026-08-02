@@ -3,6 +3,7 @@ import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SiteLoader } from "@/components/layout/SiteLoader";
+import { RouteTransition } from "@/components/layout/RouteTransition";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -82,6 +83,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <SiteLoader />
+        <RouteTransition />
         <Navbar />
         <main id="main-content" className="flex-1">
           {children}
