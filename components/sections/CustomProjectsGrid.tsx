@@ -116,7 +116,19 @@ export function CustomProjectsGrid() {
           {customProjects.map((project, i) => {
             const isActive = active === i;
             return (
-              <li key={project.slug} className="relative" style={{ transformStyle: "preserve-3d" }}>
+              <li
+                key={project.slug}
+                className="relative"
+                style={{
+                  transformStyle: "preserve-3d",
+                  // `transform-style: preserve-3d` makes each tile its own
+                  // stacking context, which traps the popup's z-index inside
+                  // it -- later tiles in the grid then paint straight over the
+                  // open card. Lifting the whole tile is what actually raises
+                  // the popup above its siblings.
+                  zIndex: isActive ? 40 : 1,
+                }}
+              >
                 <button
                   type="button"
                   onPointerEnter={(e) => {

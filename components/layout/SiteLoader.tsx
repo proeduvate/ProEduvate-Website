@@ -37,6 +37,19 @@ const MAX_VISIBLE_MS = 6000;
  */
 const MAX_FRAME_WAIT_MS = 25000;
 
+/*
+ * Stall guard.
+ *
+ * The hard cap above only helps if the download is merely slow. If it stops
+ * dead -- a stalled connection, a request queue that never drains, a device
+ * that refuses to decode -- the curtain would sit at whatever percentage it
+ * reached, and at 0% that looks exactly like a broken site with nothing on
+ * it. So progress is watched directly: if the figure has not moved at all for
+ * this long, the curtain lifts regardless and the hero falls back to its own
+ * progress bar over the poster frame.
+ */
+const STALL_MS = 7000;
+
 // Content fades before the curtain does. Tearing a WebGL context down while
 // its canvas is still partly visible flashes, so the scene is fully
 // transparent by the time the overlay unmounts.
@@ -60,6 +73,7 @@ export function SiteLoader() {
   const [exiting, setExiting] = useState(false);
   const [pageLoaded, setPageLoaded] = useState(false);
   const [capReached, setCapReached] = useState(false);
+  const [stalled, setStalled] = useState(false);
   const [ramp, setRamp] = useState(0);
 
   // Start the sequence download from here rather than waiting for the hero to
@@ -113,10 +127,20 @@ export function SiteLoader() {
     frames.status === "ready" || frames.status === "reduced" || frames.status === "failed";
   const frameProgress = frames.total === 0 ? 0 : frames.loaded / frames.total;
 
+  // Restarted every time `frames.loaded` changes, so it only ever fires when
+  // the count has genuinely sat still -- including at zero, which is the case
+  // that looks like a dead page.
+  useEffect(() => {
+    if (!gateOnFrames || framesSettled) return;
+    const t = setTimeout(() => setStalled(true), STALL_MS);
+    return () => clearTimeout(t);
+  }, [gateOnFrames, framesSettled, frames.loaded]);
+
   const progress = gateOnFrames ? frameProgress : ramp;
   const ready =
     shouldReduceMotion ||
     capReached ||
+    stalled ||
     (pageLoaded && (!gateOnFrames || framesSettled));
 
   useEffect(() => {
