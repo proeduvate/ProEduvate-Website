@@ -85,12 +85,12 @@ export function RouteTransition() {
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Image
-                  src="/brand/logo-mark.png"
+                  src="/icon.png"
                   alt=""
-                  width={160}
-                  height={45}
+                  width={128}
+                  height={128}
                   priority
-                  className="h-auto w-16 object-contain"
+                  className="h-14 w-14 object-contain"
                 />
               </motion.div>
             </div>

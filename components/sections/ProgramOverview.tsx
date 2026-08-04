@@ -4,8 +4,8 @@ import { Badge } from "@/components/ui/Badge";
 
 const items = [
   { label: "Duration", value: "3 or 6 months" },
-  { label: "Compensation", value: "Paid internship" },
-  { label: "Format", value: "Remote, hybrid, or on-site" },
+  { label: "Compensation", value: "Paid & unpaid" },
+  { label: "Format", value: "Remote" },
   { label: "Mentorship", value: "1:1 senior mentor, every intern" },
 ];
 

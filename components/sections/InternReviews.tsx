@@ -121,6 +121,13 @@ export function InternReviews() {
             description="Reviews from the people who built alongside us."
             className="max-w-2xl"
           />
+          {/* The names are real; the words are not yet. Say so rather than
+              letting drafted copy read as a quotation from a named person. */}
+          {internReviews.some((r) => !r.quoteApproved) && (
+            <p className="label-micro w-full border border-white/15 px-3 py-2 text-gray-500">
+              Quotes are drafts pending each intern&apos;s own words
+            </p>
+          )}
 
           <div className="flex gap-2">
             <button

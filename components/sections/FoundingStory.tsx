@@ -159,10 +159,23 @@ export function FoundingStory() {
                   }
                   viewport={{ once: true, margin: "-8%" }}
                   transition={{ duration: 0.6, delay: 0.1 + i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                  className="border border-white/12 bg-white/[0.03] p-8 md:p-10"
+                  className="relative border border-white/12 bg-white/[0.03] p-8 md:p-10"
                 >
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-accent to-transparent"
+                  />
                   <p className="label-micro text-accent">{statement.label}</p>
-                  <p className="display-md mt-5 text-balance text-chalk">{statement.body}</p>
+                  {/*
+                   * Deliberately NOT on the display scale. These are full
+                   * sentences, and display type is cut for short headlines --
+                   * tight tracking and sub-1 line-height turn a 20-word
+                   * statement into a cramped block. Body face, normal
+                   * tracking, generous leading.
+                   */}
+                  <p className="mt-5 max-w-prose text-lg leading-[1.65] text-gray-200 md:text-xl md:leading-[1.6]">
+                    {statement.body}
+                  </p>
                 </motion.div>
               ))}
             </div>

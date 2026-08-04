@@ -5,9 +5,10 @@ import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
-import { LinkedInIcon, XIcon, InstagramIcon } from "@/components/ui/SocialIcons";
+import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { products } from "@/data/products";
 import { services } from "@/data/services";
+import { address, emails, socials } from "@/data/contact";
 
 const companyLinks = [
   { label: "About", href: "/about" },
@@ -22,11 +23,11 @@ const legalLinks = [
   { label: "Terms of Service", href: "/terms" },
 ];
 
-const socialLinks = [
-  { label: "LinkedIn", href: "#", icon: LinkedInIcon },
-  { label: "X / Twitter", href: "#", icon: XIcon },
-  { label: "Instagram", href: "#", icon: InstagramIcon },
-];
+const socialIcons = { LinkedIn: LinkedInIcon, Instagram: InstagramIcon } as const;
+const socialLinks = socials.map((s) => ({
+  ...s,
+  icon: socialIcons[s.label as keyof typeof socialIcons],
+}));
 
 export function Footer() {
   const [email, setEmail] = useState("");
@@ -75,6 +76,24 @@ export function Footer() {
             <p className="mt-2 text-xs text-gray-500" aria-live="polite">
               {subscribed ? "Thanks — you're on the list." : "Occasional product & hiring updates."}
             </p>
+
+            <address className="mt-8 space-y-1 text-sm not-italic text-gray-400">
+              {address.lines.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </address>
+            <ul className="mt-4 space-y-1.5">
+              {emails.map((email) => (
+                <li key={email.value}>
+                  <a
+                    href={`mailto:${email.value}`}
+                    className="text-sm text-gray-300 hover:text-white"
+                  >
+                    {email.value}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>
@@ -153,6 +172,8 @@ export function Footer() {
               <a
                 key={social.label}
                 href={social.href}
+                target="_blank"
+                rel="noreferrer"
                 aria-label={social.label}
                 className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-gray-300 transition-colors hover:border-white/40 hover:text-white"
               >

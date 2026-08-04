@@ -193,15 +193,14 @@ export function CapabilityGraph() {
                     className="absolute -inset-6 rounded-full opacity-40 blur-2xl"
                     style={{ background: "var(--color-accent)" }}
                   />
-                  {/* The mark is a wide lockup (3234x900), not a square
-                      glyph, so it is sized by width and left to find its own
-                      height inside the circle. */}
+                  {/* Icon-only mark (512x512), so it sits square in the
+                      circle rather than as a wide lockup. */}
                   <Image
-                    src="/brand/logo-mark.png"
+                    src="/icon.png"
                     alt="ProEduvate"
-                    width={192}
-                    height={53}
-                    className="relative h-auto w-24 object-contain"
+                    width={160}
+                    height={160}
+                    className="relative h-20 w-20 object-contain"
                   />
                 </div>
                 <span className="label-micro mt-4 text-gray-500">The hub</span>

@@ -21,22 +21,49 @@ const FAR = 5;
 
 type Particle = { x: number; y: number; z: number; speed: number; twinkle: number };
 
-function makeSprite(colour: string, size: number) {
+/**
+ * Starfield sprite: a hard bright core with only a narrow halo around it.
+ *
+ * The soft variant ramps the gradient out to the full sprite radius, which
+ * reads as fog. `sharp` keeps the core opaque to 18% of the radius and dumps
+ * the alpha immediately after, so the particle stays a crisp point of light
+ * at any projected size -- which is what makes it look like a star rather
+ * than a blurred blob.
+ */
+function makeSprite(colour: string, size: number, sharp: boolean) {
   const c = document.createElement("canvas");
   c.width = size;
   c.height = size;
   const ctx = c.getContext("2d");
   if (!ctx) return c;
   const g = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  g.addColorStop(0, colour);
-  g.addColorStop(0.35, colour.replace(/[\d.]+\)$/, "0.35)"));
-  g.addColorStop(1, colour.replace(/[\d.]+\)$/, "0)"));
+  const fade = (a: number) => colour.replace(/[\d.]+\)$/, `${a})`);
+
+  if (sharp) {
+    g.addColorStop(0, "rgba(255,255,255,1)");
+    g.addColorStop(0.18, colour);
+    g.addColorStop(0.34, fade(0.28));
+    g.addColorStop(0.62, fade(0.05));
+    g.addColorStop(1, fade(0));
+  } else {
+    g.addColorStop(0, colour);
+    g.addColorStop(0.35, fade(0.35));
+    g.addColorStop(1, fade(0));
+  }
+
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, size, size);
   return c;
 }
 
-export function ParticleDepthField({ className }: { className?: string }) {
+export function ParticleDepthField({
+  className,
+  /** Crisp points of light instead of soft glows. */
+  sharp = false,
+}: {
+  className?: string;
+  sharp?: boolean;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -50,8 +77,11 @@ export function ParticleDepthField({ className }: { className?: string }) {
     let w = 0;
     let h = 0;
 
-    const sprite = makeSprite("rgba(120,190,255,0.9)", 64);
-    const spriteAccent = makeSprite("rgba(0,130,251,0.9)", 64);
+    // Higher-resolution sprites in sharp mode so the hard core doesn't turn
+    // into visible pixel steps once it is scaled up for near particles.
+    const spriteSize = sharp ? 128 : 64;
+    const sprite = makeSprite("rgba(190,220,255,0.95)", spriteSize, sharp);
+    const spriteAccent = makeSprite("rgba(0,130,251,0.95)", spriteSize, sharp);
 
     // Deterministic seeding keeps SSR and client identical and makes the
     // layout reproducible between reloads.
@@ -109,7 +139,8 @@ export function ParticleDepthField({ className }: { className?: string }) {
         if (sx < -60 || sx > w + 60 || sy < -60 || sy > h + 60) continue;
 
         const depth = 1 - (p.z - NEAR) / (FAR - NEAR); // 1 near, 0 far
-        const size = 4 + depth * 46;
+        // Stars stay small even up close; soft glows are allowed to bloom.
+        const size = sharp ? 2 + depth * 14 : 4 + depth * 46;
         const alpha = (0.12 + depth * 0.7) * (0.75 + Math.sin(p.twinkle) * 0.25);
 
         ctx!.globalAlpha = Math.min(1, alpha);
@@ -158,7 +189,7 @@ export function ParticleDepthField({ className }: { className?: string }) {
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [sharp]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

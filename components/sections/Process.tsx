@@ -47,9 +47,10 @@ export function Process() {
 
   return (
     <section className="relative overflow-hidden bg-surface-2 py-20 md:py-28">
-      {/* Held back to 60% so the chain and step markers stay the focus -- the
-          domains section runs the same field at full strength. */}
-      <ParticleDepthField className="pointer-events-none absolute inset-0 h-full w-full opacity-60" />
+      {/* Sharp starfield rather than the soft glow the domains section uses --
+          this reads as space, and crisp points do not wash out the chain
+          threading through the step markers. */}
+      <ParticleDepthField sharp className="pointer-events-none absolute inset-0 h-full w-full" />
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden="true" />
 
       <Container className="relative">

@@ -20,7 +20,7 @@ import { coreTeam, internTrack, orgBranch, orgSpine } from "@/data/org-chart";
 const CARD = "border bg-surface-2/80 backdrop-blur-sm transition-colors duration-300";
 // Shared width for the chiefs row and the connectors above and below it, so
 // the branch/merge rules stay anchored to the two column centres.
-const CHIEF_ROW = "w-full max-w-[560px]";
+const CHIEF_ROW = "w-full max-w-3xl";
 
 function Seat({
   abbr,
@@ -46,7 +46,7 @@ function Seat({
       style={{ transform: `translateZ(${z}px)` }}
       className={cn(
         CARD,
-        "w-[190px] px-5 py-4 text-center sm:w-[210px]",
+        "w-[210px] px-5 py-4 text-center sm:w-[240px]",
         accent
           ? "border-accent/60 shadow-[0_0_36px_-12px_var(--color-accent)]"
           : "border-white/12"
@@ -109,7 +109,7 @@ export function OrgChart() {
                 : { transform: "rotateX(11deg)", transformStyle: "preserve-3d" }
             }
           >
-            <div className="mx-auto flex w-full min-w-[600px] max-w-3xl flex-col items-center px-6">
+            <div className="mx-auto flex w-full min-w-[640px] max-w-6xl flex-col items-center px-6 lg:px-10">
               {/* Spine: CEO -> Manager -> COO */}
               {orgSpine.map((seat, i) => (
                 <div key={seat.abbr} className="flex flex-col items-center">
@@ -152,7 +152,7 @@ export function OrgChart() {
                 <p className="label-micro mb-5 text-center text-accent">
                   Core Team · one pod per discipline
                 </p>
-                <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+                <ul className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6 lg:gap-4">
                   {coreTeam.map((pod, i) => (
                     <motion.li
                       key={pod.discipline}
@@ -160,7 +160,7 @@ export function OrgChart() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, margin: "-4%" }}
                       transition={{ duration: 0.45, delay: i * 0.05 }}
-                      className="border border-white/10 bg-surface-2/70 p-4 transition-colors duration-300 hover:border-accent/50"
+                      className="flex flex-col border border-white/10 bg-surface-2/70 p-4 transition-colors duration-300 hover:border-accent/50 lg:p-5"
                     >
                       <span className="label-micro text-gray-600 tabular-nums">
                         {String(i + 1).padStart(2, "0")}

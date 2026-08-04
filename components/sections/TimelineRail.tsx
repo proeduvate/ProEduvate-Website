@@ -35,9 +35,30 @@ function monthDensity() {
 
 export function TimelineRail() {
   const trackRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
+  const [activeMonth, setActiveMonth] = useState<string | null>(null);
   const density = monthDensity();
+
+  /**
+   * Scrolls the rail to the first milestone of a month and lights it up.
+   *
+   * The rail is the scroll container, so this offsets within it rather than
+   * calling scrollIntoView -- that would scroll the whole page to bring the
+   * section into view as a side effect.
+   */
+  function selectMonth(month: string) {
+    setActiveMonth(month);
+    const index = timeline.findIndex((m) => m.year === month);
+    const card = cardRefs.current[index];
+    const track = trackRef.current;
+    if (index < 0 || !card || !track) return;
+    track.scrollTo({
+      left: card.offsetLeft - track.clientWidth / 2 + card.clientWidth / 2,
+      behavior: "smooth",
+    });
+  }
 
   const syncEdges = useCallback(() => {
     const el = trackRef.current;
@@ -122,9 +143,17 @@ export function TimelineRail() {
               const above = i % 2 === 0;
               // Alternate depth so consecutive cards don't sit on one plane.
               const z = above ? -40 : -110;
+              // Only the FIRST milestone of the selected month is highlighted,
+              // not every card sharing that month.
+              const isLead =
+                activeMonth === milestone.year &&
+                timeline.findIndex((m) => m.year === activeMonth) === i;
               return (
                 <motion.li
                   key={`${milestone.year}-${milestone.title}`}
+                  ref={(el) => {
+                    cardRefs.current[i] = el;
+                  }}
                   initial={{ opacity: 0, y: above ? -24 : 24 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-4%" }}
@@ -134,7 +163,15 @@ export function TimelineRail() {
                 >
                   {/* Card sits above or below the axis */}
                   <div className={cn("flex h-[280px] flex-col", above ? "justify-start" : "justify-end")}>
-                    <div className="group border border-white/12 bg-surface/80 p-5 backdrop-blur-sm transition-colors duration-300 hover:border-accent/60">
+                    <div
+                      data-lead={isLead || undefined}
+                      className={cn(
+                        "group border p-5 backdrop-blur-sm transition-colors duration-300",
+                        isLead
+                          ? "border-accent bg-accent/[0.08] shadow-[0_0_46px_-14px_var(--color-accent)]"
+                          : "border-white/12 bg-surface/80 hover:border-accent/60"
+                      )}
+                    >
                       <span className="label-micro text-accent">{milestone.year}</span>
                       <h3 className="mt-3 font-display text-base leading-snug text-chalk">
                         {milestone.title}
@@ -170,24 +207,46 @@ export function TimelineRail() {
         />
       </div>
 
-      {/* Density strip: milestones per month */}
+      {/* Density strip: milestones per month, and the chart's controls */}
       <Container className="relative mt-12">
-        <p className="label-micro mb-4 text-gray-500">Milestones per month</p>
+        <p className="label-micro mb-4 text-gray-500">
+          Milestones per month · select a bar to jump to it
+        </p>
         <ul className="flex items-end gap-2">
-          {density.map((bar) => (
-            <li key={bar.month} className="group flex flex-1 flex-col items-center gap-2">
-              <motion.span
-                initial={{ scaleY: 0 }}
-                whileInView={{ scaleY: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full origin-bottom bg-accent/30 transition-colors duration-300 group-hover:bg-accent"
-                style={{ height: `${12 + bar.ratio * 56}px` }}
-                title={`${bar.month}: ${bar.count}`}
-              />
-              <span className="label-micro text-[9px] text-gray-600">{bar.month}</span>
-            </li>
-          ))}
+          {density.map((bar) => {
+            const isActive = bar.month === activeMonth;
+            return (
+              <li key={bar.month} className="flex flex-1 flex-col items-center">
+                <button
+                  type="button"
+                  onClick={() => selectMonth(bar.month)}
+                  aria-pressed={isActive}
+                  aria-label={`${bar.month}: ${bar.count} milestone${bar.count === 1 ? "" : "s"}`}
+                  className="group flex w-full flex-col items-center gap-2"
+                >
+                  <motion.span
+                    initial={{ scaleY: 0 }}
+                    whileInView={{ scaleY: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className={cn(
+                      "w-full origin-bottom transition-colors duration-300",
+                      isActive ? "bg-accent" : "bg-accent/30 group-hover:bg-accent/70"
+                    )}
+                    style={{ height: `${12 + bar.ratio * 56}px` }}
+                  />
+                  <span
+                    className={cn(
+                      "label-micro text-[9px] transition-colors duration-300",
+                      isActive ? "text-accent" : "text-gray-600 group-hover:text-gray-400"
+                    )}
+                  >
+                    {bar.month}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </Container>
     </section>

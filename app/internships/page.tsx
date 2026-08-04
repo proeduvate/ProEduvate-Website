@@ -12,7 +12,7 @@ import { CtaBand } from "@/components/sections/CtaBand";
 export const metadata: Metadata = {
   title: "Internships",
   description:
-    "Paid internships at ProEduvate across AI/ML, full-stack development, product design, EdTech content, and marketing.",
+    "Remote internships at ProEduvate across AI/ML, full stack, backend, product development, digital marketing, social media, and HR.",
 };
 
 export default function InternshipsPage() {

@@ -225,3 +225,21 @@ export const products: Product[] = [
     externalUrl: "#",
   },
 ];
+
+/**
+ * Live first, then Beta, then Coming Soon.
+ *
+ * Used by the products page so shipped work leads and unreleased work sits
+ * at the end. `sort` is stable, so the authored order is preserved within
+ * each status group. The unsorted `products` export is left as-is for
+ * places that want the original ordering.
+ */
+const STATUS_ORDER: Record<ProductStatus, number> = {
+  Live: 0,
+  Beta: 1,
+  "Coming Soon": 2,
+};
+
+export const productsByStatus: Product[] = [...products].sort(
+  (a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]
+);

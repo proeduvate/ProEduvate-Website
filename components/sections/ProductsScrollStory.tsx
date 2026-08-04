@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { ProductStoryPanel, categoryColor } from "@/components/sections/ProductStoryPanel";
-import { products } from "@/data/products";
+import { productsByStatus as products } from "@/data/products";
 import { cn } from "@/lib/utils";
 
 export function ProductsScrollStory() {

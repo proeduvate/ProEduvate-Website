@@ -1,37 +1,41 @@
 import type { Metadata } from "next";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, MapPin, Building2 } from "lucide-react";
 import { PageHero } from "@/components/sections/PageHero";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { ContactForm } from "@/components/sections/ContactForm";
 import { Accordion } from "@/components/ui/Accordion";
-import { LinkedInIcon, XIcon, InstagramIcon } from "@/components/ui/SocialIcons";
+import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { faqs } from "@/data/faqs";
+import { address, emails, incubationCentres, socials } from "@/data/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with ProEduvate for partnerships, careers, media, or general inquiries.",
 };
 
-// STUB: placeholder contact details — replace with real address, phone,
-// email, and social links before launch.
+// No phone number is published, by request.
 const details = [
-  { icon: Mail, label: "Email", value: "hello@proeduvate.in", href: "mailto:hello@proeduvate.in" },
-  { icon: Phone, label: "Phone", value: "+91 80 4567 8900", href: "tel:+918045678900" },
+  ...emails.map((email) => ({
+    icon: Mail,
+    label: email.label,
+    value: email.value,
+    href: `mailto:${email.value}`,
+  })),
   {
     icon: MapPin,
     label: "Office",
-    value: "4th Floor, Prestige Tech Park, Bengaluru, India",
-    href: "#",
+    value: address.lines.join(", "),
+    href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.query)}`,
   },
 ];
 
-const social = [
-  { label: "LinkedIn", icon: LinkedInIcon, href: "#" },
-  { label: "X / Twitter", icon: XIcon, href: "#" },
-  { label: "Instagram", icon: InstagramIcon, href: "#" },
-];
+const socialIcons = { LinkedIn: LinkedInIcon, Instagram: InstagramIcon } as const;
+const social = socials.map((s) => ({
+  ...s,
+  icon: socialIcons[s.label as keyof typeof socialIcons],
+}));
 
 export default function ContactPage() {
   return (
@@ -67,10 +71,22 @@ export default function ContactPage() {
               ))}
             </div>
 
-            {/* TODO: static gradient placeholder stands in for a real embedded
-                map until a confirmed office address is supplied. */}
-            <div className="flex aspect-video items-center justify-center rounded-2xl bg-gradient-to-br from-primary via-primary-2 to-black">
-              <p className="text-sm text-white/70">Map placeholder — real address pending</p>
+            <div className="rounded-2xl border border-white/10 bg-surface-2 p-5">
+              <div className="flex items-start gap-4">
+                <Building2 className="mt-0.5 h-5 w-5 shrink-0 text-accent" aria-hidden="true" />
+                <div>
+                  <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                    Incubation Centres
+                  </p>
+                  <ul className="mt-2 space-y-1">
+                    {incubationCentres.map((centre) => (
+                      <li key={centre} className="text-sm text-chalk">
+                        {centre}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -78,6 +94,8 @@ export default function ContactPage() {
                 <a
                   key={item.label}
                   href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label={item.label}
                   className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-gray-500 transition-colors hover:border-accent hover:text-accent"
                 >

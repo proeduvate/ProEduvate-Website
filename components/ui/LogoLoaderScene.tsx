@@ -12,11 +12,12 @@ import * as THREE from "three";
  */
 
 const ACCENT = new THREE.Color("#0082fb");
-const MARK_ASPECT = 3234 / 900;
+// app/icon.png is the square icon-only mark (512x512).
+const MARK_ASPECT = 1;
 
 function Mark({ progress }: { progress: number }) {
   const group = useRef<THREE.Group>(null);
-  const texture = useLoader(THREE.TextureLoader, "/brand/logo-mark.png");
+  const texture = useLoader(THREE.TextureLoader, "/icon.png");
 
   useFrame((state, delta) => {
     if (!group.current) return;
@@ -28,9 +29,8 @@ function Mark({ progress }: { progress: number }) {
   return (
     <group ref={group}>
       <mesh>
-        {/* The mark is a 3234x900 lockup; the plane has to carry that same
-            aspect or the texture renders squashed. */}
-        <planeGeometry args={[2.7, 2.7 / MARK_ASPECT]} />
+        {/* Square icon-only mark, so the plane is square too. */}
+        <planeGeometry args={[2.1, 2.1 / MARK_ASPECT]} />
         <meshBasicMaterial map={texture} transparent toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
     </group>
