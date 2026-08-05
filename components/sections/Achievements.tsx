@@ -31,7 +31,7 @@ export function Achievements() {
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden="true" />
 
       <Container className="relative">
-        <SectionHeading index="03" eyebrow="Along the Way" title="Achievements we're proud of." />
+        <SectionHeading index="04" eyebrow="Along the Way" title="Achievements we're proud of." />
 
         {/* Headline numbers */}
         <div className="mt-16 grid grid-cols-1 border-t border-white/10 sm:grid-cols-3">

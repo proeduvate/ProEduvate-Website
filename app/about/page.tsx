@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AboutHero } from "@/components/sections/AboutHero";
 import { FoundingStory } from "@/components/sections/FoundingStory";
+import { CeoSpotlight } from "@/components/sections/CeoSpotlight";
 import { GrowthRoadmap } from "@/components/sections/GrowthRoadmap";
 import { TimelineRail } from "@/components/sections/TimelineRail";
 import { Achievements } from "@/components/sections/Achievements";
@@ -18,6 +19,7 @@ export default function AboutPage() {
     <>
       <AboutHero />
       <FoundingStory />
+      <CeoSpotlight />
       <TimelineRail />
       <Achievements />
       <GrowthRoadmap expanded />

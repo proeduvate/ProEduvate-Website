@@ -94,7 +94,7 @@ export function TimelineRail() {
       <Container className="relative">
         <div className="flex flex-wrap items-end justify-between gap-8">
           <SectionHeading
-            index="02"
+            index="03"
             eyebrow="Our Story"
             title="Milestones along the way."
             description={`${timeline.length} milestones since ProEduvate was registered in August 2025.`}

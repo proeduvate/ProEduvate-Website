@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -59,6 +60,74 @@ const PHASE_MARKERS = [
 const SMOOTHING = 14; // how fast the rendered frame chases the scroll target
 const AUTOPLAY_SECONDS = 9; // a full automatic playthrough, start to finish
 const AUTOPLAY_IDLE_MS = 700; // quiet period before autoplay picks up again
+
+/*
+ * The company slogan, set as three words on three depth planes.
+ *
+ * Each word sits further forward than the last and carries its own rule and
+ * index, so the line reads as part of the hero's 3D stage rather than a
+ * tagline dropped underneath the copy. They settle in sequence on mount,
+ * which makes it register as a deliberate beat instead of static text.
+ */
+const SLOGAN = ["People", "Projects", "Potential"];
+
+function SloganTriad({ still = false }: { still?: boolean }) {
+  return (
+    <div
+      className="mt-12 flex flex-wrap items-end gap-x-3 gap-y-4 sm:gap-x-5"
+      style={{ perspective: "700px", transformStyle: "preserve-3d" }}
+    >
+      {SLOGAN.map((word, i) => (
+        <motion.div
+          key={word}
+          // Animated on mount rather than driven by scroll progress: tying
+          // the reveal to the scrub left the slogan sitting at a third
+          // opacity until the user scrolled, which is the opposite of
+          // highlighting it.
+          //
+          // `still` renders it at rest with no entrance at all, for the
+          // static hero -- starting from opacity 0 there would depend on an
+          // animation that deliberately never runs.
+          initial={still ? false : { opacity: 0, y: 14, z: i * 26 }}
+          animate={{ opacity: 1, y: 0, z: i * 26 }}
+          transition={
+            still
+              ? { duration: 0 }
+              : { duration: 0.6, delay: 0.5 + i * 0.14, ease: [0.22, 1, 0.36, 1] }
+          }
+          className="flex items-end gap-3"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          {i > 0 && (
+            <span aria-hidden="true" className="mb-2 h-1 w-1 shrink-0 rotate-45 bg-accent-2" />
+          )}
+          <span className="flex flex-col">
+            <span className="label-micro mb-1.5 text-accent-2/80 tabular-nums">0{i + 1}</span>
+            <span
+              className="font-display text-2xl leading-none tracking-tight text-white sm:text-3xl"
+              style={{
+                textShadow: `0 0 ${18 + i * 10}px color-mix(in srgb, var(--color-accent) 60%, transparent)`,
+              }}
+            >
+              {word}
+            </span>
+            <motion.span
+              aria-hidden="true"
+              className="mt-2 h-px origin-left bg-gradient-to-r from-accent-2 to-transparent"
+              initial={still ? false : { scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={
+                still
+                  ? { duration: 0 }
+                  : { duration: 0.7, delay: 0.7 + i * 0.14, ease: [0.22, 1, 0.36, 1] }
+              }
+            />
+          </span>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
 
 // Label for the HUD readout -- whichever story beat the scrub is nearest to.
 function phaseLabel(p: number) {
@@ -419,6 +488,8 @@ export function Hero() {
               partners with institutions and companies who need the same craft applied to their
               own software.
             </p>
+
+            <SloganTriad />
           </Container>
         </div>
 
@@ -565,6 +636,9 @@ function StaticHero({ openRoles }: { openRoles: number }) {
           ProEduvate designs and ships AI-native products for EdTech and enterprise, and partners
           with institutions and companies who need the same craft applied to their own software.
         </p>
+
+        <SloganTriad still />
+
         <div className="mt-10 flex flex-wrap items-center gap-4">
           <Button href="/products" size="lg">
             Explore Our Products

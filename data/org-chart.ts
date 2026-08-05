@@ -27,12 +27,13 @@ export const orgSpine: OrgSeat[] = [
   { abbr: "CEO", title: "Chief Executive Officer", holder: null },
   { abbr: "Manager", title: "Manager", holder: null },
   { abbr: "COO", title: "Chief Operating Officer", holder: null },
+  { abbr: "CoHR", title: "Chief of Human Resources", holder: null },
 ];
 
-/** The COO's two direct reports. Both feed the same core team. */
+/** The last spine seat's two direct reports. Both feed the same core team. */
 export const orgBranch: OrgSeat[] = [
   { abbr: "COP", title: "Chief of Projects", holder: null },
-  { abbr: "COT", title: "Chief of Technology", holder: null },
+  { abbr: "CTO", title: "Chief of Technology", holder: null },
 ];
 
 export const coreTeam: CoreDiscipline[] = [
