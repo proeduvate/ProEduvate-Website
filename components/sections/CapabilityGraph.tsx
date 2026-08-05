@@ -165,7 +165,7 @@ export function CapabilityGraph() {
         />
       </Container>
 
-      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "1500px" }}>
+      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "2200px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <div className="flex flex-col items-stretch gap-12 md:flex-row md:items-center md:gap-8 lg:gap-16">

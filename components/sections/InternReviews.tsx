@@ -21,7 +21,7 @@ function ReviewsBackdrop() {
     <div
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 motion-reduce:hidden"
-      style={{ perspective: "900px", perspectiveOrigin: "50% 30%" }}
+      style={{ perspective: "2100px", perspectiveOrigin: "50% 30%" }}
     >
       {/* Receding floor */}
       <div

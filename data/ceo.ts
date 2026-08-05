@@ -41,7 +41,8 @@ export const ceo: CeoProfile = {
     "The role since has been less about direction-setting in the abstract and more about holding one standard across two halves of a company — the products we run ourselves and the work we take on for clients. Same team, same bar, whichever side it comes from.",
   ],
   focus: ["Company direction", "Product standard", "Partnerships"],
-  quote:
-    "We are not trying to be the cheapest team you can hire. We are trying to be the one whose work you do not have to rebuild in two years.",
+  // Empty until the CEO supplies their own words. The section hides the
+  // statement block entirely while this is blank or unapproved.
+  quote: "",
   quoteApproved: false,
 };

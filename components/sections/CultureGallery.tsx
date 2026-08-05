@@ -37,7 +37,7 @@ export function CultureGallery() {
         />
       </Container>
 
-      <div ref={tiltRef} className="relative mt-14" style={{ perspective: "1300px" }}>
+      <div ref={tiltRef} className="relative mt-14" style={{ perspective: "1900px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <ul

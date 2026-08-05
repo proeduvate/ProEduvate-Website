@@ -65,7 +65,7 @@ export function ServicesGrid() {
         />
       </Container>
 
-      <div ref={tiltRef} className="relative mt-14" style={{ perspective: "1600px" }}>
+      <div ref={tiltRef} className="relative mt-14" style={{ perspective: "2300px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">
@@ -139,7 +139,7 @@ export function ServicesGrid() {
                   initial={{ opacity: 0, y: 20, z: -50 }}
                   animate={{ opacity: 1, y: 0, z: 40 }}
                   transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative border border-white/12 bg-surface-2/80 p-8 backdrop-blur-sm md:p-10"
+                  className="relative border border-white/12 bg-surface-2 p-8 md:p-10"
                 >
                     <span
                       aria-hidden="true"

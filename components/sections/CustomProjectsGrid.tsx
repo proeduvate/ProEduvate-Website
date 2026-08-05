@@ -111,7 +111,7 @@ export function CustomProjectsGrid() {
 
         <ul
           className="mt-14 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
-          style={{ perspective: "1200px" }}
+          style={{ perspective: "1800px" }}
         >
           {customProjects.map((project, i) => {
             const isActive = active === i;

@@ -62,7 +62,7 @@ export function Process() {
           align="center"
         />
 
-        <div className="relative mt-20" style={{ perspective: "1200px" }}>
+        <div className="relative mt-20" style={{ perspective: "1800px" }}>
           {/* The chain, threaded behind the step markers */}
           <div
             aria-hidden="true"

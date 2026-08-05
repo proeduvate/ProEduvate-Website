@@ -61,7 +61,7 @@ export function Achievements() {
         </div>
       </Container>
 
-      <div ref={tiltRef} className="relative mt-10" style={{ perspective: "1500px" }}>
+      <div ref={tiltRef} className="relative mt-10" style={{ perspective: "2200px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <ul

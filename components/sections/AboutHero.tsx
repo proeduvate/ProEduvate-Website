@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { BracketFrame } from "@/components/ui/BracketFrame";
+import { SloganTriad } from "@/components/ui/SloganTriad";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { stats } from "@/data/stats";
 
@@ -37,7 +38,7 @@ export function AboutHero() {
       />
       <BracketFrame inset="inset-8" />
 
-      <div ref={tiltRef} className="relative" style={{ perspective: "1400px" }}>
+      <div ref={tiltRef} className="relative" style={{ perspective: "2100px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container className="relative">
             <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-[1.15fr_0.85fr]">
@@ -57,7 +58,9 @@ export function AboutHero() {
                   software — and grew into a product company building across eight sectors.
                 </p>
 
-                <dl className="mt-12 flex flex-wrap gap-x-12 gap-y-6">
+                <SloganTriad className="mt-12" />
+
+                <dl className="mt-12 flex flex-wrap gap-x-12 gap-y-6 border-t border-white/10 pt-10">
                   {headline.map((stat, i) => (
                     <div key={stat.label} style={{ transform: `translateZ(${28 - i * 8}px)` }}>
                       <dt className="label-micro text-gray-500">{stat.label}</dt>

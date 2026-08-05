@@ -17,7 +17,7 @@ import { coreTeam, internTrack, orgBranch, orgSpine } from "@/data/org-chart";
  * visible gaps at the joins. Tilting the plane gives the depth instead.
  */
 
-const CARD = "border bg-surface-2/80 backdrop-blur-sm transition-colors duration-300";
+const CARD = "border bg-surface-2 transition-colors duration-300";
 // Shared width for the chiefs row and the connectors above and below it, so
 // the branch/merge rules stay anchored to the two column centres.
 const CHIEF_ROW = "w-full max-w-3xl";
@@ -98,7 +98,7 @@ export function OrgChart() {
         </p>
       </Container>
 
-      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "1700px" }}>
+      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "2400px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           {/* The chart plane, tilted back so it recedes from the viewer. */}
           <div

@@ -130,7 +130,7 @@ export function TimelineRail() {
       </Container>
 
       {/* The rail */}
-      <div className="relative mt-16" style={{ perspective: "1200px" }}>
+      <div className="relative mt-16" style={{ perspective: "1800px" }}>
         <div
           ref={trackRef}
           className="overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -166,10 +166,10 @@ export function TimelineRail() {
                     <div
                       data-lead={isLead || undefined}
                       className={cn(
-                        "group border p-5 backdrop-blur-sm transition-colors duration-300",
+                        "group border p-5 transition-colors duration-300",
                         isLead
-                          ? "border-accent bg-accent/[0.08] shadow-[0_0_46px_-14px_var(--color-accent)]"
-                          : "border-white/12 bg-surface/80 hover:border-accent/60"
+                          ? "border-accent bg-[#10161f] shadow-[0_0_46px_-14px_var(--color-accent)]"
+                          : "border-white/12 bg-surface hover:border-accent/60"
                       )}
                     >
                       <span className="label-micro text-accent">{milestone.year}</span>

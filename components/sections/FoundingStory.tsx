@@ -82,7 +82,7 @@ export function FoundingStory() {
         />
       </Container>
 
-      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "1600px" }}>
+      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "2300px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <ol className="relative" style={{ transformStyle: "preserve-3d" }}>

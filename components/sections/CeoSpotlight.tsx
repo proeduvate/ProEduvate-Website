@@ -36,7 +36,7 @@ export function CeoSpotlight() {
       <Container className="relative">
         <div className="grid grid-cols-1 items-center gap-y-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-x-20">
           {/* ── Portrait ─────────────────────────────────────────────── */}
-          <div ref={tiltRef} className="relative" style={{ perspective: "1200px" }}>
+          <div ref={tiltRef} className="relative" style={{ perspective: "1800px" }}>
             <motion.div
               style={tiltStyle ?? undefined}
               className="relative mx-auto w-full max-w-[420px]"
@@ -124,35 +124,31 @@ export function CeoSpotlight() {
               </ul>
             </motion.div>
 
-            {/* Statement — visually separate, and second by design. */}
-            <motion.figure
-              initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-8%" }}
-              transition={{ duration: 0.6, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="relative mt-12 border-l-2 border-accent pl-7"
-            >
-              <p className="label-micro text-accent">In their words</p>
-
-              <blockquote className="mt-4">
-                {/* Display face here: it is two sentences, short enough that
-                    the tighter cut reads as emphasis rather than cramped. */}
-                <p className="font-display text-2xl leading-[1.4] text-balance text-chalk md:text-[28px]">
-                  &ldquo;{ceo.quote}&rdquo;
-                </p>
-              </blockquote>
-
-              <figcaption className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
-                <span className="label-micro text-gray-400">
+            {/*
+             * The statement only renders once real, approved words exist.
+             * The drafted stand-in has been removed rather than left on the
+             * page behind a caveat -- an unattributed invention adds nothing
+             * while it waits, and an empty quote block would just look broken.
+             */}
+            {ceo.quoteApproved && ceo.quote && (
+              <motion.figure
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-8%" }}
+                transition={{ duration: 0.6, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+                className="relative mt-12 border-l-2 border-accent pl-7"
+              >
+                <p className="label-micro text-accent">In their words</p>
+                <blockquote className="mt-4">
+                  <p className="font-display text-2xl leading-[1.4] text-balance text-chalk md:text-[28px]">
+                    &ldquo;{ceo.quote}&rdquo;
+                  </p>
+                </blockquote>
+                <figcaption className="label-micro mt-5 text-gray-400">
                   {ceo.name ?? "Name pending"} · {ceo.role}
-                </span>
-                {!ceo.quoteApproved && (
-                  <span className="label-micro border border-white/15 px-2.5 py-1.5 text-gray-600">
-                    Draft — pending their own words
-                  </span>
-                )}
-              </figcaption>
-            </motion.figure>
+                </figcaption>
+              </motion.figure>
+            )}
           </div>
         </div>
       </Container>

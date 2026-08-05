@@ -65,7 +65,7 @@ export function GrowthRoadmap({ expanded = false }: { expanded?: boolean }) {
 
         <div
           className="relative mt-20 md:mt-28"
-          style={shouldReduceMotion ? undefined : { perspective: "1600px" }}
+          style={shouldReduceMotion ? undefined : { perspective: "2300px" }}
         >
           {/* Spine */}
           <div

@@ -182,7 +182,7 @@ export function SectorRing() {
           {/* Stage */}
           <div
             className="relative mx-auto h-[300px] w-full"
-            style={{ perspective: "1400px", perspectiveOrigin: "50% 45%" }}
+            style={{ perspective: "2100px", perspectiveOrigin: "50% 45%" }}
           >
             <div
               ref={ringRef}
@@ -256,7 +256,7 @@ export function SectorRing() {
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -10, scale: 0.98 }}
                   transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-                  className="mx-auto max-w-xl border border-accent/40 bg-surface-2/90 p-7 text-center backdrop-blur-sm"
+                  className="mx-auto max-w-xl border border-accent/40 bg-surface-2 p-7 text-center"
                 >
                   <p className="label-micro text-accent">
                     Sector {String((active ?? 0) + 1).padStart(2, "0")}

@@ -15,7 +15,16 @@ export function Container({
   as?: ContainerTag;
 }) {
   return (
-    <Tag className={cn("mx-auto w-full max-w-[1280px] px-6 md:px-10", className)}>
+    // The cap grows with the viewport instead of stopping dead at 1280px.
+    // A fixed 1280 left ~320px of empty gutter per side on a 1920 display and
+    // ~640px on a 2560 one, which reads as the layout failing to fill the
+    // screen rather than as a deliberate measure.
+    <Tag
+      className={cn(
+        "mx-auto w-full max-w-[1280px] px-6 md:px-10 xl:max-w-[1440px] 2xl:max-w-[1680px]",
+        className
+      )}
+    >
       {children}
     </Tag>
   );

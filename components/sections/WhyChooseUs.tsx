@@ -77,7 +77,7 @@ export function WhyChooseUs() {
         />
       </Container>
 
-      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "1400px" }}>
+      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "2100px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_0.9fr] lg:gap-16">

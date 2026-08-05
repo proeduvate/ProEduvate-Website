@@ -46,7 +46,7 @@ export function DomainsGrid() {
         />
       </Container>
 
-      <div ref={tiltRef} className="relative mt-14" style={{ perspective: "1100px" }}>
+      <div ref={tiltRef} className="relative mt-14" style={{ perspective: "2400px" }}>
         <motion.div style={tiltStyle ?? undefined}>
           <Container>
             <ul
@@ -66,7 +66,7 @@ export function DomainsGrid() {
                     transition={{ duration: 0.5, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <span
-                      className="group relative inline-flex items-center rounded-full border border-accent/30 bg-white/[0.04] px-6 py-3 text-sm text-gray-200 backdrop-blur-sm transition-all duration-300 hover:border-accent hover:text-white"
+                      className="group relative inline-flex items-center rounded-full border border-accent/30 bg-[#0d1420] px-6 py-3 text-sm text-gray-200 transition-all duration-300 hover:border-accent hover:text-white"
                       style={{ boxShadow: "0 0 30px -10px var(--color-accent)" }}
                     >
                       <span

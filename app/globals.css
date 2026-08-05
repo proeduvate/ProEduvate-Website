@@ -141,6 +141,28 @@
     background: var(--color-surface);
     color: var(--color-chalk);
     font-family: var(--font-sans);
+    /* Light text on a dark background renders heavy with subpixel
+       antialiasing, and heavier still once a layer is composited for a 3D
+       transform. Greyscale AA keeps the weight consistent whether or not an
+       element sits on a transformed layer. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * Text on a `translateZ` layer is rasterized once and then scaled by the
+   * perspective divide, so it softens in proportion to how far forward it
+   * sits. Pinning the raster to the device pixel ratio and disabling the
+   * back face keeps those layers sharp.
+   *
+   * Applied to the 3D stages rather than globally: promoting every element
+   * to its own layer costs memory for no benefit.
+   */
+  [style*="preserve-3d"],
+  [style*="translateZ"] {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-origin: center center;
   }
 
   h1,
