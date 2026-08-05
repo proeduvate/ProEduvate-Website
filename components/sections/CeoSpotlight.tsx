@@ -1,161 +1,195 @@
 "use client";
 
 import Image from "next/image";
-import { Quote } from "lucide-react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { ceo } from "@/data/ceo";
 
 /*
- * CEO spotlight: portrait on one side, statement on the other, both on the
- * same tilting 3D stage as the rest of the About page.
+ * CEO spotlight.
  *
- * The portrait sits furthest forward inside receding plates, mirroring the
- * treatment the mark gets in the About hero so the two read as one system.
+ * The portrait is a cut-out PNG composited straight onto the section -- no
+ * card, no frame, no border. That is the whole reason the section is built
+ * this way: a framed photo reads as a corporate directory entry, while a
+ * cut-out standing in its own light reads as a person. It sits on a glow and
+ * an elliptical ground shadow so it is anchored rather than floating.
  *
- * Until a real portrait is supplied the frame renders a labelled placeholder
- * rather than a stock photograph -- a stand-in face presented as the CEO
- * would be a straightforward misrepresentation, and it is the kind of thing
- * that quietly ships and stays.
+ * Order is deliberate: who they are first, then what they say. A pull quote
+ * lands differently once you already know whose voice it is.
  */
 
-const PLATES = [
-  { z: -70, inset: "-inset-3" },
-  { z: -150, inset: "-inset-8" },
-];
-
 export function CeoSpotlight() {
-  const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 7, maxX: 4 });
+  const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 5, maxX: 3 });
 
   return (
-    <section className="relative overflow-hidden border-y border-white/10 bg-surface-2 py-24 md:py-32">
-      <div className="bg-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden="true" />
+    <section className="relative overflow-hidden border-y border-white/10 bg-[#04060a] py-24 md:py-32">
+      <div className="bg-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
+
+      {/* The light the portrait stands in. */}
       <div
         aria-hidden="true"
-        className="animate-[--animate-aurora-slow] pointer-events-none absolute top-1/4 -right-24 h-[45vh] w-[45vh] rounded-full opacity-25 blur-[130px]"
+        className="animate-[--animate-aurora-slow] pointer-events-none absolute top-0 left-[8%] h-[70vh] w-[70vh] rounded-full opacity-[0.28] blur-[150px]"
         style={{ background: "var(--color-accent)" }}
       />
 
       <Container className="relative">
-        <SectionHeading
-          index="02"
-          eyebrow="Leadership"
-          title="From our CEO."
-          description="The person setting the direction, and what they hold the company to."
-        />
-      </Container>
-
-      <div ref={tiltRef} className="relative mt-16" style={{ perspective: "1500px" }}>
-        <motion.div style={tiltStyle ?? undefined}>
-          <Container>
-            <div
-              className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20"
-              style={{ transformStyle: "preserve-3d" }}
+        <div className="grid grid-cols-1 items-center gap-y-14 lg:grid-cols-[0.85fr_1.15fr] lg:gap-x-20">
+          {/* ── Portrait ─────────────────────────────────────────────── */}
+          <div ref={tiltRef} className="relative" style={{ perspective: "1200px" }}>
+            <motion.div
+              style={tiltStyle ?? undefined}
+              className="relative mx-auto w-full max-w-[420px]"
             >
-              {/* Portrait */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-8%" }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="relative mx-auto w-full max-w-[340px]"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                {PLATES.map((plate) => (
-                  <span
-                    key={plate.z}
-                    aria-hidden="true"
-                    className={`absolute ${plate.inset} border border-accent/20 bg-accent/[0.04]`}
-                    style={{ transform: `translateZ(${plate.z}px)` }}
-                  />
+              {/* Concentric arcs behind the subject */}
+              <span
+                aria-hidden="true"
+                className="absolute top-[6%] left-1/2 aspect-square w-[92%] -translate-x-1/2 rounded-full border border-accent/25"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute top-[14%] left-1/2 aspect-square w-[70%] -translate-x-1/2 rounded-full border border-accent/15"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute top-[18%] left-1/2 aspect-square w-[58%] -translate-x-1/2 rounded-full opacity-50 blur-[60px]"
+                style={{ background: "var(--color-accent)" }}
+              />
+
+              {ceo.photo ? (
+                <Image
+                  src={ceo.photo}
+                  alt={ceo.name ? `${ceo.name}, ${ceo.role}` : ceo.role}
+                  width={840}
+                  height={1050}
+                  priority
+                  // No frame, no crop, no rounded box -- the cut-out is the
+                  // subject and the section is its background.
+                  className="relative h-auto w-full object-contain"
+                />
+              ) : (
+                <PortraitPending />
+              )}
+
+              {/* Ground shadow, so the cut-out is planted rather than floating */}
+              <span
+                aria-hidden="true"
+                className="absolute -bottom-2 left-1/2 h-6 w-[62%] -translate-x-1/2 rounded-[50%] bg-black/70 blur-xl"
+              />
+            </motion.div>
+          </div>
+
+          {/* ── About, then the statement ────────────────────────────── */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-8%" }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <p className="label-micro flex items-center gap-3 text-accent">
+                <span className="h-px w-8 bg-accent/50" aria-hidden="true" />
+                Leadership
+              </p>
+
+              <h2 className="display-lg mt-6 text-balance text-chalk">About our CEO.</h2>
+
+              <div className="mt-7 flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                <p className="font-display text-xl text-chalk">{ceo.name ?? "Name pending"}</p>
+                <p className="label-micro text-gray-500">{ceo.role}</p>
+              </div>
+
+              {/*
+               * Body face at a comfortable measure. Biography is prose, and
+               * the display cut's tight tracking makes running text read as
+               * cramped -- it is reserved for the heading and the pull quote.
+               */}
+              <div className="mt-7 max-w-xl space-y-5">
+                {ceo.about.map((paragraph) => (
+                  <p key={paragraph.slice(0, 24)} className="leading-[1.75] text-gray-300">
+                    {paragraph}
+                  </p>
                 ))}
+              </div>
 
-                <div
-                  className="relative aspect-[4/5] overflow-hidden border border-accent/40 bg-surface"
-                  style={{ transform: "translateZ(60px)" }}
-                >
-                  {ceo.photo ? (
-                    <Image
-                      src={ceo.photo}
-                      alt={ceo.name ? `${ceo.name}, ${ceo.role}` : ceo.role}
-                      fill
-                      sizes="(max-width: 1024px) 340px, 340px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-                      <Image
-                        src="/icon.png"
-                        alt=""
-                        width={96}
-                        height={96}
-                        className="h-14 w-14 object-contain opacity-40"
-                      />
-                      <p className="label-micro text-gray-600">Portrait pending</p>
-                    </div>
-                  )}
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent"
-                  />
-                </div>
+              <ul className="mt-9 flex flex-wrap gap-2.5">
+                {ceo.focus.map((item) => (
+                  <li
+                    key={item}
+                    className="label-micro border border-white/15 bg-white/[0.03] px-3.5 py-2 text-gray-400"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
 
-                {/* Name plate, pushed furthest forward */}
-                <div
-                  className="relative -mt-8 ml-6 w-[calc(100%-1.5rem)] border border-white/12 bg-surface-2 px-5 py-4"
-                  style={{ transform: "translateZ(110px)" }}
-                >
-                  <p className="font-display text-lg text-chalk">{ceo.name ?? "Name pending"}</p>
-                  <p className="label-micro mt-1.5 text-accent">{ceo.role}</p>
-                </div>
-              </motion.div>
+            {/* Statement — visually separate, and second by design. */}
+            <motion.figure
+              initial={{ opacity: 0, y: 22 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-8%" }}
+              transition={{ duration: 0.6, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="relative mt-12 border-l-2 border-accent pl-7"
+            >
+              <p className="label-micro text-accent">In their words</p>
 
-              {/* Statement */}
-              <motion.div
-                initial={{ opacity: 0, y: 26 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-8%" }}
-                transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-                style={{ transform: "translateZ(20px)" }}
-              >
-                <Quote className="h-9 w-9 text-accent/40" aria-hidden="true" />
+              <blockquote className="mt-4">
+                {/* Display face here: it is two sentences, short enough that
+                    the tighter cut reads as emphasis rather than cramped. */}
+                <p className="font-display text-2xl leading-[1.4] text-balance text-chalk md:text-[28px]">
+                  &ldquo;{ceo.quote}&rdquo;
+                </p>
+              </blockquote>
 
-                <blockquote className="mt-6">
-                  {/*
-                   * Body face, not display type: this is several sentences,
-                   * and the display cut's tight tracking makes long passages
-                   * read as cramped.
-                   */}
-                  <p className="text-xl leading-[1.6] text-chalk md:text-2xl md:leading-[1.55]">
-                    {ceo.quote}
-                  </p>
-                </blockquote>
-
+              <figcaption className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span className="label-micro text-gray-400">
+                  {ceo.name ?? "Name pending"} · {ceo.role}
+                </span>
                 {!ceo.quoteApproved && (
-                  <p className="label-micro mt-6 inline-flex border border-white/15 px-3 py-2 text-gray-500">
-                    Draft statement — pending the CEO&apos;s own words
-                  </p>
+                  <span className="label-micro border border-white/15 px-2.5 py-1.5 text-gray-600">
+                    Draft — pending their own words
+                  </span>
                 )}
-
-                <p className="mt-8 max-w-xl leading-relaxed text-gray-400">{ceo.bio}</p>
-
-                <ul className="mt-10 grid grid-cols-1 gap-px border-t border-white/10 sm:grid-cols-3">
-                  {ceo.focus.map((item, i) => (
-                    <li key={item} className="border-b border-white/10 py-5 sm:pr-6">
-                      <span className="label-micro text-gray-600 tabular-nums">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <p className="mt-2.5 font-display text-base text-chalk">{item}</p>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            </div>
-          </Container>
-        </motion.div>
-      </div>
+              </figcaption>
+            </motion.figure>
+          </div>
+        </div>
+      </Container>
     </section>
+  );
+}
+
+/**
+ * Stand-in for the cut-out portrait.
+ *
+ * Deliberately an abstract silhouette rather than stock photography: a
+ * stand-in face presented as the CEO is a misrepresentation, and it is the
+ * kind of thing that ships quietly and stays.
+ */
+function PortraitPending() {
+  return (
+    <div className="relative mx-auto flex aspect-[4/5] w-full flex-col items-center justify-end">
+      <svg
+        viewBox="0 0 200 250"
+        className="h-full w-full"
+        aria-hidden="true"
+        fill="none"
+        preserveAspectRatio="xMidYMax meet"
+      >
+        <defs>
+          <linearGradient id="ceo-silhouette" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0.03" />
+          </linearGradient>
+        </defs>
+        <circle cx="100" cy="78" r="40" fill="url(#ceo-silhouette)" />
+        <path
+          d="M28 250c0-42 32-74 72-74s72 32 72 74z"
+          fill="url(#ceo-silhouette)"
+        />
+      </svg>
+      <p className="label-micro absolute bottom-8 text-gray-600">Portrait pending</p>
+    </div>
   );
 }
