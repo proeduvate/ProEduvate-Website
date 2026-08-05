@@ -4,7 +4,6 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { BracketFrame } from "@/components/ui/BracketFrame";
-import { SloganTriad } from "@/components/ui/SloganTriad";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { stats } from "@/data/stats";
 
@@ -58,9 +57,7 @@ export function AboutHero() {
                   software — and grew into a product company building across eight sectors.
                 </p>
 
-                <SloganTriad className="mt-12" />
-
-                <dl className="mt-12 flex flex-wrap gap-x-12 gap-y-6 border-t border-white/10 pt-10">
+                <dl className="mt-12 flex flex-wrap gap-x-12 gap-y-6">
                   {headline.map((stat, i) => (
                     <div key={stat.label} style={{ transform: `translateZ(${28 - i * 8}px)` }}>
                       <dt className="label-micro text-gray-500">{stat.label}</dt>

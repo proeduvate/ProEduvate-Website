@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/Hero";
 import { LogoStrip } from "@/components/sections/LogoStrip";
+import { SloganBand } from "@/components/sections/SloganBand";
 import { StatsBand } from "@/components/sections/StatsBand";
 import { SectorRing } from "@/components/sections/SectorRing";
 import { CapabilityGraph } from "@/components/sections/CapabilityGraph";
@@ -14,6 +15,7 @@ export default function Home() {
     <>
       <Hero />
       <LogoStrip />
+      <SloganBand />
       <StatsBand />
       <SectorRing />
       <CapabilityGraph />
