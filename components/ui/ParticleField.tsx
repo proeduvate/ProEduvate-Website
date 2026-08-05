@@ -31,27 +31,43 @@ type Particle = {
   twinkle: number; // twinkle speed
 };
 
-type Orb = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  radius: number;
-  alpha: number;
-  phase: number;
-};
-
 const MOBILE_BREAKPOINT = 768;
-const DESKTOP_COUNT = 70;
-const MOBILE_COUNT = 32;
-const DESKTOP_ORBS = 7;
-const MOBILE_ORBS = 3;
-const LINK_DISTANCE = 150;
+const DESKTOP_COUNT = 200;
+const MOBILE_COUNT = 90;
+const LINK_DISTANCE = 130;
 const POINTER_RADIUS = 190;
-const SPRITE_SIZE = 64;
+// Larger sprite so the hard core still has pixels to spare once it is
+// scaled down to a couple of device pixels.
+const SPRITE_SIZE = 128;
 
-/** Pre-rendered radial glow, drawn scaled per particle -- far cheaper than
- *  building a gradient every frame. */
+/**
+ * Pre-rendered spark, drawn scaled per particle -- far cheaper than building
+ * a gradient every frame.
+ *
+ * The profile is what decides whether these read as stars or as fog. A
+ * gradient that ramps gently all the way to the sprite edge is a haze; this
+ * holds full alpha across the core and then drops it almost immediately, so
+ * the particle keeps a hard edge at any drawn size.
+ */
+function makeSparkSprite(r: number, g: number, b: number) {
+  const c = document.createElement("canvas");
+  c.width = SPRITE_SIZE;
+  c.height = SPRITE_SIZE;
+  const ctx = c.getContext("2d");
+  if (!ctx) return c;
+  const half = SPRITE_SIZE / 2;
+  const grad = ctx.createRadialGradient(half, half, 0, half, half, half);
+  grad.addColorStop(0, `rgba(255, 255, 255, 1)`);
+  grad.addColorStop(0.16, `rgba(${r}, ${g}, ${b}, 1)`);
+  grad.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, 0.35)`);
+  grad.addColorStop(0.55, `rgba(${r}, ${g}, ${b}, 0.06)`);
+  grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, SPRITE_SIZE, SPRITE_SIZE);
+  return c;
+}
+
+/** Soft radial glow, still needed for the pointer halo. */
 function makeGlowSprite(r: number, g: number, b: number, falloff: number) {
   const c = document.createElement("canvas");
   c.width = SPRITE_SIZE;
@@ -75,23 +91,11 @@ function makeParticle(w: number, h: number): Particle {
     y: Math.random() * h,
     vx: (Math.random() - 0.5) * 0.16,
     vy: -0.06 - Math.random() * 0.16,
-    radius: 1.4 + depth * 3.4,
-    alpha: 0.35 + depth * 0.55,
+    radius: 0.9 + depth * 2.1,
+    alpha: 0.4 + depth * 0.6,
     depth,
     phase: Math.random() * Math.PI * 2,
     twinkle: 0.5 + Math.random() * 1.3,
-  };
-}
-
-function makeOrb(w: number, h: number): Orb {
-  return {
-    x: Math.random() * w,
-    y: Math.random() * h,
-    vx: (Math.random() - 0.5) * 0.09,
-    vy: -0.03 - Math.random() * 0.07,
-    radius: 26 + Math.random() * 62,
-    alpha: 0.1 + Math.random() * 0.14,
-    phase: Math.random() * Math.PI * 2,
   };
 }
 
@@ -109,15 +113,13 @@ export function ParticleField({ className }: { className?: string }) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
     const count = isMobile ? MOBILE_COUNT : DESKTOP_COUNT;
-    const orbCount = isMobile ? MOBILE_ORBS : DESKTOP_ORBS;
 
-    const sparkSprite = makeGlowSprite(214, 234, 255, 0.22);
-    const orbSprite = makeGlowSprite(64, 156, 255, 0.42);
+    const sparkSprite = makeSparkSprite(206, 230, 255);
+    const pointerSprite = makeGlowSprite(64, 156, 255, 0.42);
 
     let width = 0;
     let height = 0;
     let particles: Particle[] = [];
-    let orbs: Orb[] = [];
 
     function resize() {
       const parent = canvas!.parentElement;
@@ -129,7 +131,6 @@ export function ParticleField({ className }: { className?: string }) {
 
       if (particles.length === 0) {
         particles = Array.from({ length: count }, () => makeParticle(width, height));
-        orbs = Array.from({ length: orbCount }, () => makeOrb(width, height));
       }
     }
 
@@ -196,19 +197,9 @@ export function ParticleField({ className }: { className?: string }) {
       // Additive so every layer reads as emitted light over the footage.
       ctx!.globalCompositeOperation = "lighter";
 
-      // Big soft bokeh orbs, drifting behind the sparks.
-      for (const o of orbs) {
-        o.x += o.vx * dt * speedBoost;
-        o.y += (o.vy * speedBoost - scrollVel * 0.03) * dt;
-        const m = o.radius;
-        if (o.x < -m) o.x = width + m;
-        else if (o.x > width + m) o.x = -m;
-        if (o.y < -m) o.y = height + m;
-        else if (o.y > height + m) o.y = -m;
-
-        const breathe = 0.75 + 0.25 * Math.sin(now * 0.0004 + o.phase);
-        drawGlow(orbSprite, o.x, o.y, o.radius * breathe, o.alpha * breathe);
-      }
+      // The big soft bokeh orbs that used to drift behind the sparks are
+      // gone. They were the largest blurred areas on screen and worked
+      // directly against a field that is meant to read as sharp points.
 
       // Constellation links, drawn under the sparks.
       ctx!.lineWidth = 1;
@@ -272,15 +263,16 @@ export function ParticleField({ className }: { className?: string }) {
           ctx!.lineTo(p.x, p.y + streak * dir);
           ctx!.stroke();
         } else {
-          // Wide soft halo plus a tight bright core.
-          drawGlow(sparkSprite, p.x, p.y, p.radius * 4.5, alpha * 0.55);
-          drawGlow(sparkSprite, p.x, p.y, p.radius * 1.15, alpha);
+          // One tight pass. The previous version drew a second copy at 4.5x
+          // the radius as a halo, and that wash across every particle is
+          // what made the whole field look out of focus.
+          drawGlow(sparkSprite, p.x, p.y, p.radius * 1.6, alpha);
         }
       }
 
       // Glow trailing the cursor.
       if (pointerActive) {
-        drawGlow(orbSprite, pointerX, pointerY, POINTER_RADIUS * 0.85, 0.16);
+        drawGlow(pointerSprite, pointerX, pointerY, POINTER_RADIUS * 0.85, 0.16);
       }
 
       ctx!.globalAlpha = 1;

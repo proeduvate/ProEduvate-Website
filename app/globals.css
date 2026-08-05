@@ -119,6 +119,33 @@
   }
 }
 
+/*
+ * Wireframe cubes drifting behind the slogan.
+ *
+ * Split across two elements on purpose: the outer one bobs, the inner one
+ * tumbles. Combining both into a single keyframe would mean every cube
+ * shares one transform property, and the two motions would overwrite each
+ * other rather than compose.
+ */
+@keyframes cube-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -26px, 0);
+  }
+}
+
+@keyframes cube-tumble {
+  from {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(360deg) rotateY(360deg);
+  }
+}
+
 /* Slow breathing glow used behind the hero's frame sequence. */
 @keyframes aurora-drift {
   0%,

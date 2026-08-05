@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/ui/Container";
+import { FloatingCubes } from "@/components/ui/FloatingCubes";
 import { SloganTriad } from "@/components/ui/SloganTriad";
 
 /*
@@ -18,6 +19,11 @@ export function SloganBand() {
   return (
     <section className="relative overflow-hidden border-t border-white/10 bg-surface py-20 md:py-28">
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden="true" />
+
+      {/* Cubes sit above the grid but under the glow, so the glow reads as
+          light in front of them rather than a wash over everything. */}
+      <FloatingCubes />
+
       <div
         aria-hidden="true"
         className="animate-[--animate-aurora-slow] pointer-events-none absolute top-1/2 left-1/2 h-[50vh] w-[80vw] max-w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-25 blur-[130px]"
