@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { ParticleField } from "@/components/ui/ParticleField";
+import { HeroParticles } from "@/components/ui/HeroParticles";
 import { HeroHud } from "@/components/ui/HeroHud";
 import { jobs } from "@/data/jobs";
 import { internships } from "@/data/internships";
@@ -364,8 +364,9 @@ export function Hero() {
           style={{ background: "color-mix(in srgb, var(--color-primary-2) 60%, transparent)" }}
         />
 
-        {/* Ambient particles — own rAF loop, so the hero stays alive between snaps. */}
-        <ParticleField className="pointer-events-none absolute inset-0 h-full w-full" />
+        {/* Ambient particles: the same WebGL point cloud as the "One system"
+            section, falling back to the 2D canvas field without WebGL. */}
+        <HeroParticles className="pointer-events-none absolute inset-0 h-full w-full" />
 
         {/* Legibility scrims */}
         <div
