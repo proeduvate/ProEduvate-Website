@@ -3,6 +3,16 @@
 import { useEffect, useRef } from "react";
 import { useInView, useMotionValue, useReducedMotion, animate } from "framer-motion";
 
+/*
+ * Force the true figure on screen even if the count-up never runs.
+ *
+ * The rendered text starts at "0" and is only replaced by the animation
+ * callback, so an observer that never fires or a frozen requestAnimationFrame
+ * leaves a real statistic reading zero -- a wrong number presented as fact.
+ * See the same guard in ui/Counter.tsx.
+ */
+const FAILSAFE_MS = 2200;
+
 export function AnimatedCounter({
   value,
   className,
@@ -17,6 +27,15 @@ export function AnimatedCounter({
   const shouldReduceMotion = useReducedMotion();
   const motionValue = useMotionValue(0);
 
+  // From mount, not from `inView` -- the case being guarded against is
+  // `inView` never becoming true.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (ref.current) ref.current.textContent = String(value);
+    }, FAILSAFE_MS);
+    return () => clearTimeout(t);
+  }, [value]);
+
   useEffect(() => {
     if (!inView || !ref.current) return;
     if (shouldReduceMotion) {
@@ -28,6 +47,10 @@ export function AnimatedCounter({
       ease: "easeOut",
       onUpdate: (latest) => {
         if (ref.current) ref.current.textContent = String(Math.round(latest));
+      },
+      // Rounding during the run can land a frame short of the target.
+      onComplete: () => {
+        if (ref.current) ref.current.textContent = String(value);
       },
     });
     return () => controls.stop();

@@ -44,6 +44,8 @@ const RADIUS = 430; // px from ring centre to each tile
 const BASE_SPEED = 5.5; // degrees per second at rest
 const SCROLL_IMPULSE = 0.07; // degrees added per px of scroll
 const MOMENTUM_DECAY = 2.6; // per second
+// How far the ring eases toward the hovered tile, and how quickly.
+const SNAP_STRENGTH = 3.4;
 
 export function SectorRing() {
   const shouldReduceMotion = useReducedMotion();
@@ -84,10 +86,25 @@ export function SectorRing() {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
 
-      // Hovering parks the ring so the card can be read.
-      const idle = activeRef.current === null;
+      const active = activeRef.current;
+      const idle = active === null;
       momentum -= momentum * Math.min(1, MOMENTUM_DECAY * dt);
-      rotation += (idle ? BASE_SPEED * dt : 0) + momentum * dt;
+
+      if (idle) {
+        rotation += BASE_SPEED * dt + momentum * dt;
+      } else {
+        // Hovering no longer just parks the ring -- it turns the hovered tile
+        // to face the camera. Parking alone left whichever tile you picked
+        // stuck at whatever angle it happened to be at, so a tile could be
+        // selected while edge-on and unreadable.
+        //
+        // The delta is wrapped into [-180, 180] so it always takes the short
+        // way round instead of unwinding through a full turn.
+        const target = -active * STEP;
+        const delta = ((target - rotation) % 360 + 540) % 360 - 180;
+        rotation += delta * Math.min(1, SNAP_STRENGTH * dt);
+        momentum = 0;
+      }
 
       ring!.style.transform = `translateZ(-${RADIUS}px) rotateY(${rotation}deg)`;
 
@@ -98,9 +115,19 @@ export function SectorRing() {
         const angle = ((i * STEP + rotation) % 360 + 360) % 360;
         // 1 at the front, 0 at the back.
         const facing = (Math.cos((angle * Math.PI) / 180) + 1) / 2;
-        tile.style.opacity = String(0.18 + facing * 0.82);
-        tile.style.filter = `blur(${(1 - facing) * 2.4}px)`;
-        tile.style.zIndex = String(Math.round(facing * 100));
+        // Sharpened toward the front so the leading tile stands clear of its
+        // neighbours instead of the whole ring fading evenly.
+        const front = Math.pow(facing, 1.6);
+
+        tile.style.opacity = String(0.1 + front * 0.9);
+        // Scale and brightness carry the depth instead of a blur filter.
+        // Blurring a tile blurs the text inside it, and these tiles are the
+        // section's actual content -- the same reason backdrop-filter was
+        // taken off every text panel on the site.
+        tile.style.transform =
+          `rotateY(${i * STEP}deg) translateZ(${RADIUS}px) scale(${0.82 + front * 0.18})`;
+        tile.style.filter = `brightness(${0.45 + front * 0.55})`;
+        tile.style.zIndex = String(Math.round(front * 100));
       }
 
       raf = requestAnimationFrame(frame);
