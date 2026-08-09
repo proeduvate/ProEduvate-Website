@@ -1,0 +1,1154 @@
+{
+  "products": [
+    {
+      "slug": "hackzen",
+      "name": "HackZen",
+      "tagline": "A hackathon platform built to stretch young innovators.",
+      "description": "HackZen is where hackathons get run — bringing young minds together around genuinely challenging problem statements.",
+      "category": "EdTech",
+      "status": "Beta",
+      "initials": "HZ",
+      "external_url": "#",
+      "screenshot": "/products/ui/hackzen.webp",
+      "highlights": [
+        "Students take part in live hackathons",
+        "Organisations host their own events on the platform",
+        "A personalised AI assistant sharpens problem statements and development direction",
+        "Mentors track and guide their teams' progress"
+      ]
+    },
+    {
+      "slug": "testsync",
+      "name": "TestSync",
+      "tagline": "Real-time user testing for developers and startups.",
+      "description": "TestSync connects developers and startups with real users for live testing in whichever area they need — and testers get paid for the sessions they run.",
+      "category": "IT & Enterprise",
+      "status": "Live",
+      "initials": "TS",
+      "external_url": "#",
+      "screenshot": "/products/ui/testsync.webp",
+      "highlights": []
+    },
+    {
+      "slug": "prointern",
+      "name": "ProIntern",
+      "tagline": "A one-month internship on a real project, assessed by AI.",
+      "description": "ProIntern places students inside a real project module for a one-month internship, with their learning and performance evaluated by AI.",
+      "category": "EdTech",
+      "status": "Beta",
+      "initials": "PI",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "minanalyzer",
+      "name": "MinAnalyzer",
+      "tagline": "Records, summarises, and pulls insight out of every meeting.",
+      "description": "MinAnalyzer records online meetings, summarises them into clean minutes, and surfaces the insights worth acting on.",
+      "category": "IT & Enterprise",
+      "status": "Beta",
+      "initials": "MA",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "codoai",
+      "name": "CodoAI",
+      "tagline": "Gamified coding practice with an AI guide in real time.",
+      "description": "CodoAI is a coding practice platform with a gamified, Gen Z feel — and an AI assistant guiding you live as you write code.",
+      "category": "EdTech",
+      "status": "Live",
+      "initials": "CA",
+      "external_url": "#",
+      "screenshot": "/products/ui/codoai.webp",
+      "highlights": []
+    },
+    {
+      "slug": "learnova",
+      "name": "Learnova",
+      "tagline": "A personal learning portal built around placement prep.",
+      "description": "Learnova is a personal learning portal where individuals study and prepare themselves for placements.",
+      "category": "EdTech",
+      "status": "Beta",
+      "initials": "LN",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "crictator",
+      "name": "Crictator",
+      "tagline": "Cricket simulation with realistic player and pitch modelling.",
+      "description": "Crictator simulates cricket matches under realistic conditions, with a live player model covering physical fitness, mindset, pitch conditions and more.",
+      "category": "IT & Enterprise",
+      "status": "Coming Soon",
+      "initials": "CR",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "medvault",
+      "name": "Medvault",
+      "tagline": "E-card medical records for emergencies and new consultations.",
+      "description": "Medvault stores a person's medical record on an e-card, ready for an emergency or a first visit to a new doctor.",
+      "category": "IT & Enterprise",
+      "status": "Coming Soon",
+      "initials": "MV",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "gd-bot",
+      "name": "GD Bot",
+      "tagline": "Practise group discussions against AI, then get the analytics.",
+      "description": "GD Bot is an AI-based group discussion platform where individuals practise and compete against AI, then get a report on exactly where to improve.",
+      "category": "AI",
+      "status": "Beta",
+      "initials": "GD",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "tailon-ai",
+      "name": "Tailon AI",
+      "tagline": "AI interview rounds to practise on before the real thing.",
+      "description": "Tailon AI is an AI-based interview practice platform for anyone working through interview preparation.",
+      "category": "AI",
+      "status": "Beta",
+      "initials": "TA",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "voltvision",
+      "name": "Voltvision",
+      "tagline": "Drone software that cuts energy waste in industrial zones.",
+      "description": "Voltvision is a drone-based software solution for reducing energy wastage across industrial zones, running alerts 24/7.",
+      "category": "AI",
+      "status": "Coming Soon",
+      "initials": "VV",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "varalaru-ulagam",
+      "name": "Varalaru Ulagam",
+      "tagline": "XR heritage preservation with an AI tour guide.",
+      "description": "Varalaru Ulagam is an XR solution for preserving heritage sites and promoting tourism, with an AI historic tour guide accompanying visitors.",
+      "category": "AI",
+      "status": "Coming Soon",
+      "initials": "VU",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "soft-skills-portal",
+      "name": "Soft Skills Portal",
+      "tagline": "Soft skills training through AI scenarios and questioning.",
+      "description": "The Soft Skills Portal builds individual soft skills through AI-driven scenario justification and questionnaires.",
+      "category": "EdTech",
+      "status": "Beta",
+      "initials": "SS",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "cms",
+      "name": "Clinic Management System",
+      "tagline": "Clinic management, organised the way doctors actually work.",
+      "description": "CMS is a management portal that gives doctors an efficient view of how their clinic is running, in a doctor's own terms.",
+      "category": "IT & Enterprise",
+      "status": "Beta",
+      "initials": "CM",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "camseye",
+      "name": "CamsEye",
+      "tagline": "CCTV monitoring with advanced analytics and detection reports.",
+      "description": "CamsEye monitors and detects across CCTV camera feeds, with advanced analytics and detection reporting.",
+      "category": "AI",
+      "status": "Coming Soon",
+      "initials": "CE",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    },
+    {
+      "slug": "promptogen",
+      "name": "PromptoGen",
+      "tagline": "Turns plain text or an image into a proper prompt.",
+      "description": "PromptoGen is an advanced AI tool that converts an ordinary text message into a real prompt, and an image into a detailed one.",
+      "category": "AI",
+      "status": "Live",
+      "initials": "PG",
+      "external_url": "#",
+      "screenshot": "/products/ui/promptogen.webp",
+      "highlights": []
+    },
+    {
+      "slug": "research-hub",
+      "name": "Research Hub",
+      "tagline": "Research tools and converters for sharper insight.",
+      "description": "Research Hub gathers a range of research tools and converters in one place, for better insights and a clearer research direction.",
+      "category": "AI",
+      "status": "Coming Soon",
+      "initials": "RH",
+      "external_url": "#",
+      "screenshot": null,
+      "highlights": []
+    }
+  ],
+  "services": [
+    {
+      "slug": "edtech-platforms",
+      "name": "Custom EdTech Platform Development",
+      "description": "End-to-end learning platforms built for scale — from LMS builds to full campus systems, tailored to how your institution actually teaches.",
+      "icon": "graduation-cap",
+      "included": [
+        "Learning management & content delivery",
+        "Assessment and gradebook engines",
+        "Student, faculty, and admin portals",
+        "SIS / third-party integrations"
+      ]
+    },
+    {
+      "slug": "ai-ml-solutions",
+      "name": "AI/ML Solution Development",
+      "description": "LLM integrations, intelligent tutoring systems, and automation agents designed around your data and your workflows, not a generic wrapper.",
+      "icon": "brain-circuit",
+      "included": [
+        "LLM & RAG integration",
+        "Intelligent tutoring & assessment models",
+        "Workflow automation agents",
+        "Model evaluation & guardrails"
+      ]
+    },
+    {
+      "slug": "enterprise-software",
+      "name": "Enterprise Software Development",
+      "description": "Custom internal tools and customer-facing platforms engineered for reliability, security, and the messy realities of enterprise scale.",
+      "icon": "building-2",
+      "included": [
+        "Internal tooling & admin systems",
+        "Customer-facing web applications",
+        "Legacy system modernization",
+        "API & systems integration"
+      ]
+    },
+    {
+      "slug": "ui-ux-design",
+      "name": "UI/UX & Product Design",
+      "description": "Research-backed product design that balances polish with usability, from early wireframes to a fully realized design system.",
+      "icon": "palette",
+      "included": [
+        "Product discovery & UX research",
+        "Design systems & component libraries",
+        "Interactive prototyping",
+        "Accessibility audits"
+      ]
+    },
+    {
+      "slug": "cloud-devops",
+      "name": "Cloud & DevOps / Infrastructure",
+      "description": "Infrastructure that scales quietly in the background — CI/CD, observability, and cloud architecture built for uptime.",
+      "icon": "cloud",
+      "included": [
+        "Cloud architecture & migration",
+        "CI/CD pipeline design",
+        "Observability & monitoring",
+        "Cost optimization"
+      ]
+    },
+    {
+      "slug": "data-engineering",
+      "name": "Data Engineering & Analytics",
+      "description": "Pipelines and dashboards that turn scattered institutional or product data into decisions your team can act on.",
+      "icon": "database",
+      "included": [
+        "Data pipeline & warehouse design",
+        "ETL/ELT engineering",
+        "Analytics dashboards",
+        "Reporting automation"
+      ]
+    },
+    {
+      "slug": "digital-transformation",
+      "name": "Consulting & Digital Transformation",
+      "description": "Strategic advisory for institutions and enterprises modernizing how they teach, operate, or ship software.",
+      "icon": "compass",
+      "included": [
+        "Technology roadmapping",
+        "Process & systems audits",
+        "AI readiness assessments",
+        "Change management support"
+      ]
+    }
+  ],
+  "sectors": [
+    {
+      "title": "EdTech",
+      "description": "Learning platforms and campus systems for institutions.",
+      "icon": "graduation-cap"
+    },
+    {
+      "title": "Assistive Technology",
+      "description": "Software that removes barriers, not adds to them.",
+      "icon": "accessibility"
+    },
+    {
+      "title": "Medtech",
+      "description": "Clinical and patient-facing software built with care.",
+      "icon": "stethoscope"
+    },
+    {
+      "title": "Software & IT Solutions",
+      "description": "Custom applications and internal tooling that scale.",
+      "icon": "code"
+    },
+    {
+      "title": "AI Solutions",
+      "description": "AI-native products and automation, not bolted-on features.",
+      "icon": "brain-circuit"
+    },
+    {
+      "title": "HR & Management Solutions",
+      "description": "Tools that make running people and operations easier.",
+      "icon": "users"
+    },
+    {
+      "title": "Cloud Consultancy",
+      "description": "Architecture, migration, and infrastructure done right.",
+      "icon": "cloud"
+    },
+    {
+      "title": "Data Management",
+      "description": "Pipelines and platforms that make data trustworthy.",
+      "icon": "database"
+    }
+  ],
+  "domains": [
+    {
+      "name": "AI/ML"
+    },
+    {
+      "name": "Cloud"
+    },
+    {
+      "name": "Data Analytics & Science"
+    },
+    {
+      "name": "AR/VR/XR"
+    },
+    {
+      "name": "Full Stack"
+    },
+    {
+      "name": "Testing"
+    },
+    {
+      "name": "Product Development"
+    },
+    {
+      "name": "Research"
+    },
+    {
+      "name": "UI/UX"
+    },
+    {
+      "name": "App Development"
+    }
+  ],
+  "custom_projects": [
+    {
+      "slug": "ai-seva",
+      "name": "AI Seva",
+      "description": "A custom government scheme app that recommends schemes and auto-fills the applications.",
+      "image": "/custom-projects/ai-seva.webp"
+    },
+    {
+      "slug": "blood-detection",
+      "name": "Blood Detection",
+      "description": "An AI agent-based blood detection and justification system, with mosquito-borne disease prediction.",
+      "image": "/custom-projects/blood-detection.webp"
+    },
+    {
+      "slug": "nexus-company-website",
+      "name": "Nexus Company Website",
+      "description": "A website built for a pest control company.",
+      "image": "/custom-projects/nexus-company-website.webp"
+    },
+    {
+      "slug": "hospital-website",
+      "name": "Hospital Website",
+      "description": "A hospital website scoped so each doctor sees only their own patients.",
+      "image": "/custom-projects/hospital-website.webp"
+    },
+    {
+      "slug": "crm",
+      "name": "CRM",
+      "description": "A CRM built for a client company.",
+      "image": "/custom-projects/crm.webp"
+    },
+    {
+      "slug": "ai-tender-summarizer",
+      "name": "AI Tender Summarizer",
+      "description": "An AI-based tender document summarizer with question handling built in.",
+      "image": "/custom-projects/ai-tender-summarizer.webp"
+    },
+    {
+      "slug": "certificate-management-portal",
+      "name": "Certificate Management Portal",
+      "description": "A system for managing certificates and keeping certificate data current.",
+      "image": "/custom-projects/certificate-management-portal.webp"
+    },
+    {
+      "slug": "recruitment-chatbot",
+      "name": "Recruitment Chatbot",
+      "description": "A chatbot that handles recruitment queries for an HR team.",
+      "image": "/custom-projects/recruitment-chatbot.webp"
+    },
+    {
+      "slug": "appointment-booking-chatbot",
+      "name": "Appointment Booking Chatbot",
+      "description": "An appointment booking chatbot for a doctor's clinic.",
+      "image": "/custom-projects/appointment-booking-chatbot.webp"
+    },
+    {
+      "slug": "social-media-app",
+      "name": "Social Media App",
+      "description": "A social media app built for an internal organisational requirement.",
+      "image": "/custom-projects/social-media-app.webp"
+    },
+    {
+      "slug": "lead-generator",
+      "name": "Lead Generator",
+      "description": "An AI-based lead generation tool for sourcing prospective clients.",
+      "image": "/custom-projects/lead-generator.webp"
+    }
+  ],
+  "milestones": [
+    {
+      "year": "Aug 2025",
+      "title": "ProEduvate registered",
+      "description": "ProEduvate is officially registered as a company on August 25, 2025."
+    },
+    {
+      "year": "Aug 2025",
+      "title": "Core team formed",
+      "description": "The founding core team comes together to get the company off the ground."
+    },
+    {
+      "year": "Sep 2025",
+      "title": "Company website launches",
+      "description": "ProEduvate's website goes live as our first public presence."
+    },
+    {
+      "year": "Sep 2025",
+      "title": "Social presence goes live",
+      "description": "LinkedIn and Instagram pages launch to start building our community."
+    },
+    {
+      "year": "Sep 2025",
+      "title": "Company plan framed",
+      "description": "We lock in a working plan and streamline how the team operates."
+    },
+    {
+      "year": "Oct 2025",
+      "title": "Product development begins",
+      "description": "Work starts on ProEduvate's own in-house product line."
+    },
+    {
+      "year": "Oct 2025",
+      "title": "First interns hired",
+      "description": "Our first batch of interns joins across engineering and design."
+    },
+    {
+      "year": "Nov 2025",
+      "title": "Expansion into new domains",
+      "description": "We broaden our footprint into new sectors and technical domains."
+    },
+    {
+      "year": "Nov 2025",
+      "title": "15 products ideated",
+      "description": "Ideation wraps on 15 in-house products across our sectors."
+    },
+    {
+      "year": "Dec 2025",
+      "title": "First client projects",
+      "description": "ProEduvate takes on its first custom client engagements."
+    },
+    {
+      "year": "Dec 2025",
+      "title": "AICTE certification",
+      "description": "ProEduvate earns AICTE certification."
+    },
+    {
+      "year": "Jan 2026",
+      "title": "Collaboration with RIT",
+      "description": "We partner with RIT College on joint initiatives and talent pipelines."
+    },
+    {
+      "year": "Jan 2026",
+      "title": "Interns hired from RIT",
+      "description": "The first cohort of interns from RIT joins the team."
+    },
+    {
+      "year": "Feb 2026",
+      "title": "Sponsored Agni College symposium",
+      "description": "ProEduvate sponsors the technical symposium at Agni College of Technology."
+    },
+    {
+      "year": "Feb 2026",
+      "title": "Pilot testing begins",
+      "description": "Our first product enters pilot testing with early users."
+    },
+    {
+      "year": "Mar 2026",
+      "title": "Collaboration with Veltech",
+      "description": "A new college partnership begins with Veltech."
+    },
+    {
+      "year": "Mar 2026",
+      "title": "Interns hired from Veltech",
+      "description": "Interns from Veltech join ProEduvate's growing team."
+    },
+    {
+      "year": "Apr 2026",
+      "title": "Client work expands further",
+      "description": "ProEduvate takes on a wider slate of client projects."
+    },
+    {
+      "year": "May 2026",
+      "title": "Tech infrastructure upgraded",
+      "description": "We invest in stronger infrastructure to support our growing product line."
+    },
+    {
+      "year": "Jun 2026",
+      "title": "Hackathon-based hiring",
+      "description": "ProEduvate launches hackathon-based hiring to find new talent."
+    }
+  ],
+  "stats": [
+    {
+      "label": "Projects Built",
+      "value": 28,
+      "suffix": ""
+    },
+    {
+      "label": "Institutions Served",
+      "value": 6,
+      "suffix": "+"
+    },
+    {
+      "label": "Team Members",
+      "value": 21,
+      "suffix": "+"
+    },
+    {
+      "label": "Year Building",
+      "value": 1,
+      "suffix": ""
+    }
+  ],
+  "achievement_highlights": [
+    {
+      "label": "Products developed",
+      "value": 15,
+      "suffix": ""
+    },
+    {
+      "label": "College collaborations",
+      "value": 2,
+      "suffix": ""
+    },
+    {
+      "label": "Symposium sponsored",
+      "value": 1,
+      "suffix": ""
+    }
+  ],
+  "monthly_stars": [
+    {
+      "month": "January",
+      "name": "Hari Rajan",
+      "department": "Full Stack Development"
+    },
+    {
+      "month": "February",
+      "name": "Rohith",
+      "department": "Backend Development"
+    },
+    {
+      "month": "March",
+      "name": "Arunachalam",
+      "department": "Front End Development"
+    },
+    {
+      "month": "April",
+      "name": "Sakthi",
+      "department": "Software Development"
+    },
+    {
+      "month": "May",
+      "name": "Manjushri",
+      "department": "Human Resource"
+    },
+    {
+      "month": "June",
+      "name": "Jayashri",
+      "department": "AI & Machine Learning"
+    }
+  ],
+  "recognitions": [
+    {
+      "title": "Best Department",
+      "description": "Product Development"
+    },
+    {
+      "title": "Best Tech Lead",
+      "description": "Full Stack Development Head"
+    },
+    {
+      "title": "Best Chief",
+      "description": "Chief of Projects"
+    },
+    {
+      "title": "Special Recognition",
+      "description": "Hiring for social cause"
+    }
+  ],
+  "values": [
+    {
+      "title": "Innovation",
+      "short_description": "We build what's next, not what's safe.",
+      "long_description": "We treat AI as a foundation, not a feature bolt-on — pushing our products toward what learning and enterprise software could be, not just what's expected.",
+      "icon": "lightbulb"
+    },
+    {
+      "title": "Quality",
+      "short_description": "Craft over shortcuts, always.",
+      "long_description": "Every product we ship carries our name. We hold our own IP and client work to the same bar: tested, accessible, and built to last past launch day.",
+      "icon": "gem"
+    },
+    {
+      "title": "Impact",
+      "short_description": "Outcomes over vanity metrics.",
+      "long_description": "We measure success in learning outcomes and operational hours saved for our clients, not feature counts or engagement theater.",
+      "icon": "target"
+    },
+    {
+      "title": "Integrity",
+      "short_description": "Honest about what AI can and can't do.",
+      "long_description": "We're transparent with clients, partners, and each other, especially about the limits of the AI systems we build. Trust compounds; hype doesn't.",
+      "icon": "shield-check"
+    },
+    {
+      "title": "Craft",
+      "short_description": "The details are the product.",
+      "long_description": "From micro-interactions to data pipelines, we sweat the details that make software feel considered rather than assembled.",
+      "icon": "hammer"
+    },
+    {
+      "title": "Speed",
+      "short_description": "Momentum is a feature.",
+      "long_description": "We ship in tight, reviewable increments so our products and our clients' projects keep moving without sacrificing quality.",
+      "icon": "zap"
+    }
+  ],
+  "reasons": [
+    {
+      "title": "AI-Native by Default",
+      "description": "We carry deep expertise in the latest AI stack, integrating it into your products and workflows to give your team a genuine edge — not automation for its own sake.",
+      "icon": "brain-circuit"
+    },
+    {
+      "title": "Experienced Team",
+      "description": "A team of experienced builders delivers your work at the time you need it, without cutting corners to get there.",
+      "icon": "users"
+    },
+    {
+      "title": "Quality First",
+      "description": "We hold every product to a high bar of quality, because that's what shows up in the experience your clients and users actually have.",
+      "icon": "gem"
+    },
+    {
+      "title": "A Gen Z Approach",
+      "description": "Our team brings a modern, trend-aware perspective that keeps your product feeling current in a fast-moving era.",
+      "icon": "sparkles"
+    },
+    {
+      "title": "Product-Minded Engineering",
+      "description": "Our product development team doesn't just build to spec — we identify gaps in your existing systems and help close them with the right features.",
+      "icon": "layout-grid"
+    }
+  ],
+  "intern_reviews": [
+    {
+      "name": "Vijayalakshmi",
+      "track": "Full Stack Development",
+      "cohort": "Cohort 01",
+      "initials": "V",
+      "quote": "I shipped to a real product module in my first fortnight. Nothing here felt like busywork built to keep interns occupied.",
+      "quote_approved": false
+    },
+    {
+      "name": "Sakthi S",
+      "track": "Software Development",
+      "cohort": "Cohort 01",
+      "initials": "SS",
+      "quote": "The code review culture is the part I did not expect. Every PR came back with reasoning, not just approvals.",
+      "quote_approved": false
+    },
+    {
+      "name": "Srinath L",
+      "track": "Front End Development",
+      "cohort": "Cohort 01",
+      "initials": "SL",
+      "quote": "I came in knowing React and left understanding how a product actually gets decided, scoped, and released.",
+      "quote_approved": false
+    },
+    {
+      "name": "Selvi P",
+      "track": "Backend Development",
+      "cohort": "Cohort 02",
+      "initials": "SP",
+      "quote": "Being handed ownership of a feature this early was daunting, and it is the reason I improved as fast as I did.",
+      "quote_approved": false
+    },
+    {
+      "name": "Janani P",
+      "track": "Product Development",
+      "cohort": "Cohort 02",
+      "initials": "JP",
+      "quote": "The team treated my questions as useful rather than an interruption. That changed how much I was willing to attempt.",
+      "quote_approved": false
+    },
+    {
+      "name": "Hari Haran",
+      "track": "Full Stack Development",
+      "cohort": "Cohort 02",
+      "initials": "HH",
+      "quote": "Weekly demos meant my work was visible to the whole company. It kept the standard high and the feedback fast.",
+      "quote_approved": false
+    },
+    {
+      "name": "Shalini",
+      "track": "Digital Marketing",
+      "cohort": "Cohort 02",
+      "initials": "S",
+      "quote": "I learned to write for a real audience rather than for a brief. The feedback loop was days, not months.",
+      "quote_approved": false
+    },
+    {
+      "name": "Jayashri",
+      "track": "AI & Machine Learning",
+      "cohort": "Cohort 03",
+      "initials": "J",
+      "quote": "Working on the models behind a live product is nothing like a course project. The constraints are what taught me.",
+      "quote_approved": false
+    },
+    {
+      "name": "Vignesh",
+      "track": "Backend Development",
+      "cohort": "Cohort 03",
+      "initials": "V",
+      "quote": "I joined expecting to observe and ended up owning a piece of the release. That trust is why I stayed on.",
+      "quote_approved": false
+    }
+  ],
+  "jobs": [
+    {
+      "slug": "project-management-associate",
+      "title": "Project Management Associate",
+      "department": "Projects",
+      "employment_type": "part-time",
+      "location": "Remote",
+      "location_type": "Remote",
+      "posted_at": "2026-08-01",
+      "summary": "Keep client and in-house projects moving — timelines, check-ins, and the follow-through that stops work stalling between handoffs.",
+      "responsibilities": [
+        "Track project milestones and flag slippage early",
+        "Run status check-ins and keep written notes the team can act on",
+        "Coordinate handoffs between design, engineering, and the client",
+        "Maintain project documentation as scope changes"
+      ],
+      "requirements": [
+        "Organised and comfortable chasing things to completion",
+        "Clear written English for an async, remote team",
+        "Available part-time on a predictable weekly schedule"
+      ],
+      "nice_to_have": []
+    },
+    {
+      "slug": "business-development-associate",
+      "title": "Business Development Associate",
+      "department": "Business Development",
+      "employment_type": "part-time",
+      "location": "Remote",
+      "location_type": "Remote",
+      "posted_at": "2026-08-01",
+      "summary": "Open conversations with institutions and companies who need software built to our standard, and carry them through to a scoped brief.",
+      "responsibilities": [
+        "Research and reach out to prospective institutional and enterprise clients",
+        "Qualify inbound enquiries and route them to the right team",
+        "Support proposals and scoping conversations",
+        "Keep the pipeline and follow-ups current"
+      ],
+      "requirements": [
+        "Confident starting conversations with people you have not met",
+        "Able to explain technical work in plain language",
+        "Available part-time on a predictable weekly schedule"
+      ],
+      "nice_to_have": []
+    },
+    {
+      "slug": "hr-management-associate-intern",
+      "title": "HR Management Associate (Intern)",
+      "department": "Human Resource",
+      "employment_type": "part-time",
+      "location": "Remote",
+      "location_type": "Remote",
+      "posted_at": "2026-08-01",
+      "summary": "Support hiring and people operations across our internship cohorts and core team — sourcing, scheduling, and onboarding.",
+      "responsibilities": [
+        "Screen applications and schedule interviews across tracks",
+        "Support onboarding for new interns and team members",
+        "Keep people records and cohort documentation up to date",
+        "Help run internal check-ins and feedback cycles"
+      ],
+      "requirements": [
+        "Interest in people operations and early-stage hiring",
+        "Discreet with confidential information",
+        "Available part-time on a predictable weekly schedule"
+      ],
+      "nice_to_have": []
+    }
+  ],
+  "internships": [
+    {
+      "slug": "ai-ml-intern",
+      "title": "AI/ML Intern",
+      "track": "AI & Machine Learning",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Work with the AI team on the models and pipelines behind our products, from prompt design through evaluation.",
+      "responsibilities": [
+        "Build and evaluate prompts, pipelines, and retrieval steps",
+        "Curate evaluation sets and record experiment results",
+        "Support taking a model change from notebook to production"
+      ],
+      "requirements": [
+        "Working knowledge of Python and core ML concepts",
+        "Curiosity about applied AI rather than benchmarks alone"
+      ]
+    },
+    {
+      "slug": "full-stack-intern",
+      "title": "Full Stack Intern",
+      "track": "Full Stack Development",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Ship real features across our web products, front to back, under senior engineer review.",
+      "responsibilities": [
+        "Build UI components and the API endpoints behind them",
+        "Write tests for the features you ship",
+        "Take part in code review and team standups"
+      ],
+      "requirements": [
+        "Comfortable with JavaScript/TypeScript and React",
+        "Some exposure to a backend runtime and a database"
+      ]
+    },
+    {
+      "slug": "backend-intern",
+      "title": "Backend Intern",
+      "track": "Backend Development",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Work on the services, data models, and integrations our products run on.",
+      "responsibilities": [
+        "Implement and document API endpoints",
+        "Model data and write queries that hold up under load",
+        "Help with integrations to third-party services"
+      ],
+      "requirements": [
+        "Familiar with at least one backend language and SQL",
+        "Interested in correctness and clear error handling"
+      ]
+    },
+    {
+      "slug": "product-development-intern",
+      "title": "Product Development Intern",
+      "track": "Product Development",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Sit between users and engineering — scoping what gets built, and checking it did what it was meant to.",
+      "responsibilities": [
+        "Write up requirements and acceptance criteria",
+        "Run lightweight user feedback sessions",
+        "Track what shipped against what was scoped"
+      ],
+      "requirements": [
+        "Clear written communication",
+        "Comfortable asking questions until a problem is actually understood"
+      ]
+    },
+    {
+      "slug": "digital-marketing-intern",
+      "title": "Digital Marketing Intern",
+      "track": "Digital Marketing",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Support campaigns, content, and reporting across ProEduvate's product and employer brand.",
+      "responsibilities": [
+        "Draft and schedule campaign and blog content",
+        "Support reporting on reach and engagement",
+        "Coordinate with design on marketing assets"
+      ],
+      "requirements": [
+        "Strong written English and attention to detail",
+        "Interest in how technical work gets explained to a non-technical audience"
+      ]
+    },
+    {
+      "slug": "social-media-intern",
+      "title": "Social Media Intern",
+      "track": "Social Media",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Run the day-to-day of ProEduvate's social presence and grow the community around what we build.",
+      "responsibilities": [
+        "Plan and publish a regular content calendar",
+        "Write copy that suits each platform rather than reposting one draft everywhere",
+        "Track what lands and feed it back into the next cycle"
+      ],
+      "requirements": [
+        "Familiar with LinkedIn and Instagram as a publisher, not just a user",
+        "Comfortable writing in a consistent brand voice"
+      ]
+    },
+    {
+      "slug": "hr-intern",
+      "title": "HR Intern",
+      "track": "Human Resource",
+      "location": "Remote",
+      "location_type": "Remote",
+      "duration": "3 or 6 months",
+      "stipend": "Paid or unpaid, depending on cohort",
+      "posted_at": "2026-08-01",
+      "summary": "Support hiring and people operations across our internship cohorts and core team.",
+      "responsibilities": [
+        "Screen applications and schedule interviews",
+        "Support onboarding for new joiners",
+        "Keep cohort records and documentation current"
+      ],
+      "requirements": [
+        "Interest in people operations and early-stage hiring",
+        "Discreet with confidential information"
+      ]
+    }
+  ],
+  "org_seats": [
+    {
+      "abbr": "CEO",
+      "title": "Chief Executive Officer",
+      "holder": null,
+      "tier": "spine"
+    },
+    {
+      "abbr": "Manager",
+      "title": "Manager",
+      "holder": null,
+      "tier": "spine"
+    },
+    {
+      "abbr": "COO",
+      "title": "Chief Operating Officer",
+      "holder": null,
+      "tier": "spine"
+    },
+    {
+      "abbr": "CoHR",
+      "title": "Chief of Human Resources",
+      "holder": null,
+      "tier": "spine"
+    },
+    {
+      "abbr": "COP",
+      "title": "Chief of Projects",
+      "holder": null,
+      "tier": "branch"
+    },
+    {
+      "abbr": "CTO",
+      "title": "Chief of Technology",
+      "holder": null,
+      "tier": "branch"
+    }
+  ],
+  "core_team": [
+    {
+      "discipline": "Full Stack Development",
+      "stack": [
+        "Next.js",
+        "TypeScript",
+        "Node.js"
+      ]
+    },
+    {
+      "discipline": "Front End Development",
+      "stack": [
+        "React",
+        "Tailwind CSS"
+      ]
+    },
+    {
+      "discipline": "Backend Development",
+      "stack": [
+        "Node.js",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "discipline": "Software Development",
+      "stack": [
+        "Python",
+        "Docker"
+      ]
+    },
+    {
+      "discipline": "AI & Machine Learning",
+      "stack": [
+        "OpenAI / LLM Stack",
+        "Python"
+      ]
+    },
+    {
+      "discipline": "Human Resource",
+      "stack": [
+        "People & Hiring"
+      ]
+    }
+  ],
+  "tech_stack": [
+    {
+      "name": "React"
+    },
+    {
+      "name": "Next.js"
+    },
+    {
+      "name": "TypeScript"
+    },
+    {
+      "name": "Python"
+    },
+    {
+      "name": "Node.js"
+    },
+    {
+      "name": "AWS"
+    },
+    {
+      "name": "PostgreSQL"
+    },
+    {
+      "name": "OpenAI / LLM Stack"
+    },
+    {
+      "name": "Docker"
+    },
+    {
+      "name": "Tailwind CSS"
+    }
+  ],
+  "client_logos": [
+    {
+      "name": "Agni College of Technology"
+    },
+    {
+      "name": "Rajalakshmi Institute of Technology"
+    },
+    {
+      "name": "Vel Tech Rangarajan Dr. Sagunthala R&D Institute of Science and Technology"
+    }
+  ],
+  "ceo": {
+    "name": "Uma Devi G",
+    "role": "Founder & Chief Executive Officer",
+    "photo": "/team/ceo.png",
+    "about": [
+      "Uma Devi G founded ProEduvate on a straightforward observation: the software institutions depend on every day had fallen years behind the software the same people use everywhere else. She started the company to close that gap rather than complain about it.",
+      "The role since has been less about direction-setting in the abstract and more about holding one standard across two halves of a company — the products ProEduvate runs itself and the work it takes on for clients. Same team, same bar, whichever side it comes from."
+    ],
+    "focus": [
+      "Company direction",
+      "Product standard",
+      "Partnerships"
+    ],
+    "quote": "",
+    "quote_approved": false
+  },
+  "contact": {
+    "address_lines": [
+      "No.6, Thayagam Street, Kovalam Road",
+      "Mamallapuram, Chengalpattu – 603104",
+      "Tamil Nadu, India"
+    ],
+    "address_query": "No.6 Thayagam Street, Kovalam Road, Mamallapuram, Chengalpattu 603104, Tamil Nadu, India",
+    "emails": [
+      {
+        "label": "Careers & HR",
+        "value": "hr@proeduvate.in"
+      },
+      {
+        "label": "General",
+        "value": "proeduvate@gmail.com"
+      }
+    ],
+    "incubation_centres": [
+      "Agni College of Technology",
+      "Anna University"
+    ],
+    "socials": [
+      {
+        "label": "LinkedIn",
+        "href": "https://www.linkedin.com/company/proeduvate/"
+      },
+      {
+        "label": "Instagram",
+        "href": "https://www.instagram.com/_proeduvate_"
+      }
+    ]
+  }
+}
