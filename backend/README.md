@@ -24,12 +24,18 @@ end up signing real tokens:
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Create the database, then the tables:
+Create the database, then run the migrations:
 
 ```bash
 createdb proeduvate-website
-python create_tables.py
+alembic upgrade head
 ```
+
+Alembic is the only way the schema is created. `seed.py` deliberately does
+not create tables: doing so would put them outside Alembic's control, leaving
+`alembic_version` empty while the tables existed, and the next
+`alembic upgrade head` would try to create them again and fail. The seeder
+checks the schema is there and tells you to migrate if it is not.
 
 ## Seeding
 
@@ -51,6 +57,34 @@ through the API is not in the export, and a seed that wiped it would be a
 data-loss trap on the first reseed of a live database.
 
 Omit `--password` and one is generated and printed once.
+
+### Migrations
+
+```bash
+alembic revision --autogenerate -m "what changed"   # after editing models/
+alembic upgrade head
+alembic downgrade -1
+alembic current
+alembic check      # fails if models and migrations have drifted
+```
+
+`migrations/env.py` reads the URL from the app settings rather than
+`alembic.ini`, so migrations and the app can never point at different
+databases and the password stays out of a tracked file.
+
+Autogenerating against a database that already has the tables produces an
+empty migration -- it diffs against what is *there*, not against nothing. Do
+it against a scratch database:
+
+```bash
+createdb alembic-scratch
+DATABASE_URL=postgresql+psycopg://proeduvate:proeduvate@localhost:5432/alembic-scratch \
+  alembic revision --autogenerate -m "..."
+dropdb alembic-scratch
+```
+
+For an existing database whose tables already match the models, `alembic
+stamp head` records the revision without re-running the DDL.
 
 ## Serving
 
@@ -143,5 +177,6 @@ a dialect swap would fail to catch.
 - CORS uses an explicit origin list, never `*`. The API allows credentials,
   and browsers reject wildcard-plus-credentials — the usual "fix" for which is
   to turn the protection off.
-- `create_tables.py` is the fast path for a fresh database. Alembic is
-  installed for real migrations once the schema starts changing under data.
+- Schema changes go through Alembic only. There is deliberately no second
+  path -- two ways to create tables is what leaves a database with the right
+  tables and no revision recorded.

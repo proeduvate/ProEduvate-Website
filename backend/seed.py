@@ -4,6 +4,14 @@ Loads backend/seed_data.json into the database.
     python seed.py                       # content only
     python seed.py --editor you@x.com    # content + an editor account
 
+Schema first, then this. The seeder only writes rows -- it deliberately does
+not create tables. Creating them here would put them outside Alembic's
+control: `alembic_version` would stay empty while the tables existed, and the
+next `alembic upgrade head` would try to create them again and fail.
+
+    alembic upgrade head
+    python seed.py
+
 Idempotent: rows are matched on their natural key and updated in place, so
 running it twice does not duplicate anything and a reseed after editing
 data/ brings the database back in line.
@@ -20,10 +28,10 @@ import secrets
 import sys
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import inspect, select
 from sqlalchemy.orm import Session
 
-from app.core.database import SessionLocal, engine, Base
+from app.core.database import SessionLocal, engine
 from app.core.security import hash_password
 from app.models import content as m
 
@@ -91,7 +99,15 @@ def main() -> int:
         )
         return 1
 
-    Base.metadata.create_all(engine)
+    # Fail with the actual fix rather than a wall of "relation does not
+    # exist" from the first insert.
+    if not inspect(engine).has_table("products"):
+        print(
+            "Schema is missing. Run the migrations first:\n  alembic upgrade head",
+            file=sys.stderr,
+        )
+        return 1
+
     payload = json.loads(SEED_FILE.read_text())
 
     with SessionLocal() as db:
