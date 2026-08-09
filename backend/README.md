@@ -27,7 +27,7 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 Create the database, then the tables:
 
 ```bash
-createdb proeduvate
+createdb proeduvate-website
 python create_tables.py
 ```
 
