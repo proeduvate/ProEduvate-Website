@@ -6,6 +6,7 @@ import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { ProductGlyph } from "@/components/ui/ProductGlyph";
+import { ProductScreenshot } from "@/components/ui/ProductScreenshot";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { cn } from "@/lib/utils";
 import type { Product, ProductCategory } from "@/data/products";
@@ -86,13 +87,31 @@ export function ProductStoryPanel({
       </motion.div>
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-[0.025]" aria-hidden="true" />
 
-      {/* Floating 3D emblem filling the space opposite the text */}
+      {/* Opposite the text: the product's real UI where we have it, and the
+          generated glyph art where we don't. Only four products have supplied
+          screenshots so far. */}
       <motion.div
-        aria-hidden="true"
-        className={cn("pointer-events-none absolute top-1/2 hidden -translate-y-1/2 lg:block", isRight ? "left-[6%]" : "right-[6%]")}
+        className={cn(
+          "pointer-events-none absolute top-1/2 hidden -translate-y-1/2 lg:block",
+          isRight ? "left-[4%]" : "right-[4%]"
+        )}
         style={{ y: glyphY }}
+        aria-hidden={product.screenshot ? undefined : true}
       >
-        <ProductGlyph imageSrc={imageSrc} alt={`${product.name} — abstract sample art`} accent={accent} />
+        {product.screenshot ? (
+          <ProductScreenshot
+            src={product.screenshot}
+            alt={`${product.name} interface`}
+            accent={accent}
+            facing={isRight ? "right" : "left"}
+          />
+        ) : (
+          <ProductGlyph
+            imageSrc={imageSrc}
+            alt={`${product.name} — abstract sample art`}
+            accent={accent}
+          />
+        )}
       </motion.div>
 
       <Container className="relative">

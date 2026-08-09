@@ -46,10 +46,16 @@ const SCROLL_IMPULSE = 0.07; // degrees added per px of scroll
 const MOMENTUM_DECAY = 2.6; // per second
 // How far the ring eases toward the hovered tile, and how quickly.
 const SNAP_STRENGTH = 3.4;
+// Degrees of rotation per pixel of horizontal drag, and per unit of wheel.
+const DRAG_SENSITIVITY = 0.28;
+const WHEEL_SENSITIVITY = 0.32;
+// How long after a drag or wheel before the ring resumes its idle drift.
+const INTERACTION_COOLDOWN_MS = 900;
 
 export function SectorRing() {
   const shouldReduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const tileRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [active, setActive] = useState<number | null>(null);
@@ -64,8 +70,9 @@ export function SectorRing() {
   useEffect(() => {
     if (shouldReduceMotion) return;
     const section = sectionRef.current;
+    const stage = stageRef.current;
     const ring = ringRef.current;
-    if (!section || !ring) return;
+    if (!section || !stage || !ring) return;
 
     let rotation = 0;
     let momentum = 0;
@@ -75,6 +82,12 @@ export function SectorRing() {
     let onScreen = true;
     let running = false;
 
+    // --- direct manipulation -------------------------------------------
+    let dragging = false;
+    let dragPointer = -1;
+    let dragLastX = 0;
+    let lastInteractionAt = 0;
+
     function onScroll() {
       const y = window.scrollY;
       momentum += (y - lastScrollY) * SCROLL_IMPULSE;
@@ -82,16 +95,69 @@ export function SectorRing() {
       start();
     }
 
+    /*
+     * Wheel is captured on the carousel stage only, never the whole section.
+     * Swallowing the wheel across the entire section would strand anyone who
+     * happened to be scrolling down the page through it; confined to the
+     * ~300px stage there is always somewhere else to put the cursor, and
+     * moving off it restores normal scrolling immediately.
+     */
+    function onWheel(e: WheelEvent) {
+      // Trackpads report horizontal intent on deltaX; a mouse only has deltaY.
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (delta === 0) return;
+      e.preventDefault();
+      momentum += delta * WHEEL_SENSITIVITY;
+      lastInteractionAt = performance.now();
+      start();
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      if (e.pointerType === "mouse" && e.button !== 0) return;
+      dragging = true;
+      dragPointer = e.pointerId;
+      dragLastX = e.clientX;
+      momentum = 0;
+      lastInteractionAt = performance.now();
+      stage!.setPointerCapture(e.pointerId);
+      start();
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!dragging || e.pointerId !== dragPointer) return;
+      const dx = e.clientX - dragLastX;
+      dragLastX = e.clientX;
+      rotation -= dx * DRAG_SENSITIVITY;
+      // Carry the drag speed into momentum so releasing lets it coast.
+      momentum = -dx * DRAG_SENSITIVITY * 12;
+      lastInteractionAt = performance.now();
+    }
+
+    function endDrag(e: PointerEvent) {
+      if (e.pointerId !== dragPointer) return;
+      dragging = false;
+      dragPointer = -1;
+      lastInteractionAt = performance.now();
+      if (stage!.hasPointerCapture(e.pointerId)) stage!.releasePointerCapture(e.pointerId);
+    }
+
     function frame(now: number) {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
 
       const active = activeRef.current;
-      const idle = active === null;
+      const recentlyTouched = now - lastInteractionAt < INTERACTION_COOLDOWN_MS;
+      // Direct manipulation always wins: snapping to a hovered tile while the
+      // user is dragging would fight their hand.
+      const idle = active === null || dragging || recentlyTouched;
       momentum -= momentum * Math.min(1, MOMENTUM_DECAY * dt);
 
-      if (idle) {
-        rotation += BASE_SPEED * dt + momentum * dt;
+      if (dragging) {
+        // Rotation is set straight from the pointer in onPointerMove.
+      } else if (idle) {
+        // No idle drift straight after an interaction -- it reads as the ring
+        // ignoring you and carrying on by itself.
+        rotation += (recentlyTouched ? 0 : BASE_SPEED * dt) + momentum * dt;
       } else {
         // Hovering no longer just parks the ring -- it turns the hovered tile
         // to face the camera. Parking alone left whichever tile you picked
@@ -157,6 +223,11 @@ export function SectorRing() {
       { threshold: 0 }
     );
     observer.observe(section);
+    stage.addEventListener("wheel", onWheel, { passive: false });
+    stage.addEventListener("pointerdown", onPointerDown);
+    stage.addEventListener("pointermove", onPointerMove);
+    stage.addEventListener("pointerup", endDrag);
+    stage.addEventListener("pointercancel", endDrag);
     window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
     start();
@@ -164,6 +235,11 @@ export function SectorRing() {
     return () => {
       stop();
       observer.disconnect();
+      stage.removeEventListener("wheel", onWheel);
+      stage.removeEventListener("pointerdown", onPointerDown);
+      stage.removeEventListener("pointermove", onPointerMove);
+      stage.removeEventListener("pointerup", endDrag);
+      stage.removeEventListener("pointercancel", endDrag);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);
     };
@@ -208,7 +284,8 @@ export function SectorRing() {
         <div className="relative mt-20 md:mt-24">
           {/* Stage */}
           <div
-            className="relative mx-auto h-[300px] w-full"
+            ref={stageRef}
+            className="relative mx-auto h-[300px] w-full cursor-grab touch-pan-y select-none active:cursor-grabbing"
             style={{ perspective: "2100px", perspectiveOrigin: "50% 45%" }}
           >
             <div

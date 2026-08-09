@@ -13,6 +13,11 @@ export interface ProductMetric {
 
 export interface Product {
   slug: string;
+  /**
+   * Real UI screenshot, where one exists. Only a few products have been
+   * supplied so far; the rest fall back to generated glyph art.
+   */
+  screenshot?: string;
   name: string;
   /** One-line summary, used in the homepage preview cards. */
   tagline: string;
@@ -31,6 +36,7 @@ export interface Product {
 export const products: Product[] = [
   {
     slug: "hackzen",
+    screenshot: "/products/ui/hackzen.webp",
     name: "HackZen",
     tagline: "A hackathon platform built to stretch young innovators.",
     description:
@@ -48,6 +54,7 @@ export const products: Product[] = [
   },
   {
     slug: "testsync",
+    screenshot: "/products/ui/testsync.webp",
     name: "TestSync",
     tagline: "Real-time user testing for developers and startups.",
     description:
@@ -81,6 +88,7 @@ export const products: Product[] = [
   },
   {
     slug: "codoai",
+    screenshot: "/products/ui/codoai.webp",
     name: "CodoAI",
     tagline: "Gamified coding practice with an AI guide in real time.",
     description:
@@ -202,6 +210,7 @@ export const products: Product[] = [
   },
   {
     slug: "promptogen",
+    screenshot: "/products/ui/promptogen.webp",
     name: "PromptoGen",
     tagline: "Turns plain text or an image into a proper prompt.",
     description:

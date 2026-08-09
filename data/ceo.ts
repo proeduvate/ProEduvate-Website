@@ -33,12 +33,12 @@ export interface CeoProfile {
 }
 
 export const ceo: CeoProfile = {
-  name: null,
+  name: "Uma Devi G",
   role: "Founder & Chief Executive Officer",
-  photo: null,
+  photo: "/team/ceo.png",
   about: [
-    "ProEduvate was founded on a straightforward observation: the software institutions depend on every day had fallen years behind the software the same people use everywhere else. Our CEO started the company to close that gap rather than complain about it.",
-    "The role since has been less about direction-setting in the abstract and more about holding one standard across two halves of a company — the products we run ourselves and the work we take on for clients. Same team, same bar, whichever side it comes from.",
+    "Uma Devi G founded ProEduvate on a straightforward observation: the software institutions depend on every day had fallen years behind the software the same people use everywhere else. She started the company to close that gap rather than complain about it.",
+    "The role since has been less about direction-setting in the abstract and more about holding one standard across two halves of a company — the products ProEduvate runs itself and the work it takes on for clients. Same team, same bar, whichever side it comes from.",
   ],
   focus: ["Company direction", "Product standard", "Partnerships"],
   // Empty until the CEO supplies their own words. The section hides the
