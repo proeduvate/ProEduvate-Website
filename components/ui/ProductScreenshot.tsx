@@ -31,7 +31,12 @@ export function ProductScreenshot({
 }) {
   const shouldReduceMotion = useReducedMotion();
   // Bring the edge closest to the title toward the viewer.
-  const tilt = facing === "left" ? TILT_DEG : -TILT_DEG;
+  //
+  // The sign is the opposite of what it reads as: a positive `rotateY` swings
+  // the element's *right* edge away from the camera, so facing the copy on
+  // the left needs a negative angle, not a positive one. The first version
+  // had this backwards and every screen leaned away from its own text.
+  const tilt = facing === "left" ? -TILT_DEG : TILT_DEG;
 
   return (
     <div
@@ -76,15 +81,17 @@ export function ProductScreenshot({
             className="h-auto w-full object-cover"
           />
 
-          {/* Screen sheen, angled against the tilt. */}
+          {/* Screen sheen. Flipped alongside the tilt above -- the highlight
+              belongs on the edge swinging toward the camera, so it has to
+              follow the rotation rather than stay on a fixed side. */}
           <span
             aria-hidden="true"
             className="pointer-events-none absolute inset-0"
             style={{
               background:
                 facing === "left"
-                  ? "linear-gradient(105deg, rgba(255,255,255,0.14) 0%, transparent 38%)"
-                  : "linear-gradient(255deg, rgba(255,255,255,0.14) 0%, transparent 38%)",
+                  ? "linear-gradient(255deg, rgba(255,255,255,0.14) 0%, transparent 38%)"
+                  : "linear-gradient(105deg, rgba(255,255,255,0.14) 0%, transparent 38%)",
             }}
           />
         </div>
