@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { ProductsConsoleHero } from "@/components/sections/ProductsConsoleHero";
 import { ProductsScrollStory } from "@/components/sections/ProductsScrollStory";
+import { getProductsByStatus } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Products",
@@ -11,12 +12,16 @@ export const metadata: Metadata = {
     "A minimal overview of the products ProEduvate builds and runs across EdTech, IT & Enterprise, and AI.",
 };
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  // Fetched once on the server and passed down, so the two sections cannot
+  // disagree and the browser never waits on the API.
+  const products = await getProductsByStatus();
+
   return (
     <>
-      <ProductsConsoleHero />
+      <ProductsConsoleHero products={products} />
 
-      <ProductsScrollStory />
+      <ProductsScrollStory products={products} />
 
       <section className="border-t border-white/10 bg-black py-20 md:py-28">
         <Container className="text-center">

@@ -180,3 +180,42 @@ a dialect swap would fail to catch.
 - Schema changes go through Alembic only. There is deliberately no second
   path -- two ways to create tables is what leaves a database with the right
   tables and no revision recorded.
+
+## Consuming it from the site
+
+`NEXT_PUBLIC_API_URL` in the Next app's `.env.local` points at this API:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8123
+```
+
+**Leave it unset and the site renders entirely from `data/*.ts`.** That is
+the intended behaviour, not a degraded mode: the static files stay in the
+repo as the floor and the API is an override on top of them, so a backend
+that is down cannot take the marketing site with it.
+
+`lib/api.ts` is fail-soft — a non-2xx, a timeout (2.5s) or an unreachable
+host all return null and the caller uses the static copy. An empty array
+counts as a failure too: a collection the site renders is never legitimately
+empty, and an empty seed would otherwise blank a whole section.
+
+`lib/content.ts` holds one accessor per collection. They are async and must
+be called from Server Components, so the browser never waits on the API and
+the content is in the initial HTML. Responses are cached for 60 seconds —
+editorial content does not change per request, and it means a brief API
+outage is invisible.
+
+### Wiring a section
+
+The products page is the worked example:
+
+1. The page becomes `async` and calls the accessor.
+2. The section takes the data as a prop instead of importing from `data/`.
+3. The static import stays as the fallback inside `lib/content.ts`.
+
+```tsx
+export default async function ProductsPage() {
+  const products = await getProductsByStatus();
+  return <ProductsScrollStory products={products} />;
+}
+```

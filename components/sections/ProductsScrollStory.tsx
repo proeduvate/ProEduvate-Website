@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 import { ProductStoryPanel, categoryColor } from "@/components/sections/ProductStoryPanel";
-import { productsByStatus as products } from "@/data/products";
+import type { Product } from "@/data/products";
 import { cn } from "@/lib/utils";
 
-export function ProductsScrollStory() {
+export function ProductsScrollStory({ products }: { products: Product[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeSlug, setActiveSlug] = useState(products[0].slug);
+  // `products` is a prop now, so it can in principle arrive empty.
+  const [activeSlug, setActiveSlug] = useState(products[0]?.slug ?? "");
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -31,7 +32,8 @@ export function ProductsScrollStory() {
     );
     sections.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+    // Rebinds if the list changes -- it is data now, not a module constant.
+  }, [products]);
 
   return (
     <div ref={containerRef} className="relative">

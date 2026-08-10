@@ -2,9 +2,9 @@ import { Container } from "@/components/ui/Container";
 import { Badge } from "@/components/ui/Badge";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
-import { products } from "@/data/products";
+import type { Product } from "@/data/products";
 
-export function ProductsConsoleHero() {
+export function ProductsConsoleHero({ products }: { products: Product[] }) {
   const stats = [
     { label: "Products", value: products.length },
     { label: "Live", value: products.filter((p) => p.status === "Live").length },
