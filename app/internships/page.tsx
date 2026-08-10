@@ -5,6 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProgramOverview } from "@/components/sections/ProgramOverview";
 import { TracksGrid } from "@/components/sections/TracksGrid";
 import { InternshipsBrowser } from "@/components/sections/InternshipsBrowser";
+import { getInternships } from "@/lib/content";
 import { WhatYoullGain } from "@/components/sections/WhatYoullGain";
 import { HowToApply } from "@/components/sections/HowToApply";
 import { CtaBand } from "@/components/sections/CtaBand";
@@ -15,7 +16,9 @@ export const metadata: Metadata = {
     "Remote internships at ProEduvate across AI/ML, full stack, backend, product development, digital marketing, social media, and HR.",
 };
 
-export default function InternshipsPage() {
+export default async function InternshipsPage() {
+  const internships = await getInternships();
+
   return (
     <>
       <PageHero
@@ -31,7 +34,7 @@ export default function InternshipsPage() {
         <Container>
           <SectionHeading eyebrow="Open Internship Roles" title="Current openings." />
           <div className="mt-10">
-            <InternshipsBrowser />
+            <InternshipsBrowser internships={internships} />
           </div>
         </Container>
       </section>

@@ -8,7 +8,7 @@ import { ContactForm } from "@/components/sections/ContactForm";
 import { Accordion } from "@/components/ui/Accordion";
 import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { faqs } from "@/data/faqs";
-import { address, emails, incubationCentres, socials } from "@/data/contact";
+import { getContact } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -16,28 +16,31 @@ export const metadata: Metadata = {
 };
 
 // No phone number is published, by request.
-const details = [
-  ...emails.map((email) => ({
-    icon: Mail,
-    label: email.label,
-    value: email.value,
-    href: `mailto:${email.value}`,
-  })),
-  {
-    icon: MapPin,
-    label: "Office",
-    value: address.lines.join(", "),
-    href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.query)}`,
-  },
-];
-
 const socialIcons = { LinkedIn: LinkedInIcon, Instagram: InstagramIcon } as const;
-const social = socials.map((s) => ({
-  ...s,
-  icon: socialIcons[s.label as keyof typeof socialIcons],
-}));
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { address, emails, incubationCentres, socials } = await getContact();
+
+  const details = [
+    ...emails.map((email) => ({
+      icon: Mail,
+      label: email.label,
+      value: email.value,
+      href: `mailto:${email.value}`,
+    })),
+    {
+      icon: MapPin,
+      label: "Office",
+      value: address.lines.join(", "),
+      href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address.query)}`,
+    },
+  ];
+
+  const social = socials.map((s) => ({
+    ...s,
+    icon: socialIcons[s.label as keyof typeof socialIcons],
+  }));
+
   return (
     <>
       <PageHero

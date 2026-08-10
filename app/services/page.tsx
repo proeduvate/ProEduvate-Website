@@ -7,7 +7,13 @@ import { CustomProjectsGrid } from "@/components/sections/CustomProjectsGrid";
 import { Process } from "@/components/sections/Process";
 import { LogoStrip } from "@/components/sections/LogoStrip";
 import { CtaBand } from "@/components/sections/CtaBand";
-import { techStack } from "@/data/tech-stack";
+import {
+  getCustomProjects,
+  getDomains,
+  getReasons,
+  getServices,
+  getTechStack,
+} from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -15,7 +21,15 @@ export const metadata: Metadata = {
     "Custom AI and software development for EdTech and enterprise clients — from platform builds to AI/ML solutions and cloud infrastructure.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const [services, domains, reasons, customProjects, techStack] = await Promise.all([
+    getServices(),
+    getDomains(),
+    getReasons(),
+    getCustomProjects(),
+    getTechStack(),
+  ]);
+
   return (
     <>
       <PageHero
@@ -24,10 +38,10 @@ export default function ServicesPage() {
         description="ProEduvate's services arm builds custom AI and software solutions for EdTech institutions and enterprise clients — the same craft we apply to our own products."
       />
 
-      <ServicesGrid />
-      <DomainsGrid />
-      <WhyChooseUs />
-      <CustomProjectsGrid />
+      <ServicesGrid services={services} />
+      <DomainsGrid domains={domains} />
+      <WhyChooseUs reasons={reasons} />
+      <CustomProjectsGrid customProjects={customProjects} />
       <Process />
       <LogoStrip dark={false} label="Technologies we build with" items={techStack} />
 

@@ -7,7 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { cn } from "@/lib/utils";
-import { reasons } from "@/data/why-choose-us";
+import type { Reason } from "@/data/why-choose-us";
 
 const iconMap: Record<string, LucideIcon> = {
   "brain-circuit": BrainCircuit,
@@ -37,28 +37,32 @@ const PLOT_R = 96;
 const LABEL_R = 132;
 const RINGS = [0.25, 0.5, 0.75, 1];
 
-/** Vertex i, at `radius` from the centre, first point straight up. */
-function vertex(i: number, radius: number) {
-  const angle = (-90 + i * (360 / reasons.length)) * (Math.PI / 180);
+/**
+ * Vertex i of an `axes`-sided polygon, first point straight up.
+ *
+ * Takes the axis count rather than closing over the data: `reasons` is a prop
+ * now, so the geometry cannot be computed once at module scope.
+ */
+function vertex(i: number, radius: number, axes: number) {
+  const angle = (-90 + i * (360 / axes)) * (Math.PI / 180);
   return {
     x: CENTRE + Math.cos(angle) * radius,
     y: CENTRE + Math.sin(angle) * radius,
   };
 }
 
-const plotPoints = reasons.map((_, i) => vertex(i, PLOT_R));
-const plotPath = plotPoints.map((p) => `${p.x},${p.y}`).join(" ");
+export function WhyChooseUs({ reasons }: { reasons: Reason[] }) {
+  const axes = reasons.length;
+  const plotPoints = reasons.map((_, i) => vertex(i, PLOT_R, axes));
+  const plotPath = plotPoints.map((p) => `${p.x},${p.y}`).join(" ");
+  const ringPath = (scale: number) =>
+    reasons
+      .map((_, i) => {
+        const p = vertex(i, PLOT_R * scale, axes);
+        return `${p.x},${p.y}`;
+      })
+      .join(" ");
 
-function ringPath(scale: number) {
-  return reasons
-    .map((_, i) => {
-      const p = vertex(i, PLOT_R * scale);
-      return `${p.x},${p.y}`;
-    })
-    .join(" ");
-}
-
-export function WhyChooseUs() {
   const [selected, setSelected] = useState(0);
   const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 8, maxX: 5 });
   const active = reasons[selected];
@@ -107,7 +111,7 @@ export function WhyChooseUs() {
 
                   {/* Axes */}
                   {reasons.map((reason, i) => {
-                    const p = vertex(i, PLOT_R);
+                    const p = vertex(i, PLOT_R, axes);
                     return (
                       <line
                         key={reason.title}
@@ -154,7 +158,7 @@ export function WhyChooseUs() {
 
                 {/* Axis labels, as real buttons over the plot */}
                 {reasons.map((reason, i) => {
-                  const p = vertex(i, LABEL_R);
+                  const p = vertex(i, LABEL_R, axes);
                   const isActive = i === selected;
                   return (
                     <button

@@ -5,9 +5,7 @@ import { Boxes, Layers, Rocket } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { usePointerTilt } from "@/lib/usePointerTilt";
-import { products } from "@/data/products";
-import { sectors } from "@/data/sectors";
-import { services } from "@/data/services";
+
 
 /*
  * The founding story as three beats on a receding 3D track, each carrying a
@@ -17,13 +15,13 @@ import { services } from "@/data/services";
  * step with the products, sectors and services lists.
  */
 
-const BEATS = [
+const buildBeats = (sectorCount: number, productCount: number, serviceCount: number) => [
   {
     icon: Layers,
     label: "The gap",
     heading: "Institutional software was years behind everything else.",
     body: "The tools institutions relied on to teach, assess and administer felt nothing like the software the same people used every day. That gap was the whole reason to start.",
-    figure: `${sectors.length}`,
+    figure: `${sectorCount}`,
     figureLabel: "Sectors we now build across",
     z: 60,
   },
@@ -32,7 +30,7 @@ const BEATS = [
     label: "What we did",
     heading: "We built our own products instead of waiting.",
     body: "Rather than pitch a fix, we shipped one — then found the same gap in enterprise software written without AI-native thinking, and kept going.",
-    figure: `${products.length}`,
+    figure: `${productCount}`,
     figureLabel: "Products built and run in-house",
     z: -20,
   },
@@ -41,7 +39,7 @@ const BEATS = [
     label: "Where we are",
     heading: "Two halves of one company, one standard.",
     body: "Today we run our own product line and take on client work that needs the same standard applied. Same team, same bar, whichever side it comes from.",
-    figure: `${services.length}`,
+    figure: `${serviceCount}`,
     figureLabel: "Service lines offered to clients",
     z: -100,
   },
@@ -58,7 +56,15 @@ const STATEMENTS = [
   },
 ];
 
-export function FoundingStory() {
+export function FoundingStory({
+  productCount,
+  sectorCount,
+  serviceCount,
+}: {
+  productCount: number;
+  sectorCount: number;
+  serviceCount: number;
+}) {
   const { ref: tiltRef, style: tiltStyle, shouldReduceMotion } = usePointerTilt({
     max: 6,
     maxX: 4,
@@ -92,7 +98,7 @@ export function FoundingStory() {
                 className="absolute top-0 bottom-0 left-6 w-px bg-gradient-to-b from-accent/60 via-accent/25 to-transparent md:left-8"
               />
 
-              {BEATS.map((beat, i) => {
+              {buildBeats(sectorCount, productCount, serviceCount).map((beat, i) => {
                 const Icon = beat.icon;
                 return (
                   <motion.li

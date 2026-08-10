@@ -14,7 +14,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
-import { values } from "@/data/values";
+import type { Value } from "@/data/values";
 
 const iconMap: Record<string, LucideIcon> = {
   lightbulb: Lightbulb,
@@ -36,7 +36,13 @@ const iconMap: Record<string, LucideIcon> = {
  * CSS 3D again: these are headings and paragraphs that need to stay
  * selectable and in the document outline.
  */
-export function GrowthRoadmap({ expanded = false }: { expanded?: boolean }) {
+export function GrowthRoadmap({
+  values,
+  expanded = false,
+}: {
+  values: Value[];
+  expanded?: boolean;
+}) {
   const shouldReduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
 

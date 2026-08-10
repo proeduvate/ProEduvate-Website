@@ -7,7 +7,11 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Counter } from "@/components/ui/Counter";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { cn } from "@/lib/utils";
-import { achievementHighlights, monthlyStars, recognitions } from "@/data/achievements";
+import type {
+  AchievementHighlight,
+  MonthlyStar,
+  Recognition,
+} from "@/data/achievements";
 
 /*
  * Achievements, with Star of the Month as the centrepiece rather than a
@@ -17,7 +21,15 @@ import { achievementHighlights, monthlyStars, recognitions } from "@/data/achiev
  * and lit, the rest recede behind it in order. Depth carries the ranking, so
  * the highlight needs no extra chrome to read as the current one.
  */
-export function Achievements() {
+export function Achievements({
+  highlights: achievementHighlights,
+  monthlyStars,
+  recognitions,
+}: {
+  highlights: AchievementHighlight[];
+  monthlyStars: MonthlyStar[];
+  recognitions: Recognition[];
+}) {
   const { ref: tiltRef, style: tiltStyle, shouldReduceMotion } = usePointerTilt({
     max: 7,
     maxX: 4,

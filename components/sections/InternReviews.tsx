@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Quote } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
-import { internReviews } from "@/data/intern-reviews";
+import type { InternReview } from "@/data/intern-reviews";
 
 /**
  * Depth backdrop for the reviews: a receding floor grid with a row of quote
@@ -75,7 +75,7 @@ function ReviewsBackdrop() {
  * carousel, so touch, trackpad, and keyboard all work for free and the
  * cards stay in the accessibility tree. The arrows just drive scrollBy.
  */
-export function InternReviews() {
+export function InternReviews({ internReviews }: { internReviews: InternReview[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);

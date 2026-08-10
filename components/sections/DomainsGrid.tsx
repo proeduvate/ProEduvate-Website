@@ -5,7 +5,6 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ParticleDepthField } from "@/components/ui/ParticleDepthField";
 import { usePointerTilt } from "@/lib/usePointerTilt";
-import { domains } from "@/data/domains";
 
 /*
  * Capabilities over a depth particle field, with each chip glowing on its own
@@ -14,7 +13,7 @@ import { domains } from "@/data/domains";
  * The chips are staggered in Z so they sit at different distances inside the
  * particle volume rather than floating on one sheet in front of it.
  */
-export function DomainsGrid() {
+export function DomainsGrid({ domains }: { domains: string[] }) {
   const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 8, maxX: 5 });
 
   return (

@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { cn } from "@/lib/utils";
-import { coreTeam, internTrack, orgBranch, orgSpine } from "@/data/org-chart";
+import { internTrack, type CoreDiscipline, type OrgSeat } from "@/data/org-chart";
 
 /*
  * The reporting structure as an org chart on a tilted 3D plane.
@@ -70,7 +70,15 @@ function Drop({ height = 34 }: { height?: number }) {
   );
 }
 
-export function OrgChart() {
+export function OrgChart({
+  spine: orgSpine,
+  branch: orgBranch,
+  coreTeam,
+}: {
+  spine: OrgSeat[];
+  branch: OrgSeat[];
+  coreTeam: CoreDiscipline[];
+}) {
   const { ref: tiltRef, style: tiltStyle, shouldReduceMotion } = usePointerTilt({
     max: 7,
     maxX: 4,

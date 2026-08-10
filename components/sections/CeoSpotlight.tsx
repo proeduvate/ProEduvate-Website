@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { usePointerTilt } from "@/lib/usePointerTilt";
-import { ceo } from "@/data/ceo";
+import type { CeoProfile } from "@/data/ceo";
 
 /*
  * CEO spotlight.
@@ -19,7 +19,7 @@ import { ceo } from "@/data/ceo";
  * lands differently once you already know whose voice it is.
  */
 
-export function CeoSpotlight() {
+export function CeoSpotlight({ ceo }: { ceo: CeoProfile }) {
   const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 5, maxX: 3 });
 
   return (

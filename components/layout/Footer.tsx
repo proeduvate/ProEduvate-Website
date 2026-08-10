@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Logo } from "@/components/ui/Logo";
 import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
-import { products } from "@/data/products";
-import { services } from "@/data/services";
-import { address, emails, socials } from "@/data/contact";
+import type { Product } from "@/data/products";
+import type { Service } from "@/data/services";
+import type { SiteContact } from "@/lib/content";
 
 const companyLinks = [
   { label: "About", href: "/about" },
@@ -24,12 +24,22 @@ const legalLinks = [
 ];
 
 const socialIcons = { LinkedIn: LinkedInIcon, Instagram: InstagramIcon } as const;
-const socialLinks = socials.map((s) => ({
-  ...s,
-  icon: socialIcons[s.label as keyof typeof socialIcons],
-}));
 
-export function Footer() {
+export function Footer({
+  products,
+  services,
+  contact,
+}: {
+  products: Product[];
+  services: Service[];
+  contact: SiteContact;
+}) {
+  const { address, emails, socials } = contact;
+  const socialLinks = socials.map((s) => ({
+    ...s,
+    icon: socialIcons[s.label as keyof typeof socialIcons],
+  }));
+
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 

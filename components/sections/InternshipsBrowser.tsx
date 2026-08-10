@@ -5,12 +5,14 @@ import { Stagger, AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { FilterSelect } from "@/components/ui/FilterSelect";
 import { JobCard } from "@/components/sections/JobCard";
 import { Button } from "@/components/ui/Button";
-import { internships } from "@/data/internships";
+import type { InternshipListing } from "@/data/types";
 
-const trackOptions = ["All", ...Array.from(new Set(internships.map((i) => i.track)))];
 const locationOptions = ["All", "Remote", "On-site", "Hybrid"];
 
-export function InternshipsBrowser() {
+export function InternshipsBrowser({ internships }: { internships: InternshipListing[] }) {
+  // Derived from the data rather than a module constant, so the filter
+  // reflects whatever the API actually returned.
+  const trackOptions = ["All", ...Array.from(new Set(internships.map((i) => i.track)))];
   const [track, setTrack] = useState("All");
   const [location, setLocation] = useState("All");
 
@@ -20,7 +22,7 @@ export function InternshipsBrowser() {
       const locationMatch = location === "All" || role.locationType === location;
       return trackMatch && locationMatch;
     });
-  }, [track, location]);
+  }, [track, location, internships]);
 
   return (
     <div>

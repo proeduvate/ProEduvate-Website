@@ -7,6 +7,20 @@ import { TimelineRail } from "@/components/sections/TimelineRail";
 import { Achievements } from "@/components/sections/Achievements";
 import { OrgChart } from "@/components/sections/OrgChart";
 import { CultureGallery } from "@/components/sections/CultureGallery";
+import {
+  getAchievementHighlights,
+  getProducts,
+  getSectors,
+  getServices,
+  getCeo,
+  getCoreTeam,
+  getMilestones,
+  getMonthlyStars,
+  getOrgSeats,
+  getRecognitions,
+  getStats,
+  getValues,
+} from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "About",
@@ -14,16 +28,38 @@ export const metadata: Metadata = {
     "ProEduvate's story, mission, values, and the team building AI-powered products for EdTech and enterprise.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [
+    stats, ceo, timeline, highlights, stars, recognitions, values, orgSeats, coreTeam,
+    products, sectors, services,
+  ] = await Promise.all([
+      getStats(),
+      getCeo(),
+      getMilestones(),
+      getAchievementHighlights(),
+      getMonthlyStars(),
+      getRecognitions(),
+      getValues(),
+      getOrgSeats(),
+      getCoreTeam(),
+      getProducts(),
+      getSectors(),
+      getServices(),
+    ]);
+
   return (
     <>
-      <AboutHero />
-      <FoundingStory />
-      <CeoSpotlight />
-      <TimelineRail />
-      <Achievements />
-      <GrowthRoadmap expanded />
-      <OrgChart />
+      <AboutHero stats={stats} />
+      <FoundingStory
+        productCount={products.length}
+        sectorCount={sectors.length}
+        serviceCount={services.length}
+      />
+      <CeoSpotlight ceo={ceo} />
+      <TimelineRail timeline={timeline} />
+      <Achievements highlights={highlights} monthlyStars={stars} recognitions={recognitions} />
+      <GrowthRoadmap values={values} expanded />
+      <OrgChart spine={orgSeats.spine} branch={orgSeats.branch} coreTeam={coreTeam} />
       <CultureGallery />
     </>
   );

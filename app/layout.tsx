@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SiteLoader } from "@/components/layout/SiteLoader";
 import { RouteTransition } from "@/components/layout/RouteTransition";
+import { getContact, getProducts, getServices } from "@/lib/content";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -61,11 +62,17 @@ const organizationJsonLd = {
   sameAs: [],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [products, services, contact] = await Promise.all([
+    getProducts(),
+    getServices(),
+    getContact(),
+  ]);
+
   return (
     <html
       lang="en"
@@ -88,7 +95,7 @@ export default function RootLayout({
         <main id="main-content" className="flex-1">
           {children}
         </main>
-        <Footer />
+        <Footer products={products} services={services} contact={contact} />
       </body>
     </html>
   );

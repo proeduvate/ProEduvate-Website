@@ -17,7 +17,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BracketFrame } from "@/components/ui/BracketFrame";
 import { cn } from "@/lib/utils";
-import { sectors } from "@/data/sectors";
+import type { Sector } from "@/data/sectors";
 
 const iconMap: Record<string, LucideIcon> = {
   "graduation-cap": GraduationCap,
@@ -39,7 +39,6 @@ const iconMap: Record<string, LucideIcon> = {
  * and force a separate DOM mirror for screen readers. Real perspective plus
  * preserve-3d gives the same depth for none of that.
  */
-const STEP = 360 / sectors.length;
 const RADIUS = 430; // px from ring centre to each tile
 const BASE_SPEED = 5.5; // degrees per second at rest
 const SCROLL_IMPULSE = 0.07; // degrees added per px of scroll
@@ -52,7 +51,9 @@ const WHEEL_SENSITIVITY = 0.32;
 // How long after a drag or wheel before the ring resumes its idle drift.
 const INTERACTION_COOLDOWN_MS = 900;
 
-export function SectorRing() {
+export function SectorRing({ sectors }: { sectors: Sector[] }) {
+  // Derived from the data, so it cannot be a module constant any more.
+  const STEP = 360 / sectors.length;
   const shouldReduceMotion = useReducedMotion();
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -243,7 +244,9 @@ export function SectorRing() {
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [shouldReduceMotion]);
+    // STEP is derived from the sector count, so the loop has to rebind
+    // if the list itself changes.
+  }, [shouldReduceMotion, STEP]);
 
   const activeSector = active === null ? null : sectors[active];
 

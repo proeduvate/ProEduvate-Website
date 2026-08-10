@@ -9,8 +9,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BracketFrame } from "@/components/ui/BracketFrame";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { cn } from "@/lib/utils";
-import { products } from "@/data/products";
-import { services } from "@/data/services";
+import type { Product } from "@/data/products";
+import type { Service } from "@/data/services";
 
 /*
  * Products and services as a node graph branching out of a central hub.
@@ -38,17 +38,7 @@ const V_CENTRE = (BRANCH_COUNT - 1) / 2;
 
 type NodeItem = { name: string; meta: string; href: string };
 
-const productNodes: NodeItem[] = products.slice(0, BRANCH_COUNT).map((p) => ({
-  name: p.name,
-  meta: p.status,
-  href: "/products",
-}));
 
-const serviceNodes: NodeItem[] = services.slice(0, BRANCH_COUNT).map((s) => ({
-  name: s.name,
-  meta: "Service",
-  href: "/services",
-}));
 
 function Branch({
   side,
@@ -147,7 +137,24 @@ function Branch({
   );
 }
 
-export function CapabilityGraph() {
+export function CapabilityGraph({
+  products,
+  services,
+}: {
+  products: Product[];
+  services: Service[];
+}) {
+  const productNodes: NodeItem[] = products.slice(0, BRANCH_COUNT).map((p) => ({
+    name: p.name,
+    meta: p.status,
+    href: "/products",
+  }));
+  const serviceNodes: NodeItem[] = services.slice(0, BRANCH_COUNT).map((s) => ({
+    name: s.name,
+    meta: "Service",
+    href: "/services",
+  }));
+
   const { ref: tiltRef, style: tiltStyle } = usePointerTilt();
 
   return (
@@ -174,7 +181,7 @@ export function CapabilityGraph() {
                 label="Products we run"
                 items={productNodes}
                 href="/products"
-                linkLabel="All 17 products"
+                linkLabel={`All ${products.length} products`}
               />
 
               {/* Hub */}

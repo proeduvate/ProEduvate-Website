@@ -5,13 +5,15 @@ import { Stagger, AnimatedReveal } from "@/components/ui/AnimatedReveal";
 import { FilterSelect } from "@/components/ui/FilterSelect";
 import { JobCard } from "@/components/sections/JobCard";
 import { Button } from "@/components/ui/Button";
-import { jobs } from "@/data/jobs";
+import type { JobListing } from "@/data/types";
 
 const employmentOptions = ["All", "Full-time", "Part-time"];
-const departmentOptions = ["All", ...Array.from(new Set(jobs.map((j) => j.department)))];
 const locationOptions = ["All", "Remote", "On-site", "Hybrid"];
 
-export function CareersBrowser() {
+export function CareersBrowser({ jobs }: { jobs: JobListing[] }) {
+  // Derived from the data rather than a module constant, so the filter
+  // reflects whatever the API actually returned.
+  const departmentOptions = ["All", ...Array.from(new Set(jobs.map((j) => j.department)))];
   const [employment, setEmployment] = useState("All");
   const [department, setDepartment] = useState("All");
   const [location, setLocation] = useState("All");
@@ -26,7 +28,7 @@ export function CareersBrowser() {
       const locationMatch = location === "All" || job.locationType === location;
       return employmentMatch && departmentMatch && locationMatch;
     });
-  }, [employment, department, location]);
+  }, [employment, department, location, jobs]);
 
   return (
     <div>

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { BracketFrame } from "@/components/ui/BracketFrame";
 import { usePointerTilt } from "@/lib/usePointerTilt";
-import { stats } from "@/data/stats";
+import type { Stat } from "@/data/stats";
 
 /*
  * About hero as a 3D stage rather than a flat banner, matching the treatment
@@ -23,7 +23,7 @@ const PLATES = [
   { z: -280, inset: "-inset-[6%]", opacity: 0.04 },
 ];
 
-export function AboutHero() {
+export function AboutHero({ stats }: { stats: Stat[] }) {
   const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 9, maxX: 6 });
   const headline = stats.slice(0, 3);
 

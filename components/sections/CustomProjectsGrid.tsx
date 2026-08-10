@@ -6,7 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
-import { customProjects } from "@/data/custom-projects";
+import type { CustomProject } from "@/data/custom-projects";
 
 /*
  * Client work as tiles that raise a 3D preview card on hover.
@@ -70,7 +70,7 @@ function choosePlacement(rect: DOMRect): React.CSSProperties {
   return { bottom: "100%", marginBottom: GAP, transformOrigin: "bottom center", ...centreX };
 }
 
-export function CustomProjectsGrid() {
+export function CustomProjectsGrid({ customProjects }: { customProjects: CustomProject[] }) {
   const shouldReduceMotion = useReducedMotion();
   const [active, setActive] = useState<number | null>(null);
   const [placement, setPlacement] = useState<React.CSSProperties>({});

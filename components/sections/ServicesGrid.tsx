@@ -17,7 +17,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { usePointerTilt } from "@/lib/usePointerTilt";
 import { cn } from "@/lib/utils";
-import { services } from "@/data/services";
+import type { Service } from "@/data/services";
 
 const iconMap: Record<string, LucideIcon> = {
   "graduation-cap": GraduationCap,
@@ -41,7 +41,7 @@ const iconMap: Record<string, LucideIcon> = {
  * substantial enough that having it change under an accidental mouse sweep
  * would be disorienting.
  */
-export function ServicesGrid() {
+export function ServicesGrid({ services }: { services: Service[] }) {
   const [selected, setSelected] = useState(0);
   const { ref: tiltRef, style: tiltStyle } = usePointerTilt({ max: 5, maxX: 3 });
   const active = services[selected];

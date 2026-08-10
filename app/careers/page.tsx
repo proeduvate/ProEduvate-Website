@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BenefitsGrid } from "@/components/sections/BenefitsGrid";
 import { CareersBrowser } from "@/components/sections/CareersBrowser";
+import { getJobs } from "@/lib/content";
 import { CtaBand } from "@/components/sections/CtaBand";
 
 export const metadata: Metadata = {
@@ -12,7 +13,9 @@ export const metadata: Metadata = {
     "Full-time and part-time roles at ProEduvate across engineering, design, AI/ML, EdTech content, marketing, and operations.",
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const jobs = await getJobs();
+
   return (
     <>
       <PageHero
@@ -27,7 +30,7 @@ export default function CareersPage() {
         <Container>
           <SectionHeading eyebrow="Open Positions" title="Find your next role." />
           <div className="mt-10">
-            <CareersBrowser />
+            <CareersBrowser jobs={jobs} />
           </div>
         </Container>
       </section>

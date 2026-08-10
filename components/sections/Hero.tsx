@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { HeroParticles } from "@/components/ui/HeroParticles";
 import { HeroHud } from "@/components/ui/HeroHud";
-import { jobs } from "@/data/jobs";
-import { internships } from "@/data/internships";
 import {
   getHeroFramesServerSnapshot,
   getHeroFramesSnapshot,
@@ -97,8 +95,7 @@ function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement, cw: num
   ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
 }
 
-export function Hero() {
-  const openRoles = jobs.length + internships.length;
+export function Hero({ openRoles }: { openRoles: number }) {
 
   const sectionRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);

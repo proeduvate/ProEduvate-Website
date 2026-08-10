@@ -1,9 +1,9 @@
 import { Container } from "@/components/ui/Container";
 import { Counter } from "@/components/ui/Counter";
 import { Stagger, AnimatedReveal } from "@/components/ui/AnimatedReveal";
-import { stats } from "@/data/stats";
+import type { Stat } from "@/data/stats";
 
-export function StatsBand() {
+export function StatsBand({ stats }: { stats: Stat[] }) {
   return (
     <section className="border-y border-white/10 bg-surface py-16 md:py-20">
       <Container>

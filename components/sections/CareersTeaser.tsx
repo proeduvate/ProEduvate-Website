@@ -1,10 +1,15 @@
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { AnimatedReveal } from "@/components/ui/AnimatedReveal";
-import { jobs } from "@/data/jobs";
-import { internships } from "@/data/internships";
+import type { JobListing, InternshipListing } from "@/data/types";
 
-export function CareersTeaser() {
+export function CareersTeaser({
+  jobs,
+  internships,
+}: {
+  jobs: JobListing[];
+  internships: InternshipListing[];
+}) {
   const partTime = jobs.filter((job) => job.employmentType === "part-time").length;
 
   return (

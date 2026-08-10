@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { cn } from "@/lib/utils";
-import { timeline } from "@/data/timeline";
+import type { Milestone } from "@/data/timeline";
 
 /*
  * Milestones as a horizontal 3D rail rather than a stacked list.
@@ -22,7 +22,7 @@ import { timeline } from "@/data/timeline";
  */
 
 // One bar per month, tallest month normalised to full height.
-function monthDensity() {
+function monthDensity(timeline: Milestone[]) {
   const counts = new Map<string, number>();
   for (const m of timeline) counts.set(m.year, (counts.get(m.year) ?? 0) + 1);
   const peak = Math.max(...counts.values());
@@ -33,13 +33,13 @@ function monthDensity() {
   }));
 }
 
-export function TimelineRail() {
+export function TimelineRail({ timeline }: { timeline: Milestone[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
   const [activeMonth, setActiveMonth] = useState<string | null>(null);
-  const density = monthDensity();
+  const density = monthDensity(timeline);
 
   /**
    * Scrolls the rail to the first milestone of a month and lights it up.

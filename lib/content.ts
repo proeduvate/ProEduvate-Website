@@ -42,6 +42,26 @@ import {
   type InternReview,
 } from "@/data/intern-reviews";
 import { ceo as staticCeo, type CeoProfile } from "@/data/ceo";
+import { jobs as staticJobs } from "@/data/jobs";
+import { internships as staticInternships } from "@/data/internships";
+import type { JobListing, InternshipListing } from "@/data/types";
+import {
+  orgSpine as staticOrgSpine,
+  orgBranch as staticOrgBranch,
+  coreTeam as staticCoreTeam,
+  type OrgSeat,
+  type CoreDiscipline,
+} from "@/data/org-chart";
+import {
+  techStack as staticTechStack,
+  clientLogos as staticClientLogos,
+} from "@/data/tech-stack";
+import {
+  address as staticAddress,
+  emails as staticEmails,
+  incubationCentres as staticIncubationCentres,
+  socials as staticSocials,
+} from "@/data/contact";
 
 /** Anything the API sends back carries these alongside the content columns. */
 type ApiRow = { id: number; position: number; published: boolean };
@@ -271,4 +291,163 @@ export async function getCeo(): Promise<CeoProfile> {
     quoteApproved: r.quote_approved === true,
   }));
   return row ?? staticCeo;
+}
+
+// --------------------------------------------------------------------------
+// Hiring
+// --------------------------------------------------------------------------
+
+export async function getJobs(): Promise<JobListing[]> {
+  const rows = await fetchCollection<
+    ApiRow & {
+      slug: string;
+      title: string;
+      department: string;
+      employment_type: string;
+      location: string;
+      location_type: string;
+      posted_at: string;
+      summary: string;
+      responsibilities: string[];
+      requirements: string[];
+      nice_to_have: string[];
+    },
+    JobListing
+  >("/api/v1/jobs", (r) => ({
+    // The table calls it `slug`; the site has always keyed routes on `id`.
+    id: r.slug,
+    title: r.title,
+    department: r.department,
+    employmentType: r.employment_type as JobListing["employmentType"],
+    location: r.location,
+    locationType: r.location_type as JobListing["locationType"],
+    postedAt: r.posted_at,
+    summary: r.summary,
+    responsibilities: r.responsibilities,
+    requirements: r.requirements,
+    niceToHave: r.nice_to_have?.length ? r.nice_to_have : undefined,
+  }));
+  return rows ?? staticJobs;
+}
+
+export async function getInternships(): Promise<InternshipListing[]> {
+  const rows = await fetchCollection<
+    ApiRow & {
+      slug: string;
+      title: string;
+      track: string;
+      location: string;
+      location_type: string;
+      duration: string;
+      stipend: string;
+      posted_at: string;
+      summary: string;
+      responsibilities: string[];
+      requirements: string[];
+    },
+    InternshipListing
+  >("/api/v1/internships", (r) => ({
+    id: r.slug,
+    title: r.title,
+    track: r.track,
+    location: r.location,
+    locationType: r.location_type as InternshipListing["locationType"],
+    duration: r.duration,
+    stipend: r.stipend,
+    postedAt: r.posted_at,
+    summary: r.summary,
+    responsibilities: r.responsibilities,
+    requirements: r.requirements,
+  }));
+  return rows ?? staticInternships;
+}
+
+// --------------------------------------------------------------------------
+// Org chart
+// --------------------------------------------------------------------------
+
+/** Spine and branch live in one table, split by `tier`. */
+export async function getOrgSeats(): Promise<{ spine: OrgSeat[]; branch: OrgSeat[] }> {
+  const rows = await fetchCollection<
+    ApiRow & { abbr: string; title: string; holder: string | null; tier: string },
+    OrgSeat & { tier: string }
+  >("/api/v1/org-seats", (r) => ({
+    abbr: r.abbr,
+    title: r.title,
+    holder: r.holder,
+    tier: r.tier,
+  }));
+
+  if (!rows) return { spine: staticOrgSpine, branch: staticOrgBranch };
+
+  const spine = rows.filter((r) => r.tier === "spine");
+  const branch = rows.filter((r) => r.tier === "branch");
+  // A chart with no branch would render as a chain with nothing under it, so
+  // treat a partial result as a failure rather than draw something wrong.
+  if (spine.length === 0 || branch.length === 0) {
+    return { spine: staticOrgSpine, branch: staticOrgBranch };
+  }
+  return { spine, branch };
+}
+
+export async function getCoreTeam(): Promise<CoreDiscipline[]> {
+  const rows = await fetchCollection<
+    ApiRow & { discipline: string; stack: string[] },
+    CoreDiscipline
+  >("/api/v1/core-team", (r) => ({ discipline: r.discipline, stack: r.stack }));
+  return rows ?? staticCoreTeam;
+}
+
+// --------------------------------------------------------------------------
+// Stack, clients, contact
+// --------------------------------------------------------------------------
+
+export async function getTechStack(): Promise<string[]> {
+  const rows = await fetchCollection<ApiRow & { name: string }, string>(
+    "/api/v1/tech-stack",
+    (r) => r.name
+  );
+  return rows ?? staticTechStack;
+}
+
+export async function getClientLogos(): Promise<string[]> {
+  const rows = await fetchCollection<ApiRow & { name: string }, string>(
+    "/api/v1/client-logos",
+    (r) => r.name
+  );
+  return rows ?? staticClientLogos;
+}
+
+export type SiteContact = {
+  address: { lines: string[]; query: string };
+  emails: { label: string; value: string }[];
+  incubationCentres: string[];
+  socials: { label: string; href: string }[];
+};
+
+export async function getContact(): Promise<SiteContact> {
+  const row = await fetchSingleton<
+    {
+      address_lines: string[];
+      address_query: string;
+      emails: { label: string; value: string }[];
+      incubation_centres: string[];
+      socials: { label: string; href: string }[];
+    },
+    SiteContact
+  >("/api/v1/contact", (r) => ({
+    address: { lines: r.address_lines, query: r.address_query },
+    emails: r.emails,
+    incubationCentres: r.incubation_centres,
+    socials: r.socials,
+  }));
+
+  return (
+    row ?? {
+      address: staticAddress,
+      emails: staticEmails,
+      incubationCentres: staticIncubationCentres,
+      socials: staticSocials,
+    }
+  );
 }
