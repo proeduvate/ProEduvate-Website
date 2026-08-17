@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { SiteLoader } from "@/components/layout/SiteLoader";
 import { RouteTransition } from "@/components/layout/RouteTransition";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { getContact, getProducts, getServices } from "@/lib/content";
 import "./globals.css";
 
@@ -89,13 +90,18 @@ export default async function RootLayout({
         >
           Skip to content
         </a>
-        <SiteLoader />
-        <RouteTransition />
-        <Navbar />
-        <main id="main-content" className="flex-1">
+        <SiteChrome
+          header={
+            <>
+              <SiteLoader />
+              <RouteTransition />
+              <Navbar />
+            </>
+          }
+          footer={<Footer products={products} services={services} contact={contact} />}
+        >
           {children}
-        </main>
-        <Footer products={products} services={services} contact={contact} />
+        </SiteChrome>
       </body>
     </html>
   );

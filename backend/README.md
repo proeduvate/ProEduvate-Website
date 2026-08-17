@@ -4,8 +4,9 @@ FastAPI + PostgreSQL store for everything on the marketing site that changes.
 Reads are public because the site is public; **every write requires a bearer
 token.**
 
-The site does **not** consume this yet — it still renders from `data/*.ts`.
-This branch adds the backend; wiring the frontend to it is a separate change.
+The site reads from this API when `NEXT_PUBLIC_API_URL` is set, and falls back
+to the static `data/*.ts` files whenever it is unset or the API is
+unreachable. Content is edited at `/admin` on the site itself.
 
 ## Running it
 
